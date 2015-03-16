@@ -1,0 +1,131 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.0;
+; chsLANGUAGE ;
+; ;
+; AmpView ?2004 2005 Nikolay Petrochenko ;
+; ;
+; If you translate this file in anoter language,;
+; please, send it to me (Nik_vr@mail.ru);
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=chs 
+translator=linyanli
+mail=scetus@gmail.com
+
+; 弹出菜单
+[menus]
+ItemAbout=关于... 
+ItemOptions=选项 
+ItemFileInfo=文件信息... 
+ItemClose=关闭 
+ItemTopMost=保持置顶 
+ItemView=查看
+ItemShowFileNames=文件名
+ItemShowFullNames=完整的文件名
+ItemTrackCaptions=曲目标题
+ItemShowNumbers=显示编号
+ItemShowTrackLength=显示曲目长度 
+ItemTimeMode=剩余时间 
+ItemControl=控制 
+ItemNextFile=下一首
+ItemShuffle=随机
+ItemDeleteTrack=删除曲目
+ItemDeleteFile=删除文件
+ItemSort=排序曲目
+ItemSortByLength=按长度排序
+ItemSortByFileName=按文件名排序
+ItemSortByTitle=按标题排序
+ItemSavePlayList=保存播放列表...
+; tray menus
+ItemVolumeUp=增大音量 
+ItemVolumeDown=减小音量 
+ItemRestore=还原窗口 
+ItemNextTrack=下一曲目
+ItemPrevTrack=前一曲目
+
+; 按钮提示 
+[hints]
+ButtonPlay=播放
+ButtonPause=暂停 
+ButtonStop=停止
+ButtonMute=静音
+ButtonClose=关闭 
+ButtonMinimize=最小化
+ButtonNext=下一曲目
+ButtonPrevious=前一曲目
+ButtonOpen=开启文件 
+ButtonPlayList=显示/隐藏播放列表 
+ButtonInfo=文件信息 
+
+
+; 选项窗口
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=界面 
+TreeItemPlugins=插件 
+TreeItemSkins=皮肤 
+TreeItemOther=其他 
+TreeItemControl=控制 
+TreeItemPlayList=播放列表
+
+; GroupBoxes
+BoxLanguage=语言
+BoxTranslator=翻译者
+BoxEffects=效果 
+BoxOther=其他 
+BoxInputPlugins=输入插件 
+BoxSkin=皮肤
+BoxInformation=皮肤信息 
+BoxRewindStep=逐步倒转 (秒)
+BoxOnEndTrack=曲目结束后的动作
+BoxExtensions=关联的扩展名
+BoxNewExtension=新增扩展名 
+BoxPluginsFolder=插件目录 
+BoxFont=字体
+BoxSample=样本
+BoxPressKey=按下键或组合键
+BoxFormatTrackCaption=曲目标题的格式
+BoxPlugins=可用的插件
+BoxExtensions=扩展名
+
+; Actions
+OnEndActionStop=停止
+OnEndActionNext=打开列表中的下一首 
+OnEndActionClose=关闭AmpView
+OnEndActionRestart=重复目前曲目
+OnEndActionNextFile=打开文件夹的下一文件 
+
+; 按钮 
+ButtonClose=关闭 
+ButtonConfig=配置
+ButtonAbout=关于 
+ButtonApply=应用
+ButtonScanPlugs=扫描
+ButtonAdd=添加
+ButtonDelete=删除
+; 标签
+LabelSelectLanguage=选择语言文件:
+
+; CheckBoxes
+CheckBoxUseShadows=显示阴影 
+CheckBoxUseAntiAliasing=抗锯齿
+CheckBoxIgnoreSkinFont=忽略皮肤字体
+CheckBoxNotQV=不在快速显示时使用AmpView
+CheckBoxNotNV=不在快速查看时使用AmpView
+CheckBoxUseControl=按下[Ctrl]时滚轮控制音量 
+PageInternalHotKeys=内部热键
+PageGlobalHotKeys=全局热键
+PageMouse=鼠标 
+CheckBoxWarning=删除文件显示警告
+
+; RadioBoxes
+RadioDefaultFolder=预设的文件夹
+RadioWinampFolder=Winamp 文件夹
+RadioCustomFolder=自定义文件夹 
+
+; Pages
+PagePlayList=播放列表
+PageTypes=类别

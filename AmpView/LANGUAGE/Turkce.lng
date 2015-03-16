@@ -1,0 +1,126 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 7            ;
+; Turkish language                                ;
+;                                                 ;
+; AmpView © 2004-2006 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Türkce
+TRANSLATOR=Ahmet Kaþýkçý
+mail=pharma02@yahoo.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Hakkýnda...
+ItemOptions=Seçenekler
+ItemFileInfo=Dosya Bilgisi...
+ItemClose=Kapat
+ItemTopMost=Herzaman Üstte
+ItemView=Gör
+ItemShowFileNames=Dosya-adlarý
+ItemShowFullNames=Komple adlar
+ItemTrackCaptions=Parça baþlýklarý
+ItemShowNumbers=Numaralarý göster
+ItemShowTrackLength=Parça uzunluðunu göster
+ItemTimeMode=Kalan zaman modu
+ItemControl=Kontrol
+ItemNextFile=Geçerli klasörde sonraki parça
+ItemShuffle=Karýþýk
+ItemDeleteTrack=Parçayý sil
+ItemDeleteFile=Dosyayý sil
+ItemSort=Parçalarý sýrala
+ItemSortByLength=Uzunluða göre
+ItemSortByFileName=dosya adýna göre
+ItemSortByTitle=baþlýða göre
+ItemSavePlayList=Çalma listesini kaydet...
+
+; tray menus
+ItemVolumeUp=Sesi aç
+ItemVolumeDown=Sesi kýs
+ItemRestore=Pencereyi geri yükle
+ItemNextTrack=Sonraki parça
+ItemPrevTrack=Önceki parça
+
+; Hints for buttons
+[hints]
+ButtonPlay=Çal
+ButtonPause=Durakla
+ButtonStop=Dur
+ButtonMute=Sessiz
+ButtonClose=Kapat
+ButtonMinimize=Aþaðý al
+ButtonNext=Sonraki parça
+ButtonPrevious=Önceki parça
+ButtonOpen=Dosya aç
+ButtonPlayList=Çalma listesini göster/gizle
+ButtonInfo=Dosya bilgisi
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Arayüz
+TreeItemPlugins=Eklentiler
+TreeItemSkins=Kaplamalar
+TreeItemOther=Diðer
+TreeItemControl=Kontrol
+TreeItemPlayList=Çalma listesi
+
+; GroupBoxes
+BoxLanguage=Dil
+BoxTranslator=Çevirmen
+BoxEffects=Efektler
+BoxOther=Diðer
+BoxInputPlugins=Giriþ eklentileri
+BoxSkin=Kaplama
+BoxInformation=Bilgi
+BoxRewindStep=Sardýrma hýzý(saniye)
+BoxOnEndTrack=Parçanýn sonunda
+BoxFont=Yazýtipi
+BoxSample=Örnek
+BoxPressKey=Tuþ/Tuþ kombinasyonu girin
+BoxFormatTrackCaption=Parça baþlýðý biçimi
+BoxPlugins=Kullanýlabilir Eklentiler
+BoxExtensions=Geniþlemeler
+BoxConfig=Konfigürasyon
+; Actions
+OnEndActionStop=Dur
+OnEndActionNext=Listede sonraki parçayý aç
+OnEndActionClose=AmpView'i kapat
+OnEndActionRestart=Geçerli parçayý tekrar baþlat
+OnEndActionNextFile=Klasörde sonraki dosyayý aç
+
+; Buttons
+ButtonClose=Kapat
+ButtonAdd=Ekle
+ButtonDelete=Sil
+
+; Labels
+LabelSelectLanguage=Listeden dil seçin:
+
+; CheckBoxes
+CheckBoxUseShadows=Gölge görüntülenmesi
+CheckBoxUseAntiAliasing=AntiAliasing kullanýmý
+CheckBoxIgnoreSkinFont=Kaplama yazýtipini reddet
+CheckBoxNotQV=QuickView ile AmpView kullanma
+CheckBoxNotNV=Normal görünüm ile AmpView kullanma
+CheckBoxUseControl=Sadece [Ctrl] basýlýysa fare tekerleði ile ses ayarla
+CheckBoxWarning=Dosya silme uyarýlarýný göster
+CheckBoxDefaultConfig=Tüm kullanýcýlarda ayný konfigürasyonu kullan
+PageInternalHotKeys=Dahili kýsayollar
+PageGlobalHotKeys=Genel kýsayollar
+PageMouse=Fare
+
+; Pages
+PagePlayList=Çalma listesi
+
+; Other strings
+[strings]
+WarningDeleteFiles=Bu dosyalarý silmek istediðinizden emin misiniz?
+WarningDeleteTracks=Bu parçalarý silmek istediðinizden enim misiniz?
+WarningCaption=Uyarý

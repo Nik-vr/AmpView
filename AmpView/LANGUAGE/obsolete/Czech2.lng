@@ -1,0 +1,117 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.0                   ;
+; Czech language                                  ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Czech	
+translator=Jan Lukeš
+mail=johny007@gmail.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=O aplikaci...
+ItemOptions=Nastavení
+ItemFileInfo=Info o souboru...
+ItemClose=Zavøít
+ItemTopMost=Vždy nahoøe
+ItemView=Ukázat
+ItemShowFileNames=Soubor-jména
+ItemShowFullNames=Celá jména
+ItemTrackCaptions=Track captions
+ItemShowNumbers=Ukázat èísla
+ItemShowTrackLength=Ukázat délku skladby
+ItemTimeMode=Mod zbyvajícího èasu
+ItemControl=Ovládání
+ItemNextFile=Další z adresáøe
+; tray menus
+ItemVolumeUp=Hlasitost +
+ItemVolumeDown=Hlasitost -
+ItemRestore=Obnovit okno
+ItemNextTrack=Další skladba
+ItemPrevTrack=Pøedchozí skladba
+
+; Hints for buttons
+[hints]
+ButtonPlay=Pøehrát
+ButtonPause=Pauza
+ButtonStop=Stop
+ButtonMute=Ticho
+ButtonClose=Zavøít
+ButtonMinimize=Minimalizovat
+ButtonNext=Další skladba
+ButtonPrevious=Pøedchozí skladba
+ButtonOpen=Otevøít soubor
+ButtonPlayList=Ukázat/skrýt playlist
+ButtonInfo=O souboru
+
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Rozhraní
+TreeItemPlugins=Pluginy
+TreeItemSkins=Skiny
+TreeItemOther=Další
+TreeItemControl=Obecné
+
+; GroupBoxes
+BoxLanguage=Jazyk
+BoxTranslator=Pøekladatel
+BoxEffects=Efekty
+BoxOther=Jiné
+BoxInputPlugins=Vstupní pluginy
+BoxSkin=Skiny
+BoxInformation=Informace
+BoxRewindStep=Zpìtné kroky
+BoxOnEndTrack=Nakonci skladby
+BoxExtensions=Podporované pøípony
+BoxNewExtension=Nové pøípony
+BoxPluginsFolder=Adresáø pluginù
+BoxFont=Font
+BoxSample=Ukázka
+BoxPressKey=Klávesové zkratky
+
+; Actions
+OnEndActionStop=Stop pøehrávání
+OnEndActionNext=Pøehrát další skladbu ze seznamu
+OnEndActionClose=Zavøít AmpView
+OnEndActionRestart=Restartovat pøehrávanou
+OnEndActionNextFile=Pøehrát další skladbu z adresáøe
+
+; Buttons
+ButtonClose=Zavøít
+ButtonConfig=Nastavení
+ButtonAbout=O pluginu
+ButtonApply=Aplikovat
+ButtonScanPlugs=Scanuj
+
+; Labels
+LabelSelectLanguage=Vyber jazyk ze seznamu:
+
+; CheckBoxes
+CheckBoxUseShadows=Používat stíny
+CheckBoxUseAntiAliasing=Používat AntiAliasing
+CheckBoxIgnoreSkinFont=Ignorovat font skinu
+CheckBoxNotQV=Nepoužívat AmpView pro rychlý náhled
+CheckBoxNotNV=Nepoužívat AmpView pro normální náhled
+CheckBoxUseControl=Zmìnit hlasitost pokud je  [Ctrl] stisknut
+PageInternalHotKeys=Interní zkratky
+PageGlobalHotKeys=Obecné zkratky
+PageMouse=Myš
+
+; RadioBoxes
+RadioDefaultFolder=Standartní adresáø
+RadioWinampFolder=Adresár Winampu
+RadioCustomFolder=Jiný adresáø
+
+; Pages
+PagePlayList=PlayList
+PageTypes=Typy

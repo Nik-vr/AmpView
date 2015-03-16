@@ -1,0 +1,126 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 7            ;
+; English language                                ;
+;                                                 ;
+; AmpView © 2004-2007 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=English
+translator=Nikolay Petrochenko
+mail=Nik_vr@mail.ru
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=About...
+ItemOptions=Options
+ItemFileInfo=File info...
+ItemClose=Close
+ItemTopMost=Stay on Top
+ItemView=View
+ItemShowFileNames=File-names
+ItemShowFullNames=Full names
+ItemTrackCaptions=Track captions
+ItemShowNumbers=Show numbers
+ItemShowTrackLength=Show track length
+ItemTimeMode=Time left mode
+ItemControl=Control
+ItemNextFile=Next file from current folder
+ItemShuffle=Shuffle
+ItemDeleteTrack=Delete track
+ItemDeleteFile=Delete file
+ItemSort=Sort tracks
+ItemSortByLength=by length
+ItemSortByFileName=by filename
+ItemSortByTitle=by title
+ItemSavePlayList=Save Playlist...
+
+; tray menus
+ItemVolumeUp=Volume Up
+ItemVolumeDown=Volume Down
+ItemRestore=Restore window
+ItemNextTrack=Next track
+ItemPrevTrack=Previous track
+
+; Hints for buttons
+[hints]
+ButtonPlay=Play
+ButtonPause=Pause
+ButtonStop=Stop
+ButtonMute=Mute
+ButtonClose=Close
+ButtonMinimize=Minimize
+ButtonNext=Next track
+ButtonPrevious=Previous track
+ButtonOpen=Open file
+ButtonPlayList=Show/Hide Playlist
+ButtonInfo=File info
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interface
+TreeItemPlugins=Plugins
+TreeItemSkins=Skins
+TreeItemOther=Other
+TreeItemControl=Control
+TreeItemPlayList=PlayList
+
+; GroupBoxes
+BoxLanguage=Language
+BoxTranslator=Translator
+BoxEffects=Effects
+BoxOther=Other
+BoxInputPlugins=Input-plugins
+BoxSkin=Skin
+BoxInformation=Information
+BoxRewindStep=Step of rewind (seconds)
+BoxOnEndTrack=On end of a track
+BoxFont=Font
+BoxSample=Sample
+BoxPressKey=Press key or keys combination
+BoxFormatTrackCaption=Format of track's captions
+BoxPlugins=Available Plugins
+BoxExtensions=Extensions
+BoxConfig=Configuration
+; Actions
+OnEndActionStop=Stop track
+OnEndActionNext=Open next track from list
+OnEndActionClose=Close AmpView
+OnEndActionRestart=Restart current track
+OnEndActionNextFile=Open next file from folder
+
+; Buttons
+ButtonClose=Close
+ButtonAdd=Add
+ButtonDelete=Delete
+
+; Labels
+LabelSelectLanguage=Select language from list:
+
+; CheckBoxes
+CheckBoxUseShadows=To resolve display of shadows
+CheckBoxUseAntiAliasing=To resolve use of AntiAliasing
+CheckBoxIgnoreSkinFont=Ignore skin font
+CheckBoxNotQV=Not use AmpView for QuickView
+CheckBoxNotNV=Not use AmpView for Normal View
+CheckBoxUseControl=Change Volume with mouse well only if [Ctrl] key pressed
+CheckBoxWarning=Show warnings of the files deleting
+CheckBoxDefaultConfig=Use only default configuration file for all users
+PageInternalHotKeys=Internal HotKeys
+PageGlobalHotKeys=Global HotKeys
+PageMouse=Mouse
+
+; Pages
+PagePlayList=PlayList
+
+; Other strings
+[strings]
+WarningDeleteFiles=Are you sure that want to delete this files?
+WarningDeleteTracks=Are you sure that want to delete this tracks?
+WarningCaption=Warning

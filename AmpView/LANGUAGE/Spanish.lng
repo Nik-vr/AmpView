@@ -1,0 +1,126 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 7            ;
+; Spanish language                                ;
+;                                                 ;
+; AmpView © 2004-2006 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Español
+translator=Vico//Koby
+mail=vicokoby@gmail.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Acerca de...
+ItemOptions=Opciones
+ItemFileInfo=Información de archivo...
+ItemClose=Cerrar
+ItemTopMost=Siempre visible
+ItemView=Ver
+ItemShowFileNames=Nombres de archivos
+ItemShowFullNames=Nombres completos
+ItemTrackCaptions=Títulos de pistas
+ItemShowNumbers=Mostrar números
+ItemShowTrackLength=Mostrar longitud de pista
+ItemTimeMode=Modo tiempo restante
+ItemControl=Control
+ItemNextFile=Siguiente archivo de de la carpeta actual
+ItemShuffle=Desordenar
+ItemDeleteTrack=Borrar pista
+ItemDeleteFile=Borrar archivo
+ItemSort=Ordenar pistas
+ItemSortByLength=por duración
+ItemSortByFileName=por nombre de archivo
+ItemSortByTitle=por título
+ItemSavePlayList=Guardar Lista de reproducción...
+
+; tray menus
+ItemVolumeUp=Subir volumen
+ItemVolumeDown=Bajar volumen
+ItemRestore=Restaurar ventana
+ItemNextTrack=Pista siguiente
+ItemPrevTrack=Pista anterior
+
+; Hints for buttons
+[hints]
+ButtonPlay=Reproducir
+ButtonPause=Pausa
+ButtonStop=Detener
+ButtonMute=Silencio
+ButtonClose=Cerrar
+ButtonMinimize=Minimizar
+ButtonNext=Pista siguiente
+ButtonPrevious=Pista anterior
+ButtonOpen=Abrir archivo
+ButtonPlayList=Mostrar/Ocultar Lista de reproducción
+ButtonInfo=Información de archivo
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interfaz
+TreeItemPlugins=Plugins
+TreeItemSkins=Carátulas
+TreeItemOther=Otros
+TreeItemControl=Control
+TreeItemPlayList=Lista de reproducción
+
+; GroupBoxes
+BoxLanguage=Idioma
+BoxTranslator=Traductor
+BoxEffects=Efectos
+BoxOther=Otros
+BoxInputPlugins=Plugins de entrada
+BoxSkin=Carátula
+BoxInformation=Información
+BoxRewindStep=Paso de rebobinado (segundos)
+BoxOnEndTrack=Al final de una pista
+BoxFont=Fuente
+BoxSample=Muestra
+BoxPressKey=Presione una tecla o una combinación de teclas
+BoxFormatTrackCaption=Formato de los títulos de las pistas
+BoxPlugins=Plugins disponibles
+BoxExtensions=Extensiones
+BoxConfig=Configuración
+; Actions
+OnEndActionStop=Detener pista
+OnEndActionNext=Abrir pista siguiente de la lista
+OnEndActionClose=Cerrar AmpView
+OnEndActionRestart=Reiniciar pista actual
+OnEndActionNextFile=Abrir archivo siguiente desde una carpeta
+
+; Buttons
+ButtonClose=Cerrar
+ButtonAdd=Añadir
+ButtonDelete=Borrar
+
+; Labels
+LabelSelectLanguage=Seleccine un idioma de la lista:
+
+; CheckBoxes
+CheckBoxUseShadows=Mostrar sombras en la resolución
+CheckBoxUseAntiAliasing=Usar Antialias en la resolución
+CheckBoxIgnoreSkinFont=Ignorar fuente de carátula
+CheckBoxNotQV=No usar AmpView en Vista Rápida
+CheckBoxNotNV=No usar AmpView en Vista Normal
+CheckBoxUseControl=Cambiar volumen con el ratón sólo cuando está presionada la tecla [Ctrl]
+CheckBoxWarning=Mostrar advertencias al borrar pistas
+CheckBoxDefaultConfig=Mismo archivo de configuración para todos los usuarios
+PageInternalHotKeys=Teclas directas internas
+PageGlobalHotKeys=Teclas directas globales
+PageMouse=Ratón
+
+; Pages
+PagePlayList=Lista de reproducción
+
+; Other strings
+[strings]
+WarningDeleteFiles=¿Está seguro que quiere borrar estos archivos?
+WarningDeleteTracks=¿Está seguro que quiere borrar estas pistas?
+WarningCaption=Advertencia

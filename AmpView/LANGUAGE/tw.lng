@@ -1,0 +1,131 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.0                   ;
+; twLANGUAGE                                      ;
+;                                                 ;
+; AmpView © 2004 2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=tw     
+translator=unknow
+mail=
+
+; ¦r¦ê, ¨Ï¥Î¦b¼u¥X¿ï³æ           
+[menus]
+ItemAbout=Ãö©ó... 
+ItemOptions=¿ï¶µ   
+ItemFileInfo=ÀÉ®×¸ê°T... 
+ItemClose=Ãö³¬ 
+ItemTopMost=°±¯d³Ì¤W¤è 
+ItemView=ÀËµø
+ItemShowFileNames=¦WºÙ      
+ItemShowFullNames=§¹¾ãªº¦WºÙ
+ItemTrackCaptions=¦±¥Ø¼ÐÃD      
+ItemShowNumbers=Åã¥Ü½s¸¹    
+ItemShowTrackLength=Åã¥Ü¦±¥Øªø«×     
+ItemTimeMode=³Ñ¾l®É¶¡ 
+ItemControl=±±¨î   
+ItemNextFile=¥Ø«e¸ê®Æ§¨ªº¤U¤@­ÓÀÉ®×       
+ItemShuffle=Shuffle
+ItemDeleteTrack=§R°£¦±¥Ø
+ItemDeleteFile=§R°£ÀÉ®×
+ItemSort=±Æ§Ç¦±¥Ø
+ItemSortByLength=ªø«×
+ItemSortByFileName=ÀÉ¦W
+ItemSortByTitle=¼ÐÃD
+ItemSavePlayList=Àx¦s¼½©ñ²M³æ...
+; tray menus
+ItemVolumeUp=­µ¶q¤j   
+ItemVolumeDown=­µ¶q ¤p     
+ItemRestore=ÁÙ­ìµøµ¡      
+ItemNextTrack=¤U¤@¦±¥Ø
+ItemPrevTrack=«e¤@¦±¥Ø    
+
+; «ö¶s´£¥Ü         
+[hints]
+ButtonPlay=¼½©ñ
+ButtonPause=¼È°± 
+ButtonStop=°±¤î
+ButtonMute=ÀR­µ
+ButtonClose=Ãö³¬ 
+ButtonMinimize=³Ì¤p¤Æ  
+ButtonNext=¤U¤@¦±¥Ø  
+ButtonPrevious=«e¤@¦±¥Ø      
+ButtonOpen=¶}±ÒÀÉ®× 
+ButtonPlayList=Åã¥Ü/ÁôÂÃ¼½©ñ²M³æ 
+ButtonInfo=ÀÉ®×¸ê°T 
+
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=¤¶­±     
+TreeItemPlugins=¥~±¾   
+TreeItemSkins=­±ªO 
+TreeItemOther=¨ä¥L 
+TreeItemControl=±±¨î   
+TreeItemPlayList=¼½©ñ²M³æ
+
+; GroupBoxes
+BoxLanguage=»y¨¥    
+BoxTranslator=Â½Ä¶ªÌ    
+BoxEffects=®ÄªG   
+BoxOther=¨ä¥L 
+BoxInputPlugins=¿é¤J¥~±¾     
+BoxSkin=­±ªO
+BoxInformation=¸ê°T       
+BoxRewindStep=³v¨B­ËÂà (¬í)           
+BoxOnEndTrack=¦±¥Øµ²§ôªº«áÄò°Ê§@
+BoxExtensions=¤w¤ä´©°ÆÀÉ¦W        
+BoxNewExtension=·s¼W°ÆÀÉ¦W   
+BoxPluginsFolder=¥~±¾¸ê®Æ§¨     
+BoxFont=¦rÅé
+BoxSample=¼Ë¥»  
+BoxPressKey=«ö¤UÁä©Î²Õ¦XÁä               
+BoxFormatTrackCaption=¦±¥Ø¼ÐÃDªº®æ¦¡
+BoxPlugins=¥i¥Îªº¥~±¾
+BoxExtensions=°ÆÀÉ¦W
+
+; Actions
+OnEndActionStop=°±¤î¦±¥Ø  
+OnEndActionNext=±q¦Cªí¶}±Ò¤U¤@¦±¥Ø       
+OnEndActionClose=Ãö³¬AmpView  
+OnEndActionRestart=­«½Æ¥Ø«e¦±¥Ø   
+OnEndActionNextFile=±q¸ê®Æ§¨¶}±Ò¤U¤@ÀÉ®×   
+
+; «ö¶s   
+ButtonClose=Ãö³¬ 
+ButtonConfig=²ÕºA  
+ButtonAbout=Ãö©ó 
+ButtonApply=®M¥Î 
+ButtonScanPlugs=±½´y    
+ButtonAdd=¥[¤J
+ButtonDelete=§R°£
+; ¼ÐÅÒ  
+LabelSelectLanguage=¿ï¾Ü»y¨¥±q¦Cªí:           
+
+; CheckBoxes
+CheckBoxUseShadows=Åã¥Ü³±¼v              
+CheckBoxUseAntiAliasing=¨¾¿÷¾¦¥\¯à    
+CheckBoxIgnoreSkinFont=©¿²¤­±ªO¦rÅé    
+CheckBoxNotQV=¤£¨Ï¥ÎAmpView §ÖÅã     
+CheckBoxNotNV=¤£¨Ï¥ÎAmpView ÀËµø          
+CheckBoxUseControl=¥Î·Æ¹«§ïÅÜ­µ¶q«ö¤U[Ctrl] Áä                         
+PageInternalHotKeys=¤º³¡¼öÁä        
+PageGlobalHotKeys=¾ãÅéªº¼öÁä    
+PageMouse=·Æ¹« 
+CheckBoxWarning=ÀÉ®×§R°£Åã¥ÜÄµ§i
+
+; RadioBoxes
+RadioDefaultFolder=¹w³]ªº¸ê®Æ§¨  
+RadioWinampFolder=Winamp ¸ê®Æ§¨
+RadioCustomFolder=¦Û­q¸ê®Æ§¨   
+
+; Pages
+PagePlayList=¼½©ñ²M³æ
+PageTypes=Ãþ§O 

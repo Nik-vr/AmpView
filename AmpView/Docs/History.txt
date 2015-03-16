@@ -1,0 +1,208 @@
+-------------------------------------------
+AmpView - Lister-plugin for Total Commander
+-------------------------------------------
+Autor (c) 2004-2009 Nikolay Petrochenko
+-------------------------------------------
+Versions History
+-------------------------------------------
+
+
+Version 3.3 beta 1 [14 nov 2009]
+--------------------------------
+ + Unicode's support on ID-tags is fixed
+ * BASS libraries has updated (now used version 2.4.4)
+ * Some bugs fixed
+ * Some bugs added :)
+ - Sound-effects has deleted
+
+
+Version 3.2 beta 10 [05 jan 2007]
+--------------------------------
+ + Unicode's support on ID-tags
+ * BASS libraries has updated
+ * Some minor tweaks
+
+
+Version 3.2 beta 9 [02 jan 2007]
+--------------------------------
+ * Fixed bug with track's numeration
+
+
+Version 3.2 beta 8 [01 jan 2007]
+--------------------------------
+ * Skin's drawing algoritm has updated
+ * Skin "Lister" has updated
+ * Some minor tweaks
+ - Bug fixed: after skin changing thumbs
+   has not redrawind
+
+
+Version 3.2 beta 7 [29 dec 2006]
+--------------------------------
+ + New option: "Use only default config for
+   all users". If not active (default) then
+   configuration file has curent user name,
+   else - has used file default.ini
+ * Some minor tweaks
+
+
+Version 3.2 beta 6 [19 dec 2006]
+--------------------------------
+ * About windows has deleted. Now information
+   about plugin has show in playlist
+ * BASS libraries has updated
+ * Some minor tweaks
+ - Fixed bug with opening AmpView from Lister
+
+
+Version 3.2 beta 5 [18 dec 2006]
+--------------------------------
+ + Experimental midi support (installed sound-fonts
+   is needed)
+ * BASS library has updated to version 2.3
+ * Some minor tweaks
+
+
+Version 3.2 beta 4 [05 sen 2006]
+--------------------------------
+ * BASS library has updated to version 2.2
+ * Some minor tweaks
+ * Updated some lang-files
+ * Documentation has updated
+ - Bugs fixed
+
+
+Version 3.2 beta 3 [21 apr 2006]
+--------------------------------
+ * Some minor tweaks
+ - Bugs fixed
+ - Obsolet lang-files has deleted from distrib
+
+
+Version 3.2 beta 2 [15 apr 2006]
+--------------------------------
+ + Added Equalizer (10 bands)
+ + Added effects: "Reverbiration" and "Echo"
+ + Added new skin element - PLCloseButton
+ * Documentation has updated
+ * Checked funtions for work whit hotkeys
+ * Some minor tweaks
+ - Bug fixed: main window has not get focus with
+   restoring from tray
+ - Bugs fixed
+
+
+Version 3.2 beta 1 [12 mar 2006]
+--------------------------------
+ * Function of the play list drawing has rewrited
+ * Function of the work with hotkeys has changed
+ * Some minor tweaks
+ - Some bugs fixed
+ + Some bugs added ;)
+
+
+Version 3.1 final [15 jan 2006]
+-------------------------------
+ * bass.dll has updated
+ * Some minor tweaks
+
+
+Version 3.1 (RC2) [09 dec 2005]
+-------------------------------
+ * Some bugs fixed
+ * Some minor tweaks
+
+
+Version 3.1 (RC1) [04 nov 2005]
+-------------------------------
+ + Now you can save playlist
+ + Now AmpView has store last playlist
+ + Added reverse sorting feature
+ + Added hotkeys for sorting: [Ctrl]+[1], [Ctrl]+[2] è
+   [Ctrl]+[3]
+ - Bug fixed: 'Top most' feture has work incorrect
+ * Now for trak's with length more when 60 min. has used
+   following format of the length: HH/NN (but not NN:SS)
+ * Documantation has updated
+ * Some bugs fixed
+ * Some minor tweaks
+
+
+Version 3.1 (beta 5) [29 oct 2005]
+----------------------------------
+ + Added: sorting track by filename, caption or length
+ - Some obsolete lang-files has deleted from distribution
+ * Decrease system loading during work in tray-mode
+ * In open-dialog added filter for plugin's supported
+   types
+ * Some bugs fixed
+ * Some minor tweaks
+
+
+Version 3.1 (beta 4) [28 oct 2005]
+----------------------------------
+ + Now you can add new extensions for registering
+   to AmpView
+ * Fixed work whit mod-files
+ * Some bugs fixed
+ * Some minor tweaks
+
+
+Version 3.1 (beta 3) [18 oct 2005]
+----------------------------------
+ + Added support for BASS additional modules
+ * Added missing strings to localization files
+
+
+Version 3.1 (beta 2) [17 oct 2005]
+----------------------------------
+ - Bug fixed: time has not correctly show for the
+   trackers
+ * BASS 2.2 now used
+ * Some minor tweaks
+
+
+Version 3.1 (beta 1) [30 jul 2005]
+----------------------------------
+ - Bugs fixed
+ * Some minor tweaks
+
+
+Version 3.1 (alfa 3) [03 jul 2005]
+----------------------------------
+ + Added new feature: deleting files (Shift+Del)
+ - Bug fixed: language in Options windows has not
+   setup corectly
+ - Bug fixed: length of some track has not read
+   correctly
+ - Bug fixed: some "global" HotKeys has not work
+ - Bug fixed: end of track has not get correctly
+ * Now length of all track has read when file added
+   to list
+ * Some minor tweaks
+
+
+Version 3.1 (alfa 2) [25 jun 2005]
+----------------------------------
+ + Added help
+ + Added format-string for track caption
+ * Bug fixed: track captions has not correctly
+   extracted
+ * Some minor tweaks
+
+
+Version 3.1 (alfa 1) [03 jun 2005]
+----------------------------------
+ * Updated skin's drawing when usind "big" fonts
+   (125%)
+ * Now AmpView not use BassCD.dll and InfoTolls.dll
+ * Speed up plugin's loading
+ * The size of plugin is reduced
+
+
+Version 3.1 (alfa 0) [20 may 2005]
+----------------------------------
+ ! AmpView's engine has rewrited
+ ! Now you can't using Winamp's plugins (temporary)
+ * Speed up plugin's loading
+ * The size of plugin is reduced

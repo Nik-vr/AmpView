@@ -1,0 +1,119 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 1            ;
+; Latvieðu valoda                                ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Latvieðu
+translator=Edmunds Lihaèevs
+mail=modjo@inbox.lv
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Par...
+ItemOptions=Iespçjas
+ItemFileInfo=Faila info..
+ItemClose=Aizvçrt
+ItemTopMost=Vienmçr uz displeja
+ItemView=Skats
+ItemShowFileNames=Failu nosaukumi
+ItemShowFullNames=Pilni nosaukumi
+ItemTrackCaptions=Skaòdarbu nosaukumi
+ItemShowNumbers=Râdît numerâciju
+ItemShowTrackLength=Râdît laiku
+ItemTimeMode=Râdît atlikuðo laiku
+ItemControl=Vadîba
+ItemNextFile=Nâkoðais fails atvçrtajâ mapç
+ItemShuffle=Atskaòot pçc nejauðîbas principa
+ItemDeleteTrack=Nodzçst skaòdarbu
+ItemDeleteFile=Dzçst failu
+ItemSort=Ðíirot failus
+ItemSortByLength=pçc garuma
+ItemSortByFileName=pçc faila nosaukuma
+ItemSortByTitle=pçc skaòdarbu nosaukumiem
+ItemSavePlayList=Saglabât skaòdarbu sarakstu kâ...
+
+; tray menus
+ItemVolumeUp=Skaïums +
+ItemVolumeDown=Skaïums -
+ItemRestore=Atvçrt programmas logu
+ItemNextTrack=Nâkamais skaòdarbs
+ItemPrevTrack=Iepriekðçjais skaòdarbs
+
+; Hints for buttons
+[hints]
+ButtonPlay=Starts
+ButtonPause=Pauze
+ButtonStop=Stop
+ButtonMute=Izslçgt skaòu
+ButtonClose=Aizvçrt
+ButtonMinimize=Samazinât uz sistçmas tekni
+ButtonNext=Nâkamais skaòdarbs
+ButtonPrevious=Iepriekðçjais skaòdarbs
+ButtonOpen=Atvçrt failu
+ButtonPlayList=Skaòdarbu saraksts: izslçgt/ieslçgt
+ButtonInfo=Info
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interfeiss
+TreeItemPlugins=Spraudòi
+TreeItemSkins=Noformçjums
+TreeItemOther=Pârçjie
+TreeItemControl=Vadîba
+TreeItemPlayList=Skaòdarbu saraksts
+
+; GroupBoxes
+BoxLanguage=Valoda (Language)
+BoxTranslator=Tulkotâjs
+BoxEffects=Efekti
+BoxOther=Pârçjais
+BoxInputPlugins=Ieejas spraudòi
+BoxSkin=Noformçjums
+BoxInformation=Informâcija
+BoxRewindStep=Atkârtotas atskaòoðanas solis (sekundes)
+BoxOnEndTrack=Skaòdarbam beidzoties
+BoxFont=Fonts
+BoxSample=Paraugs
+BoxPressKey=Spiest taustiòu vai to kombinâciju
+BoxFormatTrackCaption=Formatçt dziesmu nosaukumus
+BoxPlugins=Pieejamie spraudòi
+BoxExtensions=Paplaðinâjumi
+
+; Actions
+OnEndActionStop=Apturçt
+OnEndActionNext=Atskaòot nâkamo no saraksta
+OnEndActionClose=Aizvçrt AmpView
+OnEndActionRestart=Atkârtot
+OnEndActionNextFile=Atskaòot nâkamo skaòdarbu mapç
+
+; Buttons
+ButtonClose=Aizvçrt
+ButtonAdd=Pievienot
+ButtonDelete=Dzçst
+
+; Labels
+LabelSelectLanguage=Izvçlçties valodu:
+
+; CheckBoxes
+CheckBoxUseShadows=Râdît ar çnojumu
+CheckBoxUseAntiAliasing=Ieslçgt pretkropïojumu filtru
+CheckBoxIgnoreSkinFont=Nerâdît noformçjuma uzrakstus
+CheckBoxNotQV=Nelietot AmpView âtrskatam
+CheckBoxNotNV=Nelietot AmpView normâlai atskaòoðanai
+CheckBoxUseControl=Skaïumu ar peli regulçt tikai pie nospiesta [Ctrl]
+CheckBoxWarning=Râdît brîdinâjumu pie datu dzçðanas
+PageInternalHotKeys=Programmas karstie taustiòi
+PageGlobalHotKeys=Vispârçjie karstie taustiòi
+PageMouse=Pele
+
+; Pages
+PagePlayList=Skaòdarbu saraksts

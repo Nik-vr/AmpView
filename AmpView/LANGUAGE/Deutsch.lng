@@ -1,0 +1,127 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 7            ;
+; Deutsche Sprache                                ;
+;                                                 ;
+; AmpView © 2004-2006 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Deutsch
+translator=TychoBarfy
+mail=tycho.barfy@gmx.de
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Über...
+ItemOptions=Optionen
+ItemFileInfo=Datei-Info..
+ItemClose=Schließen
+ItemTopMost=Immer im Vordergrund
+ItemView=Ansicht
+ItemShowFileNames=Dateinamen
+ItemShowFullNames=Volle Namen
+ItemTrackCaptions=Track-Titel
+ItemShowNumbers=Nummern anzeigen
+ItemShowTrackLength=Tracklänge anzeigen
+ItemTimeMode=Verbleibende Zeit anzeigen
+ItemControl=Steuerung
+ItemNextFile=Nächste Datei in aktuellem Ordner
+ItemShuffle=Zufällig mischen
+ItemDeleteTrack=Stück entfernen
+ItemDeleteFile=Datei löschen
+ItemSort=Stück sortieren
+ItemSortByLength=nach Länge
+ItemSortByFileName=nach Dateiname
+ItemSortByTitle=nach Titel
+ItemSavePlayList=Playliste speichern...
+
+; tray menus
+ItemVolumeUp=Lautstärke +
+ItemVolumeDown=Lautstärke -
+ItemRestore=Fenster wiederherstellen
+ItemNextTrack=Nächstes Stück
+ItemPrevTrack=Vorheriges Stück
+
+; Hints for buttons
+[hints]
+ButtonPlay=Start
+ButtonPause=Pause
+ButtonStop=Stop
+ButtonMute=Stumm
+ButtonClose=Schließen
+ButtonMinimize=Minimieren
+ButtonNext=Nächstes Stück
+ButtonPrevious=Letztes Stück
+ButtonOpen=Datei öffnen
+ButtonPlayList=Playliste an/aus
+ButtonInfo=Datei-Info
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interface
+TreeItemPlugins=Plugins
+TreeItemSkins=Skins
+TreeItemOther=Sonstiges
+TreeItemControl=Steuerung
+TreeItemPlayList=Playliste
+
+; GroupBoxes
+BoxLanguage=Sprache (Language)
+BoxTranslator=Übersetzer
+BoxEffects=Effekte
+BoxOther=Sonstiges
+BoxInputPlugins=Input-Plugins
+BoxSkin=Skin
+BoxInformation=Informationen
+BoxRewindStep=Rückspulschritte (Sekunden)
+BoxOnEndTrack=Am Ende des Stücks
+BoxFont=Schrift
+BoxSample=Muster
+BoxPressKey=Taste oder Tastenkombination drücken
+BoxFormatTrackCaption=Format des Tracktitels
+BoxPlugins=Verfügbare Plugins
+BoxExtensions=Dateierweiterungen
+BoxConfig=Konfiguration
+
+; Actions
+OnEndActionStop=Stück anhalten
+OnEndActionNext=Nächstes Stück der Playliste abspielen
+OnEndActionClose=AmpView schließen
+OnEndActionRestart=Stück wiederholen
+OnEndActionNextFile=Nächstes Stück im Order abspielen
+
+; Buttons
+ButtonClose=Schließen
+ButtonAdd=Hinzufügen
+ButtonDelete=Löschen
+
+; Labels
+LabelSelectLanguage=Sprache auswählen:
+
+; CheckBoxes
+CheckBoxUseShadows=Schatten anzeigen
+CheckBoxUseAntiAliasing=AntiAliasing einschalten
+CheckBoxIgnoreSkinFont=Skinschrift ignorieren
+CheckBoxNotQV=AmpView nicht in QuickView verwenden
+CheckBoxNotNV=AmpView nicht in Normaler Anzeige verwenden
+CheckBoxUseControl=Lautstärke mit Mausrad nur bei gedrückter Strg-Taste ändern
+CheckBoxWarning=Zeige Warnungen beim Löschen von Dateien
+CheckBoxDefaultConfig=Verwende nur Standard- Konfigurationsdatei für alle Nutzer
+PageInternalHotKeys=Interne HotKeys
+PageGlobalHotKeys=Globale HotKeys
+PageMouse=Maus
+
+; Pages
+PagePlayList=Playliste
+
+; Other strings
+[strings]
+WarningDeleteFiles=Sind Sie sicher, dass Sie dise Dateien löschen wollen?
+WarningDeleteTracks=Sind Sie sicher, dass Sie dise Tracks löschen wollen?
+WarningCaption=Warnung

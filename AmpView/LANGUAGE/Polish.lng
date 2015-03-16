@@ -1,0 +1,124 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.1                   ;
+; Polish  language                                ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Polish
+translator=Oliwer Kowalczyk
+mail=ggolik@tlen.pl
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=O Programie...
+ItemOptions=Opcje
+ItemFileInfo=Info o Pliku...
+ItemClose=Zamknij
+ItemTopMost=Zawsze na wierzchu
+ItemView=Podgl¹d
+ItemShowFileNames=Nazwa Pliku
+ItemShowFullNames=Pe³na Nazwa
+ItemTrackCaptions=Podpis Utworu
+ItemShowNumbers=Poka¿ Numer
+ItemShowTrackLength=Poka¿ Czas Trwania
+ItemTimeMode=Pozosta³y Czas
+ItemControl=Klawisze
+ItemNextFile=Nastêpny Utwór z Bierz¹cego Katalogu
+ItemShuffle=Losowo
+ItemDeleteTrack=Usuñ Utwór
+ItemDeleteFile=Usuñ Plik
+ItemSort=Sortuj Utwory
+ItemSortByLength=wg. D³ugoœci
+ItemSortByFileName=wg. Nazwy
+ItemSortByTitle=wg. Tytu³u
+ItemSavePlayList=Zapisz Playlistê...
+
+; tray menus
+ItemVolumeUp=Zwiêksz G³oœnoœæ
+ItemVolumeDown=Zmniejsz G³oœnoœæ
+ItemRestore=Przywróæ Okno
+ItemNextTrack=Nastêpny Utwór
+ItemPrevTrack=Poprzedni Utwór
+
+; Hints for buttons
+[hints]
+ButtonPlay=Graj
+ButtonPause=Pauza
+ButtonStop=Zatrzymaj
+ButtonMute=Wycisz
+ButtonClose=Zamknij
+ButtonMinimize=Minimalizuj
+ButtonNext=Nastêpny Utwór
+ButtonPrevious=Poprzedni Utwór
+ButtonOpen=Otwórz Plik
+ButtonPlayList=Poka¿/Ukryj Playlistê
+ButtonInfo=Info o Pliku
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interface
+TreeItemPlugins=Plugins-Wtyczki
+TreeItemSkins=Skóra
+TreeItemOther=Inne
+TreeItemControl=Klawisze
+TreeItemPlayList=PlayLista
+
+; GroupBoxes
+BoxLanguage=Jêzyk
+BoxTranslator=T³umaczenie
+BoxEffects=Efekty
+BoxOther=Inne
+BoxInputPlugins=Wtyczki Wejœcia
+BoxSkin=Skóra
+BoxInformation=Informacje
+BoxRewindStep=Przewiñ (w sekundach)
+BoxOnEndTrack=Na Koniec Utworu
+BoxFont=Pocz¹tek
+BoxSample=Wycinek
+BoxPressKey=Wciœnij Przycisk, b¹dŸ przycisk ³¹czenia
+BoxFormatTrackCaption=Format Podpisów Utworów
+BoxPlugins=Dostêpne Wtyczki 
+BoxExtensions=Rozszerzone
+; Actions
+OnEndActionStop=Zatrzymaj Utwór
+OnEndActionNext=Otwórz Nastêpny Utwór z Listy
+OnEndActionClose=Zamknij AmpView
+OnEndActionRestart=Powtórz Bie¿¹cy Utwór
+OnEndActionNextFile=Otwórz Nastêpny Utwór z Katalogu
+
+; Buttons
+ButtonClose=Zamknij
+ButtonAdd=Dodaj
+ButtonDelete=Usuñ
+
+; Labels
+LabelSelectLanguage=Wybierz Jêzyk z Listy:
+
+; CheckBoxes
+CheckBoxUseShadows=Wykorzystaj Cienie
+CheckBoxUseAntiAliasing=Wykorzystaj AntiAliasing
+CheckBoxIgnoreSkinFont=Ignoruj Czcionkê w Skórze
+CheckBoxNotQV=Nie U¿ywaj Skróconego Okna AmpView
+CheckBoxNotNV=Nie u¿ywaj Normalnego Okna AmpView
+CheckBoxUseControl=Zmieñ g³oœnoœæ kó³kiem myszki tylko jeœli [Ctrl] bêdzie wciœniêty
+CheckBoxWarning=Poka¿ Ostrze¿enie Przed Usuniêciem Pliku
+PageInternalHotKeys=Wew. Skróty Klawiszowe
+PageGlobalHotKeys=G³. Skróty Klawiszowe
+PageMouse=Mysz
+
+; Pages
+PagePlayList=PlayLista
+
+; Other strings
+[strings]
+WarningDeleteFiles=Jesteœ pewien, ¿e chcesz usun¹æ plik?
+WarningDeleteTracks=Jesteœ pewien, ¿e chcesz usun¹æ utwór?
+WarningCaption=Otrze¿enie

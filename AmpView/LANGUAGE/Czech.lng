@@ -1,0 +1,118 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.1                   ;
+; Czech language                                  ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Èesky
+translator=Yarca
+mail=yarca@email.cz
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=O programu...
+ItemOptions=Nastavení
+ItemFileInfo=Info o souboru...
+ItemClose=Zavøít
+ItemTopMost=Vždy navrchu
+ItemView=Zobrazit
+ItemShowFileNames=Název souboru
+ItemShowFullNames=Plný název (s cestou)
+ItemTrackCaptions=Název stopy
+ItemShowNumbers=Ukázat poøadová èísla
+ItemShowTrackLength=Ukázat délku stopy
+ItemTimeMode=Režim zbývajícího èasu
+ItemControl=Ovládání
+ItemNextFile=Další soubor z aktuální složky
+ItemShuffle=Zamíchat
+ItemDeleteTrack=Smazat stopu
+ItemDeleteFile=Smazat soubor
+ItemSort=Seøadit stopy
+ItemSortByLength=podle délky
+ItemSortByFileName=podle názvu souboru
+ItemSortByTitle=podle názvu stopy
+
+; tray menus
+ItemVolumeUp=Zesílit
+ItemVolumeDown=Zeslabit
+ItemRestore=Obnovit okno
+ItemNextTrack=Další stopa
+ItemPrevTrack=Pøedchozí stopa
+
+; Hints for buttons
+[hints]
+ButtonPlay=Pøehrát
+ButtonPause=Pozastavit
+ButtonStop=Zastavit
+ButtonMute=Ztišit
+ButtonClose=Zavøít
+ButtonMinimize=Minimalizovat
+ButtonNext=Další stopa
+ButtonPrevious=Pøedchozí stopa
+ButtonOpen=Otevøít soubor
+ButtonPlayList=Zobrazit/Skrýt seznam stop
+ButtonInfo=Info o souboru
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Rozhraní
+TreeItemPlugins=Zásuvné moduly
+TreeItemSkins=Vzhled (skin)
+TreeItemOther=Ostatní
+TreeItemControl=Ovládání
+TreeItemPlayList=Seznam stop
+
+; GroupBoxes
+BoxLanguage=Jazyk
+BoxTranslator=Pøekladatel
+BoxEffects=Efekty
+BoxOther=Ostatní
+BoxInputPlugins=Vstupní zásuvné moduly
+BoxSkin=Vzhled (skin)
+BoxInformation=Informace
+BoxRewindStep=Krok pøi pøetáèení zpìt (v sekundách)
+BoxOnEndTrack=Na konci stopy
+BoxFont=Písmo
+BoxSample=Náhled
+BoxPressKey=Klávesa nebo kombinace kláves
+BoxFormatTrackCaption=Formát názvù stop
+BoxPlugins=Dostupné zásuvné moduly
+BoxExtensions=Typy souborù
+
+; Actions
+OnEndActionStop=Zastavit pøehrávání
+OnEndActionNext=Pøehrát další stopu ze seznamu
+OnEndActionClose=Zavøít AmpView
+OnEndActionRestart=Pøehrát stopu znovu
+OnEndActionNextFile=Pøehrát další soubor ve složce
+
+; Buttons
+ButtonClose=Zavøít
+ButtonAdd=Pøidat
+ButtonDelete=Smazat
+
+; Labels
+LabelSelectLanguage=Vyberte jazyk ze seznamu:
+
+; CheckBoxes
+CheckBoxUseShadows=Použít stínování
+CheckBoxUseAntiAliasing=Použít AntiAliasing
+CheckBoxIgnoreSkinFont=Ignorovat písmo vzhledu (skinu)
+CheckBoxNotQV=Nepoužívat AmpView pro Náhled
+CheckBoxNotNV=Nepoužívat AmpView pro Zobrazení
+CheckBoxUseControl=Koleèkem myši mìnit hlasitost pouze pøi souèasnì stiskuté klávese [Ctrl]
+CheckBoxWarning=Zobrazit upozornìní pøed smazáním souborù
+PageInternalHotKeys=Vnitøní klávesové zkratky
+PageGlobalHotKeys=Obecné klávesové zkratky
+PageMouse=Myš
+
+; Pages
+PagePlayList=Seznam stop

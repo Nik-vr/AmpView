@@ -1,0 +1,75 @@
+; ------------------------------------------------------ ;
+; Мовний файл для AmpView 2.1+                           ;
+; Українська мова                                        ;
+;                                                        ;
+; AmpView © 2004-2005 Петроченко Н.Ю.                    ;
+;                                                        ;
+; Якщо ви перевели цей файл на іншу мову, будь ласка,    ;
+; відправте його за цією адресою Nik_vr@mail.ru          ;
+; ------------------------------------------------------ ;
+
+; Інформація про мову та перекладача
+[main]
+langname=Український
+translator=Сліпченко Д.В.
+mail=slipdem@yandex.ru
+
+; Рядки, що використовуються в контукстовому меню
+[menus]
+ItemAbout=Про плагін...
+ItemOptions=Опції
+ItemFileInfo=Інформація про файл...
+ItemClose=Закрити
+ItemTopMost=Поверх всіх вікон
+ItemView=Вигляд
+ItemShowFileNames=Назви файлів
+ItemShowFullNames=Повні назви
+ItemTrackCaptions=Заголовки треків
+ItemShowNumbers=Показувати нумерацію
+ItemShowTrackLength=Показувати час
+
+; Підказки для кнопок
+[hints]
+ButtonPlay=Відтворення
+ButtonPause=Пауза
+ButtonStop=Зупинити
+ButtonMute=Вимкнути звук
+ButtonClose=Закрити
+ButtonMinimize=Згорнути
+ButtonNext=Наступний трек
+ButtonPrevious=Попередній трек
+
+; Рядки, що використовуються в вікні опцій
+[options]
+; Дерево опцій (назви сторінок)
+TreeItemInterface=Інтерфейс
+TreeItemPlugins=Модулі
+TreeItemSkins=Шкури
+TreeItemOther=Різне
+; Групи
+BoxLanguage=Мова
+BoxTranslator=Перекладач
+BoxEffects=Ефекти
+BoxOther=Різне
+BoxInputPlugins=Input-модулі
+BoxOutputPlugins=Output-модулі
+BoxSkin=Шкура
+BoxInformation=Інформація
+BoxRewindStep=Крок перемотування (секунди)
+BoxOnEndTrack=В кінці трека
+; Дії
+OnEndActionStop=Зупинити трек
+OnEndActionNext=Відкрити наступний трек із списку
+OnEndActionClose=Закрити AmpView
+OnEndActionRestart=Відтворювати наступний трек зпочатку
+OnEndActionNextFile=Відкрити наступний файл із папки
+; Кнопки
+ButtonClose=Закрити
+ButtonConfig=Налаштувати
+ButtonAbout=Інформація
+ButtonSet=Застосувати
+; Надписи
+LabelSelectLanguage=Виберіть мову з списку:
+; Прапорці
+CheckBoxUseShadows=Дозволити використання тіней
+CheckBoxUseAntiAliasing=Дозволити використання згладжування

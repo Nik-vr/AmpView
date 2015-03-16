@@ -1,0 +1,126 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.0                   ;
+; Italian language                                ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Italiano
+translator=Debenedetti Emanuele
+mail=sanremoedaltro@libero.it
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Informazioni su AmpView
+ItemOptions=Opzioni
+ItemFileInfo=Informazioni sul file...
+ItemClose=Chiudi
+ItemTopMost=Sempre in primo piano
+ItemView=Visualizza
+ItemShowFileNames=Nome del file
+ItemShowFullNames=Nome completo
+ItemTrackCaptions=Info del file
+ItemShowNumbers=Mostra numerazione
+ItemShowTrackLength=Mostra lunghezza tracce
+ItemTimeMode=Mostra il tempo rimanente
+ItemControl=Controlli
+ItemNextFile=Prossimo file nella cartella corrente
+ItemShuffle=Ordina le tracce in modo casuale
+ItemDeleteTrack=Rimuovi la traccia
+ItemDeleteFile=Elimina il file
+ItemSort=Ordina le tracce
+ItemSortByLength=per durata
+ItemSortByFileName=per nome del file
+ItemSortByTitle=per titolo
+ItemSavePlayList=Salva la Playlist...
+
+; tray menus
+ItemVolumeUp=Volume +
+ItemVolumeDown=Volume -
+ItemRestore=Ripristina finestra
+ItemNextTrack=Traccia successiva
+ItemPrevTrack=Traccia precedente
+
+; Hints for buttons
+[hints]
+ButtonPlay=Riproduci
+ButtonPause=Pausa
+ButtonStop=Stop
+ButtonMute=Muto
+ButtonClose=Chiudi
+ButtonMinimize=Riduci ad icona
+ButtonNext=Traccia successiva
+ButtonPrevious=Traccia precedente
+ButtonOpen=Apri file
+ButtonPlayList=Mostra/Nascondi la Playlist
+ButtonInfo=Info del file
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Apparenza
+TreeItemPlugins=Plugins
+TreeItemSkins=Skins
+TreeItemOther=Altro
+TreeItemControl=Controlli
+TreeItemPlayList=PlayList
+
+; GroupBoxes
+BoxLanguage=Lingua
+BoxTranslator=Traduttore
+BoxEffects=Effetti
+BoxOther=Altro
+BoxInputPlugins=Input-plugins
+BoxSkin=Skin
+BoxInformation=Informazioni
+BoxRewindStep=Salto del rewind (secondi)
+BoxOnEndTrack=Alla fine di una traccia
+BoxFont=Carattere
+BoxSample=Esempio
+BoxPressKey=Premi un tasto od una combinazione di tasti
+BoxFormatTrackCaption=Formato del totolo delle tracce
+BoxPlugins=Tracce disponibili
+BoxExtensions=Estensioni supportate
+
+; Actions
+OnEndActionStop=Ferma la riproduzione
+OnEndActionNext=Apri la traccia successiva della lista
+OnEndActionClose=Chiudi AmpView
+OnEndActionRestart=Riavvia la traccia corrente
+OnEndActionNextFile=Apri il file successivo della cartella
+
+; Buttons
+ButtonClose=Chiudi
+ButtonAdd=Aggiungi
+ButtonDelete=Rimuovi
+
+; Labels
+LabelSelectLanguage=Scegli una lingua dalla lista:
+
+; CheckBoxes
+CheckBoxUseShadows=Mostra l'ombreggiatura
+CheckBoxUseAntiAliasing=Usa l'AntiAliasing
+CheckBoxIgnoreSkinFont=Ignora il carattere della skin
+CheckBoxNotQV=Non usare AmpView con la QuickView
+CheckBoxNotNV=Non usare AmpView con la Normal View
+CheckBoxUseControl=Cambia il volume con la rotella del mouse solo assieme al tast
+CheckBoxWarning=Chiedi conferma prima di cancellare un file [Ctrl]
+PageInternalHotKeys=Combinazioni di tasti interni
+PageGlobalHotKeys=Combinazioni di tasti globali
+PageMouse=Mouse
+
+; Pages
+PagePlayList=PlayList
+
+; Other strings
+[strings]
+WarningDeleteFiles=Sei sicuro di voler cancellare questo file?
+WarningDeleteTracks=Sei sicuro di voler rimuovere questa traccia?
+WarningCaption=Attenzione
+

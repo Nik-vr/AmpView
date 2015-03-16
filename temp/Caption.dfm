@@ -1,0 +1,31 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  BorderIcons = []
+  BorderStyle = bsNone
+  Caption = 'Information'
+  ClientHeight = 240
+  ClientWidth = 347
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  FormStyle = fsStayOnTop
+  OldCreateOrder = False
+  OnShow = FormShow
+  PixelsPerInch = 120
+  TextHeight = 16
+  object AboutImage: TImage32
+    Left = 0
+    Top = 0
+    Width = 271
+    Height = 176
+    Bitmap.ResamplerClassName = 'TNearestResampler'
+    BitmapAlign = baTopLeft
+    Scale = 1.000000000000000000
+    ScaleMode = smNormal
+    TabOrder = 0
+  end
+end

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" lasteditedby="Nik" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title translate="true">Format of caption</title>
+  <body>
+    <header>
+      <para styleclass="Heading1"><text styleclass="Heading1" translate="true">Format of caption</text></para>
+    </header>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:100%; cell-padding:5px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:#0080c0; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td style="vertical-align:middle; background-color:#0080c0;">
+          <para styleclass="p_heading1" style="text-align:left; text-indent:0px; margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; line-height:1.0; background-color:transparent; white-space:normal; page-break-inside:auto; page-break-after:auto; border:none; tabstops:none;"><text styleclass="Normal" style="font-size:12pt; font-weight:bold; vertical-align:baseline; color:#ffffff;" translate="true">Format of caption</text></para>
+        </td>
+        <td style="vertical-align:middle; background-color:#0080c0;">
+          <para style="text-align:right;"><link displaytype="text" defaultstyle="true" type="topiclink" href="Aaaaaiea" styleclass="Normal" style="font-size:9pt; vertical-align:baseline; color:#ffffff;" translate="true">Top</link><text styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true"> &#160;</text><link displaytype="text" defaultstyle="true" type="topiclink" href="Aiyeaeeaaeoe" styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true">Previous</link><text styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true"> &#160;</text><link displaytype="text" defaultstyle="true" type="topiclink" href="Nicaaieaneeiia" styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true">Next</link></para>
+        </td>
+      </tr>
+    </table></para>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="1" colcount="1" style="width:100%; cell-padding:5px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:12pt; font-weight:bold; vertical-align:baseline;" translate="true">Format string can contain the following things:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">1. Plain text like &quot;Some song&quot;. This text is merely copied to the output.</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">2. Special identifier, beginning with &apos;%&apos; to substitute for the tag value:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%TITL&quot; &#160;- song title;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%ARTI&quot; &#160;- song artist;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%ALBM&quot; &#160;- album name;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%GNRE&quot; &#160;- song genre;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%YEAR&quot; &#160;- song/album year;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%CMNT&quot; &#160;- comment;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &quot;%TRCK&quot; &#160;- track number;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">3. Expression:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%IFV1(x,a)&quot; - if x is not empty, then %IFV1() evaluates to a,</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; or to an empty string otherwise;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%IFV2(x,a,b)&quot; - if x is not empty, then %IFV2() evaluates to a,</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; else to b;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%IUPC(x)&quot; - brings x to uppercase, so &quot;%IUPC(foO)&quot; yields &quot;FOO&quot;;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%ILWC(x)&quot; - brings x to lowercase, so &quot;%ILWC(fOO)&quot; yields &quot;foo&quot;;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%ICAP(x)&quot; - capitalizes first letter in each word of x, so</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &quot;%ICAP(FoO bAR)&quot; yields &quot;Foo Bar&quot;;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160;- escaped symbols:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%%&quot; - &quot;%&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%(&quot; - &quot;(&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%,&quot; - &quot;,&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160;&quot;%)&quot; - &quot;)&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">Example</text><text styleclass="Normal" style="vertical-align:baseline;" translate="true">. Assume we have the following information in the tag:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160;Title: &quot;Nemo&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160;Artist: &quot;nightwish&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160;Album: &quot;Once&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160;Track: &quot;3&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160;Year: &quot;2004&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> &#160; &#160; &#160; &#160; &#160; </text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">Format string: &quot;%IFV1(%TRCK,%TRCK. )%IFV2(%ARTI,%ICAP(%ARTI),no artist) - %IFV2(%TITL,%ICAP(%TITL) -,no title -) %IFV1(%ALBM,%IUPC(%ALBM))%IFV1(%YEAR, %(%YEAR%))&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">Output: &quot;3.- Nightwish - Nemo - ONCE (2004)&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">if &apos;Artist&apos; and &apos;Title&apos; are empty, the output will be: &quot;3. - no artist - no title - ONCE (2004)&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">if only &apos;Track&apos; is empty, the output will be &quot;Nightwish - Nemo - ONCE (2004)&quot;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-size:12pt; font-weight:bold; vertical-align:baseline;" translate="true">Notes:</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">1. &quot;%IFV2(sometext ,a,b)&quot; always evaluates to a, because a space after &#160; &quot;sometext&quot; causes the condition string to be not empty. This is intentional.</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">2. &quot;symbols &apos;%(,)&apos; are reserved, that is, they must be escaped if they are inteded to appear in the output. See the above example: the parens around %YEAR are escaped with &apos;%&apos; to prevent misinterpretation.</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">3. Ill-formed string causes some error message to appear in the output, but don&apos;t count on it too much...</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">4. The output string is allocated by tags.dll, so deleting the pointer may crash the program. DON&apos;T! In addition to this, the function is NOT THREAD SAFE. It is user&apos;s responsibility to serialize the execution (a critical section would suffice). The output string itself is valid till the next TAGS_Read() call.</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">5. If mp3 contains both ID3v1 and ID3v2 tags, ID3v2 data takes precedence.</text></para>
+        </td>
+      </tr>
+    </table></para>
+  </body>
+</topic>

@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="../helpproject.xsl" ?>
+<topic template="Default" lasteditedby="Nik" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../helpproject.xsd">
+  <title translate="true">Introduction</title>
+  <body>
+    <header>
+      <para styleclass="Heading1"><text styleclass="Heading1" translate="true">Introduction</text></para>
+    </header>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:100%; cell-padding:5px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:#0080c0; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td style="vertical-align:middle; background-color:#0080c0;">
+          <para styleclass="p_heading1" style="text-align:left; text-indent:0px; margin-top:0px; margin-right:0px; margin-bottom:0px; margin-left:0px; line-height:1.0; background-color:transparent; white-space:normal; page-break-inside:auto; page-break-after:auto; border:none; tabstops:none;"><text styleclass="Normal" style="font-size:12pt; font-weight:bold; vertical-align:baseline; color:#ffffff;" translate="true">AmpView</text></para>
+        </td>
+        <td style="vertical-align:middle; background-color:#0080c0;">
+          <para style="text-align:right;"><link displaytype="text" defaultstyle="true" type="topiclink" href="intro" styleclass="Normal" style="font-size:9pt; vertical-align:baseline; color:#ffffff;" translate="true">Top</link><text styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true"> &#160;</text><link displaytype="text" defaultstyle="true" type="topiclink" href="install" styleclass="Normal" style="font-size:9pt; vertical-align:baseline;" translate="true">Next</link></para>
+        </td>
+      </tr>
+    </table></para>
+    <para styleclass="Normal" style="line-height:1.0; tabstops:none;"><table rowcount="1" colcount="1" style="width:100%; cell-padding:5px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+      <tr style="vertical-align:top">
+        <td>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">AmpView</text><text styleclass="Normal" style="vertical-align:baseline;" translate="true"> is a Lister-plugin for Total Commander, which can play WAV, MP3, MP2, MP1, Ogg Vorbis, WMA and MIDI files, using BASS sound system (bass.dll, basswma.dll). It also supports MOD music and MO3 music(MO3, IT, XM, S3M, MTM, MOD, UMX formats) using BASS&apos;s native function. Also you can open PlayLists (m3u and pls).</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">System requirements</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:auto; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+            <tr style="vertical-align:top">
+              <td style="width:17px;">
+                <para><text styleclass="Normal" style="font-family:Symbol; vertical-align:baseline;" translate="true">·</text></para>
+              </td>
+              <td>
+                <para><text styleclass="Normal" style="vertical-align:baseline;" translate="true">Pentium 2 (AMD K6-2) processor 266 MHz or above</text></para>
+              </td>
+            </tr>
+          </table></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:auto; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+            <tr style="vertical-align:top">
+              <td style="width:17px;">
+                <para><text styleclass="Normal" style="font-family:Symbol; vertical-align:baseline;" translate="true">·</text></para>
+              </td>
+              <td>
+                <para><text styleclass="Normal" style="vertical-align:baseline;" translate="true">32 Mb RAM</text></para>
+              </td>
+            </tr>
+          </table></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:auto; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+            <tr style="vertical-align:top">
+              <td style="width:17px;">
+                <para><text styleclass="Normal" style="font-family:Symbol; vertical-align:baseline;" translate="true">·</text></para>
+              </td>
+              <td>
+                <para><text styleclass="Normal" style="vertical-align:baseline;" translate="true">Windows 9x/Me, Windows 2000/XP, Windows Vista/7. Windows 95 and Windows NT NOT OFFICIAL SUPPORTED!</text></para>
+              </td>
+            </tr>
+          </table></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:auto; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+            <tr style="vertical-align:top">
+              <td style="width:17px;">
+                <para><text styleclass="Normal" style="font-family:Symbol; vertical-align:baseline;" translate="true">·</text></para>
+              </td>
+              <td>
+                <para><text styleclass="Normal" style="vertical-align:baseline;" translate="true">DirectX 8 or above</text></para>
+              </td>
+            </tr>
+          </table></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><table rowcount="1" colcount="2" style="width:auto; cell-padding:0px; cell-spacing:0px; page-break-inside:auto; border-width:0px; border-spacing:0px; cell-border-width:0px; border-style:none; background-color:none; head-row-background-color:none; alt-row-background-color:none;">
+            <tr style="vertical-align:top">
+              <td style="width:17px;">
+                <para><text styleclass="Normal" style="font-family:Symbol; vertical-align:baseline;" translate="true">·</text></para>
+              </td>
+              <td>
+                <para><text styleclass="Normal" style="vertical-align:baseline;" translate="true">Sound-fonts (for MIDI support)</text></para>
+              </td>
+            </tr>
+          </table></para>
+          <para styleclass="Normal" style="text-indent:-15px; margin-left:30px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">All the rights on AmpView belong to the author. The given product is absolutely free-of-charge and extends freely. You can use it as you wish, however remember, that you do it at own risk, and the author does not bear any responsibility for possible moral or the material damage caused at use of the given product.</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="vertical-align:baseline;" translate="true">&#32;</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">© 2004-2009 Nikolay Petrochenko</text></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">E-mail: </text><link displaytype="text" defaultstyle="true" type="weblink" href="mailto:nik_vr@mail.ru" styleclass="weblink" style="font-family:Arial; font-size:10pt; font-weight:bold; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true">nik_vr@mail.ru</link></para>
+          <para styleclass="Normal" style="margin-left:15px; line-height:1.0; tabstops:none;"><text styleclass="Normal" style="font-weight:bold; vertical-align:baseline;" translate="true">Web: </text><link displaytype="text" defaultstyle="true" type="topiclink" href="Www.megabyte-web" styleclass="weblink" style="font-family:Arial; font-size:10pt; font-weight:bold; font-style:normal; text-decoration:none; text-transform:none; vertical-align:baseline; color:#000000; background-color:transparent; letter-spacing:normal; letter-scaling:100%;" translate="true">www.megabyte-web.ru</link></para>
+        </td>
+      </tr>
+    </table></para>
+  </body>
+</topic>

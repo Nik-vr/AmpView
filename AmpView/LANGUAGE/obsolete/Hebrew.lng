@@ -1,0 +1,93 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.2+                  ;
+; Hebrew language                                 ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=עברית
+translator=יניב גרשוני
+mail=yanivg101@speedy.co.il
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=...אודות
+ItemOptions=אפשרויות
+ItemFileInfo=...מידע קובץ
+ItemClose=סגור
+ItemTopMost=תמיד עליון
+ItemView=תצוגה
+ItemShowFileNames=שמות קבצים
+ItemShowFullNames=שמות מלאים
+ItemTrackCaptions=אפשרויות רצועה
+ItemShowNumbers=הראה מספרים
+ItemShowTrackLength=הראה אורך רצועה
+
+; Hints for buttons
+[hints]
+ButtonPlay=הפעל
+ButtonPause=השהה
+ButtonStop=עצור
+ButtonMute=השתק
+ButtonClose=סגור
+ButtonMinimize=מזער
+ButtonNext=רצועה הבאה
+ButtonPrevious=רצועה קודמת
+ButtonOpen=פתח קובץ
+ButtonPlayList=הראה/הסתר רשימת השמעה
+ButtonInfo=מידע קובץ
+
+; strings, used in the option's window
+[options]
+; Options tree (page-names)
+TreeItemInterface=ממשק
+TreeItemPlugins=תוספים
+TreeItemSkins=מעטפות
+TreeItemTypes=סוגים
+TreeItemOther=אחר
+; GroupBoxes
+BoxLanguage=שפה
+BoxTranslator=מתרגם
+BoxEffects=אפקטים
+BoxOther=אחר
+BoxInputPlugins=כניסה-תוספים
+BoxOutputPlugins=יציאה-תוספים
+BoxSkin=מעטפת
+BoxInformation=מידע
+BoxRewindStep=(צעד החזרה אחורה (שניות
+BoxOnEndTrack=בסוף הרצועה
+BoxExtensions=סיומות נתמכות
+BoxNewExtension=סיומת חדשה
+BoxPluginsFolder=ספריית התוספים
+BoxFont=גופן
+BoxSample=דוגמא
+; Actions
+OnEndActionStop=עצור רצועה
+OnEndActionNext=פתיחת הרצועה הבאה מהרשימה
+OnEndActionClose=AmpView סגירת
+OnEndActionRestart=התחל רצועה נוכחית מחדש
+OnEndActionNextFile=פתיחת הקובץ הבא מהספרייה
+; Buttons
+ButtonClose=סגור
+ButtonConfig=תצורה
+ButtonAbout=אודות
+ButtonSet=קביעה
+ButtonApply=הוסף
+ButtonScanPlugs=סריקה
+; Labels
+LabelSelectLanguage=:בחר שפה מהרשימה
+; CheckBoxes
+CheckBoxUseShadows=להציג צל
+CheckBoxUseAntiAliasing=להחליק עקומות
+CheckBoxIgnoreSkinFont=התעלם מהגופן של המעטפת
+; RadioBoxes
+RadioDefaultFolder=ספריית ברירת מחדל
+RadioWinampFolder=Winamp ספריית
+RadioCustomFolder=ספרייה מותאמת אישית
+; Pages
+PagePlayList=רשימת השמעה

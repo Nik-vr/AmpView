@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XInclude">
+  <topicref type="topic" id="401314993260948" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Ввеaение">
+    <caption translate="true">Введение</caption>
+  </topicref>
+  <topicref type="topic" id="401315291311038" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Установка">
+    <caption translate="true">Установка</caption>
+  </topicref>
+  <topicref type="topic" id="401316489107989" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0">
+    <caption translate="true">Управление</caption>
+    <topicref type="topic" id="401315858797598" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Горячиеклавиши">
+      <caption translate="true">Горячие клавиши</caption>
+    </topicref>
+    <topicref type="topic" id="401316770418404" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Форматированиезаголовков">
+      <caption translate="true">Форматирование заголовков</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="401315822792393" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0">
+    <caption translate="true">Разное</caption>
+    <topicref type="topic" id="401318805761339" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Созaаниескинов">
+      <caption translate="true">Создание скинов</caption>
+    </topicref>
+    <topicref type="topic" id="401318001617131" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Связu2">
+      <caption translate="true">Связь</caption>
+    </topicref>
+    <topicref type="topic" id="401316641965025" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Благоaарности">
+      <caption translate="true">Благодарности</caption>
+    </topicref>
+    <topicref type="topic" id="401316172717754" build="ALL" modified="2009-11-14T16:26:47.453Z" icon="0" href="Пожертвование">
+      <caption translate="true">Пожертвование</caption>
+    </topicref>
+  </topicref>
+</map>

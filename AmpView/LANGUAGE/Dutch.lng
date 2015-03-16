@@ -1,0 +1,117 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.0                   ;
+; Dutch language                                  ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Nederlands
+translator=BrainWave
+mail=brainwave036@gmail.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Over...
+ItemOptions=Opties
+ItemFileInfo=Bestands info...
+ItemClose=Sluiten
+ItemTopMost=Op de voorgrond blijfen
+ItemView=Bekijk
+ItemShowFileNames=Bestands-naam
+ItemShowFullNames=Voledige Naam
+ItemTrackCaptions=ID3TAG van nummer
+ItemShowNumbers=Laat nummervolgorde zien
+ItemShowTrackLength=Laat de tijdsduur van het nummer zien
+ItemTimeMode=Overgebleven afspeeltijd 
+ItemControl=Bediening
+ItemNextFile=Volgend bestand van actieve map
+; tray menus
+ItemVolumeUp=Volume Harder
+ItemVolumeDown=Volume Zachter
+ItemRestore=Restore window
+ItemNextTrack=Volgend nummer
+ItemPrevTrack=Vorig nummer
+
+; Hints for buttons
+[hints]
+ButtonPlay=Afspelen
+ButtonPause=Pauze
+ButtonStop=Stop
+ButtonMute=Stilte
+ButtonClose=Sluiten
+ButtonMinimize=Minimalizeren
+ButtonNext=Volgend nummer
+ButtonPrevious=Vorig nummer
+ButtonOpen=Open bestand
+ButtonPlayList=Laat zien/verberg afspeellijst
+ButtonInfo=Bestands info
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=Interface
+TreeItemPlugins=Plugins
+TreeItemSkins=Uiterlijk
+TreeItemOther=Overige
+TreeItemControl=Bediening
+
+; GroupBoxes
+BoxLanguage=Taal
+BoxTranslator=Vertaler
+BoxEffects=Effecten
+BoxOther=Overige
+BoxInputPlugins=Input-plugins
+BoxSkin=Uiterlijk
+BoxInformation=Informatie
+BoxRewindStep=Terugspoelen (aantal seconden)
+BoxOnEndTrack=Aan het einde van het nummer
+BoxExtensions=Ondersteunde extensies
+BoxNewExtension=Nieuwe extensies
+BoxPluginsFolder=Plugin's map
+BoxFont=Lettertype
+BoxSample=Voorbeeld
+BoxPressKey=Druk toets of toets combinatie
+
+; Actions
+OnEndActionStop=Stop nummer
+OnEndActionNext=Open volgend nummer van lijst
+OnEndActionClose=Sluit AmpView
+OnEndActionRestart=Herhaal nummer
+OnEndActionNextFile=Open volgend bestand van map
+
+; Buttons
+ButtonClose=Sluiten
+ButtonConfig=Configuratie
+ButtonAbout=Over
+ButtonApply=Bevestigen
+ButtonScanPlugs=Zoeken
+
+; Labels
+LabelSelectLanguage=Selecteer taal uit lijst:
+
+; CheckBoxes
+CheckBoxUseShadows=Deaktiveer schaduw 
+CheckBoxUseAntiAliasing=Deaktiveer het gebruik van AntiAliasing (Letters)
+CheckBoxIgnoreSkinFont=Selecteer lettertype 
+CheckBoxNotQV=Gebruik AmpView niet voor QuickView
+CheckBoxNotNV=Gebruik AmpView niet voor Normal View
+CheckBoxUseControl=Verander het volume met de muis (werkt alleen als je de [Ctrl] toets ingedrukt houdt)
+PageInternalHotKeys=Interne Sneltoetsen
+PageGlobalHotKeys=Externe Sneltoetsen
+PageMouse=Muis
+
+; RadioBoxes
+RadioDefaultFolder=Standaart map
+RadioWinampFolder=Winamp map
+RadioCustomFolder=Selecteer map
+
+; Pages
+PagePlayList=Afspeellijst
+PageTypes=Type
+

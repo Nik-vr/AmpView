@@ -1,0 +1,137 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta3             ;
+; English language                                ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Românã
+translator=Cãutãtor Kan
+mail=cautusk@yahoo.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Despre...
+ItemOptions=Opþiuni
+ItemFileInfo=Informaþii piesã...
+ItemClose=Închidere
+ItemTopMost=Menþinere în prim-plan
+ItemView=Afiºare
+ItemShowFileNames=Nume fiºiere
+ItemShowFullNames=Nume întregi
+ItemTrackCaptions=Antet piese
+ItemShowNumbers=Expunere numere
+ItemShowTrackLength=Expunere duratã
+ItemTimeMode=Timp rãmas
+ItemControl=Control
+ItemNextFile=Urmãtor fiºier din directorul curent
+ItemShuffle=Shuffle
+ItemDeleteTrack=ªtergere piesã
+ItemDeleteFile=ªtergere fiºier
+ItemSort=Sortare piese
+ItemSortByLength=dupã lungime
+ItemSortByFileName=dupã numele fiºierului
+ItemSortByTitle=dupã titlu
+ItemSavePlayList=Salvare listã...
+
+; tray menus
+ItemVolumeUp=Volum în sus
+ItemVolumeDown=Volum în jos
+ItemRestore=Fereastra precedentã
+ItemNextTrack=Piesa urmãtoare
+ItemPrevTrack=Piesa precedentã
+
+; Hints for buttons
+[hints]
+ButtonPlay=Redare
+ButtonPause=Pauzã
+ButtonStop=Oprire
+ButtonMute=Tãcere
+ButtonClose=Închidere
+ButtonMinimize=Minimizare
+ButtonNext=Piesa urmãtoare
+ButtonPrevious=Piesa precedentã
+ButtonOpen=Deschide fiºierul
+ButtonPlayList=Afiºeazã/ascunde lista
+ButtonInfo=Info fiºier
+
+; strings, used in the option's window
+[options]
+; Options tree (page-names)
+TreeItemInterface=Interfaþa
+TreeItemPlugins=Conectori
+TreeItemSkins=Feþe
+TreeItemTypes=Tip
+TreeItemOther=Altele
+TreeItemControl=Control
+TreeItemPlayList=Listã
+
+; GroupBoxes
+BoxLanguage=Limbã
+BoxTranslator=Traducãtor
+BoxEffects=Efecte vizuale
+BoxOther=Etc.
+BoxInputPlugins=Extensii - intrare
+BoxOutputPlugins=Extensii - ieºire
+BoxSkin=Teme
+BoxInformation=Informaþii
+BoxRewindStep=Pas derulare (secunde)
+BoxOnEndTrack=La sfârºitul melodiei
+BoxExtensions=Extensii suportate
+BoxNewExtension=Extensie nouã
+BoxPluginsFolder=Director Plugin
+BoxFont=Font
+BoxSample=Exemplu
+BoxPressKey=Apãsare tastã sau combinaþie de taste
+BoxFormatTrackCaption=Format of track's captions
+BoxPlugins=Conectori funcþionali
+BoxExtensions=Extensii
+
+; Actions
+OnEndActionStop=Oprirea melodiei
+OnEndActionNext=Deschiderea urmãtoarei melodiei din listã
+OnEndActionClose=Închiderea AmpView
+OnEndActionRestart=Repornirea melodiei curente
+OnEndActionNextFile=Deschiderea urmãtorului fiºier din director
+
+; Buttons
+ButtonClose=Închidere
+ButtonConfig=Configurare
+ButtonAbout=Despre...
+ButtonSet=Stabilire
+ButtonApply=Aplicã
+ButtonScanPlugs=Scanare
+
+; Labels
+LabelSelectLanguage=Alege o limbã din listã:
+
+; CheckBoxes
+CheckBoxUseShadows=Afiºare umbrã
+CheckBoxUseAntiAliasing=Utilizare AntiAliasing
+CheckBoxIgnoreSkinFont=Ignorare font temã
+CheckBoxNotQV=Nu se foloseºte AmpView pentru afiºare rapidã (QuickView)
+CheckBoxNotNV=Nu se foloseºte AmpView pentru afiºare normalã
+CheckBoxUseControl=Schimbare volum cu mouse numai când se va apãsa tasta [Ctrl]
+PageInternalHotKeys=Taste interne
+PageGlobalHotKeys=Taste globale
+PageMouse=Mouse
+
+; RadioBoxes
+RadioDefaultFolder=directorul de bazã
+RadioWinampFolder=Directorul Winamp
+RadioCustomFolder=Directorul diferit
+
+; Pages
+PagePlayList=Lista
+PageTypes=Tipuri
+
+; Other strings
+[strings]
+WarningDeleteFiles=Eºti sigur cã vrei sã ºtergi acest fiºier?
+WarningDeleteTracks=Eºti sigur cã vrei sã ºtergi acest fiºier?
+WarningCaption=Atenþie

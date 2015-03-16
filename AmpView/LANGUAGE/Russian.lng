@@ -1,0 +1,120 @@
+; ------------------------------------------------------ ;
+; Языковой файл для AmpView 3.2 beta 7                   ;
+; Русский язык                                           ;
+;                                                        ;
+; AmpView © 2004-2007 Петроченко Н.Ю.                    ;
+;                                                        ;
+; Если вы перевели этот файл на другой язык, пожалуйста, ;
+; отправьте его по адресу Nik_vr@mail.ru                 ;
+; ------------------------------------------------------ ;
+
+; Информация о языке и переводчике
+[main]
+langname=Русский
+translator=Петроченко Н.Ю.
+mail=Nik_vr@mail.ru
+
+; Строки, используемые в контекстном меню
+[menus]
+ItemAbout=О плагине...
+ItemOptions=Опции
+ItemFileInfo=Информация о файле...
+ItemClose=Закрыть
+ItemTopMost=Поверх всех окон
+ItemView=Вид
+ItemShowFileNames=Имена файлов
+ItemShowFullNames=Полные имена
+ItemTrackCaptions=Заголовки треков
+ItemShowNumbers=Показывать нумерацию
+ItemShowTrackLength=Показывать время
+ItemTimeMode=Обратный отсчет времени
+ItemControl=Управление
+ItemNextFile=Следующий файл из текущей папки
+ItemShuffle=Перемешать треки
+ItemDeleteTrack=Удалить трек
+ItemDeleteFile=Удалить файл
+ItemSort=Упорядочить треки
+ItemSortByLength=по длине
+ItemSortByFileName=по имени файла
+ItemSortByTitle=по заголовку
+ItemSavePlayList=Сохранить список треков...
+
+; меню в трее
+ItemVolumeUp=Увеличить громкость
+ItemVolumeDown=Уменьшить громкость
+ItemRestore=Показать окно
+ItemNextTrack=Следующий трек
+ItemPrevTrack=Предыдущий трек
+
+; Подсказки для кнопок
+[hints]
+ButtonPlay=Воспроизведение
+ButtonPause=Пауза
+ButtonStop=Остановить
+ButtonMute=Выключить звук
+ButtonClose=Закрыть
+ButtonMinimize=Свернуть
+ButtonNext=Следующий трек
+ButtonPrevious=Предыдущий трек
+ButtonOpen=Открыть файлы
+ButtonPlayList=Показать/Скрыть список треков
+ButtonInfo=Информация о файле
+
+; Строки, используемые в окне опций
+[options]
+; Дерево опций (названия страниц)
+TreeItemInterface=Интерфейс
+TreeItemPlugins=Модули
+TreeItemSkins=Скины
+TreeItemOther=Разное
+TreeItemControl=Управление
+TreeItemPlayList=Список треков
+; Группы
+BoxLanguage=Язык
+BoxTranslator=Переводчик
+BoxEffects=Эффекты
+BoxOther=Разное
+BoxInputPlugins=Input-модули
+BoxSkin=Скин
+BoxInformation=Информация
+BoxRewindStep=Шаг перемотки (секунды)
+BoxOnEndTrack=В конце трека
+BoxFont=Шрифт
+BoxSample=Образец
+BoxPressKey=Нажмите клавишу или комбинацию клавиш
+BoxFormatTrackCaption=Формат заголовков треков
+BoxPlugins=Доступные модули
+BoxExtensions=Расширения
+BoxConfig=Конфигурация
+; Действия
+OnEndActionStop=Остановить трек
+OnEndActionNext=Открыть следующий трек из списка
+OnEndActionClose=Закрыть AmpView
+OnEndActionRestart=Проиграть текущий трек сначала
+OnEndActionNextFile=Открыть следующий файл из папки
+; Кнопки
+ButtonClose=Закрыть
+ButtonAdd=Добавить
+ButtonDelete=Удалить
+; Надписи
+LabelSelectLanguage=Выберите язык из списка:
+; Флажки
+CheckBoxUseShadows=Разрешить использование теней
+CheckBoxUseAntiAliasing=Разрешить использование сглаживания
+CheckBoxIgnoreSkinFont=Игнорировать шрифт скина
+CheckBoxNotQV=Не использовать AmpView в режиме QuickView
+CheckBoxNotNV=Не использовать AmpView в обычном режиме
+CheckBoxUseControl=Регулировать уровень звука колесом мыши только при нажатом [Ctrl]
+CheckBoxWarning=Показывать предупреждения при удалении файлов
+CheckBoxDefaultConfig=Использовать один файл конфигурации для всех пользователей
+PageInternalHotKeys=Внутренние команды
+PageGlobalHotKeys=Глобальные команды
+PageMouse=Мышь
+; Страницы
+PagePlayList=Список
+
+; Прочие строки
+[strings]
+WarningDeleteFiles=Вы уверены, что хотите удалить эти файлы?
+WarningDeleteTracks=Вы уверены, что хотите удалить этот трек?
+WarningCaption=Предупреждение

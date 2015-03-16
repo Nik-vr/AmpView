@@ -1,0 +1,95 @@
+Version 3.0 beta 1
+-------------------
+ Del: [Options] -> BoxOutputPlugins=Output-plugins
+ Del: [Options] -> ButtonSet=Set
+
+Version 3.0 beta 3
+-------------------
+ Add: [Menus] -> ItemVolumeUp=Volume Up
+ Add: [Menus] -> ItemVolumeDown=Volume Down
+ Add: [Menus] -> ItemRestore=Restore window
+ Add: [Menus] -> ItemNextTrack=Next track
+ Add: [Menus] -> ItemPrevTrack=Previous track
+ 
+Version 3.0 beta 4
+-------------------
+ Add: [Options] -> CheckBoxNotQV=Not use AmpView for QuickView
+ Add: [Options] -> CheckBoxNotNV=Not use AmpView for Normal View
+ Add: [Options] -> TreeItemControl=Control
+ Del: [Options] -> TreeItemTypes=Types
+ Add: [Options] -> PageTypes=Types
+
+Version 3.0 beta 6
+-------------------
+ Add: [Options] -> CheckBoxNotNV=Not use AmpView for Normal View
+ Add: [Options] -> PageInternalHotKeys=Internal HotKeys
+ Add: [Options] -> PageGlobalHotKeys=Global HotKeys
+ Add: [Options] -> PageMouse=Mouse
+ Add: [Options] -> CheckBoxUseControl=Change Volume with mouse well only if [Ctrl] key pressed
+
+
+Version 3.0 RC1
+----------------
+ Add: [Options] -> BoxPressKey=Press key or keys combination
+
+
+Version 3.0 RC3
+----------------
+ Add: [Menus] -> ItemTimeMode=Time left mode
+ Add: [Menus] -> ItemControl=Control
+ Add: [Menus] -> ItemNextFile=Next file from current folder
+
+
+Version 3.1 alfa 1
+-------------------
+ Del: [Options] -> ButtonScanPlugs=Scanning
+ Del: [Options] -> BoxPluginsFolder=Plugin's folder
+ Del: [Options] -> RadioDefaultFolder=Default folder
+ Del: [Options] -> RadioWinampFolder=Winamp folder
+ Del: [Options] -> RadioCustomFolder=Custom folder
+
+Version 3.1 beta 3
+------------------
+ Add: [Options] -> BoxFormatTrackCaption=Format of track's captions
+ Add: [Options] -> TreeItemPlayList=PlayList
+ Add: [Options] -> CheckBoxWarning=Show warnings of the track's deleting
+ Add: [Menus] -> ItemShuffle=Shuffle
+ Add: [Menus] -> ItemDeleteTrack=Delete track
+ Add: [Menus] -> ItemDeleteFile=Delete file
+ Del: [Options] -> BoxExtensions=Supported extensions
+ Add: [Options] -> BoxPlugins=Avaible Plugins
+ Del: [Options] -> BoxNewExtension=New extension
+ Del: [Options] -> ButtonApply=Apply
+ Del: [Options] -> PageTypes=Types
+
+Version 3.1 beta 4
+------------------
+ Add: [Options] -> BoxExtensions=Extensions
+ Add: [Options] -> ButtonAdd=Add
+ Add: [Options] -> ButtonDelete=Delete
+ Del: [Options] -> ButtonConfig=Config
+ Del: [Options] -> ButtonAbout=About
+
+Version 3.1 beta 5
+------------------
+ Add: [Menus] -> ItemSort=Sort tracks
+ Add: [Menus] -> ItemSortByLength=by length
+ Add: [Menus] -> ItemSortByFileName=by filename
+ Add: [Menus] -> ItemSortByTitle=by title
+
+Version 3.1 RC1
+---------------
+ Add: [Menus] -> ItemSavePlayList=Save Playlist...
+
+
+Version 3.2 beta 3
+------------------
+ Add: [Strings] -> WarningDeleteFiles=Are you sure that want to delete this files?
+ Add: [Strings] -> WarningDeleteTracks=Are you sure that want to delete this tracks?
+ Add: [Strings] -> WarningCaption=Warning
+
+
+Version 3.2 beta 7
+------------------
+ Add: [Strings] -> BoxConfig=Configuration
+ Add: [Strings] -> CheckBoxDefaultConfig=Use only default configuration file for all users

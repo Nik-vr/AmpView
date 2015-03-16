@@ -1,0 +1,63 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.1                   ;
+; Polish / Polski                                 ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; ----------------------------------------------- ;
+
+[main]
+LangName=Polski
+translator=P.G. Koriakin
+mail=admin@methclub.com
+
+[menus]
+ItemAbout=O wtyczce...
+ItemOptions=Opcje
+ItemFileInfo=Info o pliku...
+ItemClose=Zamknij
+ItemTopMost=Zawsze na wierzchu
+ItemView=Podglad
+ItemShowFileNames=Nazwa pliku
+ItemShowFullNames=Sciezka i nazwa pliku
+ItemTrackCaptions=Naglowek pliku
+ItemShowNumbers=Pokaz numery
+ItemShowTrackLength=Pokaz dlugosc sciezki
+
+[hints]
+ButtonPlay=Play
+ButtonPause=Pauza
+ButtonStop=Stop
+ButtonMute=Wycisz
+ButtonClose=Zamknij
+ButtonMinimize=Minimalizuj
+ButtonNext=Nastepna sciezka
+ButtonPrevious=Poprzednia sciezka
+
+[options]
+TreeItemInterface=Interfejs
+TreeItemPlugins=Wtyczki
+TreeItemSkins=Skorki
+TreeItemOther=Inne
+BoxLanguage=Jezyk
+BoxTranslator=Tlumacz
+BoxEffects=Efekty
+BoxOther=Inne
+BoxInputPlugins=Wtyczki-wejscia
+BoxOutputPlugins=Wtyczki-wyjscia
+BoxSkin=Skora
+BoxInformation=Informacja
+BoxRewindStep=Skok przewijania (sekundy)
+BoxOnEndTrack=Na koniec utworu
+OnEndActionStop=Zatrzymaj utwor
+OnEndActionNext=Otworz nastepny utwor z listy
+OnEndActionClose=Zamknij AmpView
+OnEndActionRestart=Restart obecnego utworu
+OnEndActionNextFile=Otworz nastepny plik z katalogu
+ButtonClose=Zamknij
+ButtonConfig=Konfigoruj
+ButtonAbout=O wtyczce
+ButtonSet=Ustaw
+LabelSelectLanguage=Wybierz jezyk z listy:
+CheckBoxUseShadows=Pokazuj cienie
+CheckBoxUseAntiAliasing=Uzyj AntiAliasing'u

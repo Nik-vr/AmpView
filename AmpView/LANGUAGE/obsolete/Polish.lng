@@ -1,0 +1,70 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.1                   ;
+; Polish language © 2005 balver                   ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Polish
+translator=balver
+mail=balver@gmail.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Informacje...
+ItemOptions=Opcje
+ItemFileInfo=Informacje o pliku...
+ItemClose=Zamknij
+ItemTopMost=Zawsze na wierzchu
+ItemView=Podgl¹d
+ItemShowFileNames=Nazwy plików
+ItemShowFullNames=Œcie¿ki plików
+ItemTrackCaptions=Nag³ówki utworów
+ItemShowNumbers=Poka¿ numeracjê
+ItemShowTrackLength=Poka¿ d³ugoœæ utworu
+
+; Hints for buttons
+[hints]
+ButtonPlay=Odtwarzaj
+ButtonPause=Pauza
+ButtonStop=Zatrzymaj
+ButtonMute=Wycisz
+ButtonClose=Zamknij
+ButtonMinimize=Zminimalizuj
+ButtonNext=Nastêpny utwór
+ButtonPrevious=Poprzedni utwór
+
+; strings, used in the option's window
+[options]
+; Options tree (pages names)
+TreeItemInterface=Interfejs
+TreeItemPlugins=Wtyczki
+TreeItemSkins=Skórki
+TreeItemOther=Inne
+; GroupBoxes
+BoxLanguage=Jêzyk
+BoxTranslator=T³umacz
+BoxEffects=Efekty
+BoxOther=Inne
+BoxInputPlugins=Wtyczki wejœcia
+BoxOutputPlugins=Wtyczki wyjœcia
+BoxSkin=Skórka
+BoxInformation=Informacja
+BoxRewindStep=Krok przewijania (sekundy)
+BoxOnEndTrack=Po zakoñczeniu utworu
+; Actions
+OnEndActionStop=Zatrzymaj odtwarzanie
+OnEndActionNext=Otwórz nastêpny utwór z listy
+OnEndActionClose=Zamknij AmpView
+OnEndActionRestart=Powtórz odtwarzanie bie¿¹cego utworu
+OnEndActionNextFile=Otwórz nastêpny plik z folderu
+; Buttons
+ButtonClose=Zamknij
+ButtonConfig=Konfiguruj
+ButtonAbout=Informacje
+ButtonSet=Ustaw
+; Labels
+LabelSelectLanguage=Wybierz jêzyk z listy:
+; CheckBoxes
+CheckBoxUseShadows=Wyœwietl cienie
+CheckBoxUseAntiAliasing=U¿yj wyg³adzania (AntiAliasing)

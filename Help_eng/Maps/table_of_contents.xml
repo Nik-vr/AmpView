@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map xmlns:xsi="http://www.w3.org/2001/XInclude">
+  <topicref type="topic" id="401316021005961" build="ALL" modified="2009-11-14T16:48:12.303Z" icon="0" href="intro">
+    <caption translate="true">Introduction</caption>
+  </topicref>
+  <topicref type="topic" id="401315344960441" build="ALL" modified="2009-11-14T16:48:18.785Z" icon="0" href="install">
+    <caption translate="true">Install</caption>
+  </topicref>
+  <topicref type="topic" id="401317792774485" build="ALL" modified="2009-11-14T16:36:45.822Z" icon="0">
+    <caption translate="true">Control</caption>
+    <topicref type="topic" id="401317265492431" build="ALL" modified="2009-11-14T16:48:26.468Z" icon="0" href="hotkeys">
+      <caption translate="true">HotKeys</caption>
+    </topicref>
+    <topicref type="topic" id="401317369686398" build="ALL" modified="2009-11-14T16:48:32.938Z" icon="0" href="captions">
+      <caption translate="true">Format of caption</caption>
+    </topicref>
+  </topicref>
+  <topicref type="topic" id="401316006893357" build="ALL" modified="2009-11-14T16:36:45.822Z" icon="0">
+    <caption translate="true">Other</caption>
+    <topicref type="topic" id="401316854980001" build="ALL" modified="2009-11-14T16:48:40.082Z" icon="0" href="skins">
+      <caption translate="true">Skins</caption>
+    </topicref>
+    <topicref type="topic" id="401315788674899" build="ALL" modified="2009-11-14T16:48:53.629Z" icon="0" href="contact">
+      <caption translate="true">Contact</caption>
+    </topicref>
+    <topicref type="topic" id="401316127787669" build="ALL" modified="2009-11-14T16:49:02.695Z" icon="0" href="credits">
+      <caption translate="true">Credits</caption>
+    </topicref>
+    <topicref type="topic" id="401315263314867" build="ALL" modified="2009-11-14T16:49:16.172Z" icon="0" href="Payment">
+      <caption translate="true">Payment</caption>
+    </topicref>
+  </topicref>
+</map>

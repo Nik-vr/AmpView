@@ -1,0 +1,56 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.0 (RC2)+            ;
+; German language                                 ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Informationen über den Übersetzer
+[main]
+LangName=German
+translator=Nico Block
+mail=nike.b@mail.austria.com
+
+; Strings, benutzt im Popup-Menü
+[menus]
+ItemAbout=Über...
+ItemOptions=Optionen
+ItemFileInfo=Datei Info...
+ItemClose=schliessen
+
+; Tipps für die Symbole
+[hints]
+ButtonPlay=Start
+ButtonPause=Pause
+ButtonStop=Stopp
+ButtonMute=STumm
+ButtonClose=Schliessen
+ButtonMinimize=Minimieren
+
+; strings, benutzt im Optionen-Fenster
+[options]
+; GroupBoxes
+BoxLanguage=Sprache
+BoxTranslator=Übersetzer
+BoxEffects=Effekte
+BoxOther=Sonstiges
+BoxInputPlugins=Eingangs-Plugins
+BoxOutputPlugins=Ausgabe-Plugins
+BoxSkin=Skin
+BoxInformation=Informationen
+; Buttons
+ButtonClose=Schliessen
+ButtonConfigIP=Konfiguriere akt. Eingangs-Plugins
+ButtonConfigOP=Konfiguriere akt. Ausgabe-Plugins
+ButtonAboutIP=Über aktuelles Eingangs-Plugins
+ButtonAboutOP=Über aktuelles Ausgabe-Plugins
+; Labels
+LabelSelectLanguage=Select language from list:
+LabelScrollStep=Scroll Schritte:
+LabelSeconds=Sekunden
+; CheckBoxes
+CheckBoxUseShadows=Deaktiviere die Anzeige von Schatten
+CheckBoxUseAntiAliasing=Deaktiviere die Benutzung von AntiAliasing (Schrift)

@@ -1,0 +1,105 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.2+                   ;
+; Swedish/Svenska                                 ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; ----------------------------------------------- ;
+
+[main]
+LangName=Svenska
+translator=Leif Larsson
+mail=Leif.Larsson@gmail.com
+
+[menus]
+ItemAbout=Om...
+ItemOptions=Alternativ
+ItemFileInfo=Filinfo...
+ItemClose=Stäng
+ItemTopMost=Alltid överst
+ItemView=Visa
+ItemShowFileNames=Filnamn
+ItemShowFullNames=Fullständig sökväg
+ItemTrackCaptions=Spårnamn
+ItemShowNumbers=Visa spårnummer
+ItemShowTrackLength=Visa längden på spåret
+ItemTimeMode=Visa Tid kvar
+ItemControl=Kontroller
+ItemNextFile=Nästa fil i aktuell mapp
+ItemShuffle=Blanda
+ItemDeleteTrack=Ta bort spåret från listan
+ItemDeleteFile=Ta bort filen
+ItemSort=Sortera spåren
+ItemSortByLength=efter längd
+ItemSortByFileName=efter filnamn
+ItemSortByTitle=efter namn
+ItemSavePlayList=Spara spellista...
+
+; tray menus
+ItemVolumeUp=Höj volymen
+ItemVolumeDown=Sänk volymen
+ItemRestore=Återställ fönster
+ItemNextTrack=Nästa spår
+ItemPrevTrack=Föregående spår
+
+[hints]
+ButtonPlay=Spela upp
+ButtonPause=Paus
+ButtonStop=Stoppa
+ButtonMute=Ljud av
+ButtonClose=Stäng
+ButtonMinimize=Minimera
+ButtonNext=Nästa
+ButtonPrevious=Föregående
+ButtonOpen=Öppna fil
+ButtonPlayList=Visa/Dölj spellista
+ButtonInfo=Filinformation
+
+[options]
+TreeItemInterface=Gränssnitt
+TreeItemPlugins=Plugin-program
+TreeItemSkins=Skal
+TreeItemOther=Övrigt
+TreeItemControl=Kontroller
+TreeItemPlayList=Spellista
+
+BoxLanguage=Språk
+BoxTranslator=Översättare
+BoxEffects=Effekter
+BoxOther=Övrigt
+BoxInputPlugins=Input-moduler
+BoxSkin=Skal
+BoxInformation=Information
+BoxRewindStep=Snabbspolning (i sekunder)
+BoxOnEndTrack=Vid slutet av spåret
+BoxFont=Teckensnitt
+BoxSample=Exempel
+BoxPressKey=Tryck tangent eller tangentkombination
+BoxFormatTrackCaption=Format på spårnamn
+BoxPlugins=Tillgängliga plugin-program
+BoxExtensions=Filtyper
+
+OnEndActionStop=Stoppa
+OnEndActionNext=Spela nästa spår i listan
+OnEndActionClose=Stäng AmpView
+OnEndActionRestart=Spela upp aktuellt spår igen
+OnEndActionNextFile=Spela nästa spår i mappen
+
+ButtonClose=&Stäng
+ButtonAdd=&Lägg till
+ButtonDelete=&Ta bort
+
+LabelSelectLanguage=Välj språk:
+
+CheckBoxUseShadows=&Använd skuggning
+CheckBoxUseAntiAliasing=A&nvänd kantutjämning
+CheckBoxIgnoreSkinFont=&Ignorera skalets teckensnitt
+CheckBoxNotQV=&Använd inte AmpView vid Visa i fönster
+CheckBoxNotNV=A&nvänd inte AmpView vid vanlig visning
+CheckBoxUseControl=Ä&ndra volymen med musen bara om Ctrl är nedtryckt
+CheckBoxWarning=&Bekräfta borttagning av spår
+PageInternalHotKeys=Interna kortkommandon
+PageGlobalHotKeys=Globala kortkommandon
+PageMouse=Mus
+
+PagePlayList=Spellista

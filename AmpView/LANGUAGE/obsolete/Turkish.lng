@@ -1,0 +1,75 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 2.1                   ;
+; Turkish language                                ;
+;                                                 ;
+; AmpView © 2004-2005 Nikolay Petrochenko         ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Turkish
+translator=ibrahim DURMAZ
+mail=idurmaz@superposta.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Hakkýnda...
+ItemOptions=Seçenekler
+ItemFileInfo=Dosya bilgisi...
+ItemClose=Kapat
+ItemTopMost=Her zaman üstte
+ItemView=Görünüm
+ItemShowFileNames=Dosya adlarý
+ItemShowFullNames=Tam adlar
+ItemTrackCaptions=Ýz Baþlýklarý
+ItemShowNumbers=Numaralarý Göster
+ItemShowTrackLength=Ýz uzunluðunu göster
+
+; Hints for buttons
+[hints]
+ButtonPlay=Çal
+ButtonPause=Beklet
+ButtonStop=Durdur
+ButtonMute=Sessiz
+ButtonClose=Kapat
+ButtonMinimize=Simge durumu
+ButtonNext=Sonraki Ýz
+ButtonPrevious=Önceki Ýz
+
+; strings, used in the option's window
+[options]
+; Options tree (page-names)
+TreeItemInterface=Arayüz
+TreeItemPlugins=Eklentiler
+TreeItemSkins=Kabuklar
+TreeItemOther=Diðer
+; GroupBoxes
+BoxLanguage=Dil
+BoxTranslator=Çeviriyi Yapan
+BoxEffects=Etkiler
+BoxOther=Diðer
+BoxInputPlugins=Giriþ-eklentileri
+BoxOutputPlugins=Çýkýþ-eklentileri
+BoxSkin=Kabuk
+BoxInformation=Bilgi
+BoxRewindStep=Süre sonunda durdur (saniye)
+BoxOnEndTrack=Ýz sona erdiðinde
+; Actions
+OnEndActionStop=Ýz'i durdur
+OnEndActionNext=Listeden sonraki izi aç
+OnEndActionClose=AmpView'i kapat
+OnEndActionRestart=Aktif izi yeniden baþlat
+OnEndActionNextFile=Klasörden sonraki dosyayý aç
+; Buttons
+ButtonClose=Kapat
+ButtonConfig=Ayar
+ButtonAbout=Hakkýnda
+ButtonSet=Set
+; Labels
+LabelSelectLanguage=Listeden Dil seçin:
+; CheckBoxes
+CheckBoxUseShadows=To resolve display of shadows
+CheckBoxUseAntiAliasing=To resolve use of AntiAliasing

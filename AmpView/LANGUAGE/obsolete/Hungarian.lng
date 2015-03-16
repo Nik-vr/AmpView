@@ -1,0 +1,73 @@
+; ----------------------------------------------- ;
+; AmpView 2.1 nyelvi file                         ;
+; Magyar nyelv                                    ;
+;                                                 ;
+; AmpView (C) 2004-2005 Nikolay Petrochenko       ;
+;                                                 ;
+; ----------------------------------------------- ;
+
+; Information on the translator  
+[main]
+LangName=Magyar (Hungarian)
+translator=Zodarr
+mail=zodarr@freemail.hu
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=Névjegy
+ItemOptions=Lehetõségek
+ItemFileInfo=Fájl infó
+ItemClose=Bezárás
+ItemTopMost=Mindig felül
+ItemView=Nézet
+ItemShowFileNames=Fájlnév
+ItemShowFullNames=Teljes név
+ItemTrackCaptions=Sáv szövegek
+ItemShowNumbers=Számok mutatása
+ItemShowTrackLength=Zenehossz mutatása
+
+; Hints for buttons
+[hints]
+ButtonPlay=Lejátszás
+ButtonPause=Szünet
+ButtonStop=Állj
+ButtonMute=Némítás
+ButtonClose=Bezárás
+ButtonMinimize=Minimalizálás
+ButtonNext=Következõ szám
+ButtonPrevious=Elõzõ szám
+
+; strings, used in the option's window
+[options]
+; Options tree (page-names)
+TreeItemInterface=Kezelõfelület
+TreeItemPlugins=Beépülõk
+TreeItemSkins=Bõrök
+TreeItemOther=Más
+; GroupBoxes
+BoxLanguage=Nyelv
+BoxTranslator=Fordító
+BoxEffects=Hatások
+BoxOther=Más
+BoxInputPlugins=Bemeneti beépülõk
+BoxOutputPlugins=Kimeneti beépülõk
+BoxSkin=Bõr
+BoxInformation=Információ
+BoxRewindStep=Visszatekerés léptetése (másodperc)
+BoxOnEndTrack=A szám végénél
+; Actions
+OnEndActionStop=Szám megállítása
+OnEndActionNext=Következõ szám megnyitása a listából
+OnEndActionClose=AmpView bezárása
+OnEndActionRestart=Jelenlegi szám újraindítása
+OnEndActionNextFile=Következõ szám megnyitása a mappából
+; Buttons
+ButtonClose=Bezárás
+ButtonConfig=Beállítás
+ButtonAbout=Névjegy
+ButtonSet=Beállít
+; Labels
+LabelSelectLanguage=Válaszd ki a nyelvet a listából:
+; CheckBoxes
+CheckBoxUseShadows=Árnyékok használata
+CheckBoxUseAntiAliasing=AntiAliasing használata

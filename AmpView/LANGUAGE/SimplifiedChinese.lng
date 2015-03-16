@@ -1,0 +1,126 @@
+; ----------------------------------------------- ;
+; Language file for AmpView 3.2 beta 7            ;
+; Simplified Chinese                              ;
+;                                                 ;
+; AmpView  2004-2007 Nikolay Petrochenko          ;
+;                                                 ;
+; If you translate this file in anoter language,  ;
+; please, send it to me (Nik_vr@mail.ru)          ;
+; ----------------------------------------------- ;
+
+; Information on the translator
+[main]
+LangName=Simplified Chinese - 简体中文
+translator=onezls
+mail=80470@163.com
+
+; Strings, used in the popup menu
+[menus]
+ItemAbout=关于
+ItemOptions=设置
+ItemFileInfo=文件信息...
+ItemClose=关闭
+ItemTopMost=置顶
+ItemView=查看
+ItemShowFileNames=文件名
+ItemShowFullNames=全名
+ItemTrackCaptions=流 标题
+ItemShowNumbers=显示 号码
+ItemShowTrackLength=显示 流长度
+ItemTimeMode=倒计时模式
+ItemControl=控制
+ItemNextFile=文件夹内 下一首
+ItemShuffle=打乱
+ItemDeleteTrack=流删除
+ItemDeleteFile=删除文件
+ItemSort=流排序
+ItemSortByLength=根据长度
+ItemSortByFileName=根据文件名
+ItemSortByTitle=根据标题
+ItemSavePlayList=保存播放列表...
+
+; tray menus
+ItemVolumeUp=【+】
+ItemVolumeDown=【-】
+ItemRestore=恢复窗口
+ItemNextTrack=【》】
+ItemPrevTrack=【《】
+
+; Hints for buttons
+[hints]
+ButtonPlay=播放
+ButtonPause=暂停
+ButtonStop=停止
+ButtonMute=静音
+ButtonClose=关闭
+ButtonMinimize=最小化
+ButtonNext=【》】
+ButtonPrevious=【《】
+ButtonOpen=打开文件
+ButtonPlayList=显示/隐藏 播放列表
+ButtonInfo=文件信息
+
+; strings, used in the option's window
+[options]
+
+; Options tree (page-names)
+TreeItemInterface=接口
+TreeItemPlugins=插件
+TreeItemSkins=皮肤
+TreeItemOther=其他
+TreeItemControl=控制
+TreeItemPlayList=播放列表
+
+; GroupBoxes
+BoxLanguage=Language
+BoxTranslator=译者
+BoxEffects=效果
+BoxOther=其他
+BoxInputPlugins=输入插件
+BoxSkin=皮肤
+BoxInformation=信息
+BoxRewindStep=倒带步长 (单位秒)
+BoxOnEndTrack=尾声
+BoxFont=字体
+BoxSample=样本Sample
+BoxPressKey=按键（或组合键）
+BoxFormatTrackCaption=标题格式
+BoxPlugins=有效的插件
+BoxExtensions=扩展
+BoxConfig=配置
+; Actions
+OnEndActionStop=停止
+OnEndActionNext=列表下一首
+OnEndActionClose=关闭程序
+OnEndActionRestart=重播本首
+OnEndActionNextFile=文件夹内 下一首
+
+; Buttons
+ButtonClose=关闭
+ButtonAdd=增加
+ButtonDelete=删除
+
+; Labels
+LabelSelectLanguage=Select language from list:
+
+; CheckBoxes
+CheckBoxUseShadows=显示阴影
+CheckBoxUseAntiAliasing=反锯齿
+CheckBoxIgnoreSkinFont=忽略皮肤字体
+CheckBoxNotQV=在 QuickView 不使用 AmpView
+CheckBoxNotNV=在 Normal View 不使用 AmpView
+CheckBoxUseControl=仅当ctrl按下时 使用鼠标调节音量
+CheckBoxWarning=检测到列表文件删除的时候报错
+CheckBoxDefaultConfig=全部用户使用默认配置
+PageInternalHotKeys=内置热键
+PageGlobalHotKeys=全局热键
+PageMouse=鼠标
+
+; Pages
+PagePlayList=播放列表
+
+; Other strings
+[strings]
+WarningDeleteFiles=删除文件？
+WarningDeleteTracks=删除歌曲？
+WarningCaption=错误
