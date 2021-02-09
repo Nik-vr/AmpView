@@ -1,12 +1,28 @@
 unit Viewer;
 
+{$IF CompilerVersion >= 24.0 }
+  {$LEGACYIFEND ON}
+{$IFEND}
+
 interface
 
 uses Windows, Messages, SysUtils, Classes, Controls, Graphics, Forms,
-     XPMan, Menus, ExtCtrls, ActnList, GRButton32, StdCtrls, MyDialogs,
+     XPMan, Menus, ExtCtrls, ActnList, GRButton32, StdCtrls,
+     {$IF CompilerVersion <24}
+       MyDialogs,
+     {$ELSE}
+       Dialogs,
+     {$IFEND}
      MyTools, ProgressBar32, GR32, BASSPlayerX, PlayListClass, xIni,
-     GR32_Layers, PNGImage, ZlibMultiple, SkinTypes, HotKeyTools,
-     Dynamic_BASS, GR32_Image, TrayTools;
+     GR32_Layers, System.Actions, GR32_Image,
+     {$IF CompilerVersion >= 24.0 }
+       Vcl.Imaging.PNGImage,
+     {$ELSE}
+       PNGImage,
+     {$IFEND}
+     ZlibMultiple, SkinTypes, HotKeyTools,
+     Dynamic_BASS, TrayTools, ShellAPI,
+  ComCtrls;
 
 type
   TAmpViewMainForm = class(TForm)
@@ -87,6 +103,16 @@ type
     N3: TMenuItem;
     ActionEQ: TAction;
     ActionOpenFolder: TAction;
+    ActionSelectAll: TAction;
+    hwHintTimer: TTimer;
+    ActionDetach: TAction;
+    ItemDetach: TMenuItem;
+    N8: TMenuItem;
+    ItemOpen: TMenuItem;
+    ItemOpenFolder: TMenuItem;
+    DelayedExecutionTimer: TTimer;
+    ItemShufflePlay: TMenuItem;
+    ActionShufflePlay: TAction;
     procedure OpenDialogShow(Sender: TObject);
     procedure OpenDialogClose(Sender: TObject);
     procedure ProgressBarMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -104,6 +130,11 @@ type
       Y: Integer; Layer: TCustomLayer);
     procedure MainImageMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+    function IsEmbedded:boolean;
+    function IsEmbeddedActive:boolean;
+    procedure DoDeactivate;
+    procedure PostMsgParent(msg:TMessage);
+    function GetParentHandle:HWND;
     procedure VolumeBarMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer; Layer: TCustomLayer);
     procedure VolumeBarMouseDown(Sender: TObject; Button: TMouseButton;
@@ -147,29 +178,49 @@ type
     procedure FormPaint(Sender: TObject);
     procedure ActionEQExecute(Sender: TObject);
     procedure ActionOpenFolderExecute(Sender: TObject);
+    procedure VolumeBarMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+    procedure ActionSelectAllExecute(Sender: TObject);
+    procedure hwHintTimerTimer(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ActionDetachExecute(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ActionShufflePlayExecute(Sender: TObject);
   private
     DragMode: boolean;
     x0, y0: integer;
     ShownOnce: Boolean;
+    PreventLoop: Boolean;
     procedure WMDeactivate(var Msg: TMessage); message WM_KILLFOCUS;
-    procedure WMActivate(var Msg: TMessage); message WM_ACTIVATEAPP;
+    procedure WMActivateApp(var Msg: TMessage); message WM_ACTIVATEAPP;
+    procedure WMActivate(var Msg: TMessage); message WM_ACTIVATE;
     procedure WMHotkey( var msg: TWMHotkey ); message WM_HOTKEY;
     procedure WMTransfer(var Msg: TWMCopyData); message WM_COPYDATA;
     procedure WMTRAYICONNOTIFY(var Msg: TMessage); message WM_NOTIFYTRAYICON;
     procedure WMQueryEndSession(var Msg: TWMQueryEndSession); message WM_QUERYENDSESSION;
+    procedure WMPreventLoop(var Msg: TMessage); message WM_USER + 101;
+    procedure WMAttached(var Msg: TMessage); message WM_USER + 111;
+    procedure WMDetached(var Msg: TMessage); message WM_USER + 112;
+    procedure WMKeyDown(var Msg: TMessage); message WM_KEYDOWN;
+    procedure WMKeyUp(var Msg: TMessage); message WM_KEYUP;
     //
     procedure DrawText(x, y: integer; text: string; Font: TFont; DrawShadow: boolean);
     procedure DrawTimer(value: string);
     procedure GetNextFile;
     procedure GetNextTrack;
     procedure GetPrevTrack;
+    procedure ShowCustomHint(str:string;x,y:integer;disappear:Boolean);
     procedure SetVolume(VolumeLevel: integer);
     procedure ShowAmpView(show: boolean);
+    
     { Private declarations }
   public
+    hMutex:hwnd;
     procedure AddFile(const TrackFile: string; redraw: boolean);
+    procedure AddFolderRec(const Path: string;SL:TStrings);
     procedure AddFolder(const Path: string);
-    procedure OpenTrack(const FileName: string);
+    function OpenTrack(const FileName: string):integer;
     procedure SetButtonStates;
     procedure SetTopMost(TopMost: boolean);
     procedure LoadLang(const FileName: string);
@@ -183,7 +234,12 @@ type
   end;
 
 const
- version='3.2 (beta 9)';
+  version='3.5';
+
+  OPENTRACK_OK=0;
+  OPENTRACK_STOP=1;
+  OPENTRACK_FILE_NOT_EXIST=2;
+  OPENTRACK_ERROR=3;
 
 var
   AmpViewMainForm: TAmpViewMainForm;
@@ -194,7 +250,7 @@ var
   MyPlayList: TPlayList;
   CurTrack: integer;
   // Элементы скина
-  OpenDialog: TMyOpenDialog;
+  OpenDialog: {$IF CompilerVersion >= 24.0} TOpenDialog {$ELSE} TMyOpenDialog {$IFEND} ;
   SkinText: TSkinTextAtributes; // Описания тектовых элементов
   MainPicture: TBitmap32;       // Основной рисунок
   CaptionOffset: integer;
@@ -208,27 +264,68 @@ var
   MuteGlobal: integer;
   NextTrackGlobal: integer;
   PrevTrackGlobal: integer;
-
+  LastVolUpd:Cardinal;
+  LastScrollUpd:Cardinal;
+  DefaultFormatString:string;
+  hwHint:THintWindow;
+  IsOpening:Boolean;
+  FileFormats:string;
+  FileFormatsSL:TStringList;
+  UseHints:Boolean;
+  accel:double;
+  ShuffleHistory:TStringList;
+  ShuffleHistoryPos:Integer;
+  firsttime:boolean;
 
 implementation
 
-uses PlayList, Options, Equal;
+uses PlayList, Options, Equal,
+  FileInfo ;
 
 {$R *.dfm}
 
 procedure TAmpViewMainForm.FormCreate(Sender: TObject);
 var
  ConfigName: string;
+ sfpath:string;
+ ff_media_files,ff_midi_files,ff_tracker_files:string;
+ ExtFile: string;
+ NumOfExt: integer;
+ FilterAdd: string;
+ i:integer;
 begin
- OpenDialog:=TMyOpenDialog.Create(AmpViewMainForm);
- OpenDialog.Filter:='Popular media files|*mp3;*.ogg;*.mp1;*.mp2;*.wma;*.wav|Midi-files|*.mid;*.midi;*.rmi;*.kar|Module trakers|*.mod;*.it;*.xm|CD Audio tracks|*.cda|Playlists|*.m3u';
+
+ firsttime:=true;
+
+ Randomize;
+ ShuffleHistory:=TStringList.Create;
+ ShuffleHistory.Clear;
+ ShuffleHistoryPos:=0;
+
+ ff_media_files:='*.mp3;*.ogg;*.mp1;*.mp2;*.wma;*.wav;*.flac;*.fla;*.mp4;*.m4a;*.mpc;*.aac;*.ac3;*.opus;*.webm;*.wv;*.dsf;*.ape';
+ ff_midi_files:='*.mid;*.midi;*.rmi;*.kar';
+ ff_tracker_files:='*.mod;*.it;*.xm';
+
+ FileFormats:=ff_media_files+';'+ff_midi_files+';'+ff_tracker_files;
+ FileFormatsSL:=TStringList.Create;
+ FileFormatsSL.Delimiter:=';';
+ FileFormatsSL.DelimitedText:=FileFormats;
+
+ OpenDialog:={$IF CompilerVersion >= 24.0} TOpenDialog {$ELSE} TMyOpenDialog {$IFEND}.Create(AmpViewMainForm);
+ OpenDialog.Filter:='Media files|'+ff_media_files+'|Midi files|'+ff_midi_files+'|Module trackers|'+ff_tracker_files+'|CD Audio tracks|*.cda|Playlists|*.m3u';
  OpenDialog.Options:=OpenDialog.Options+[ofAllowMultiSelect];
+
+ DefaultFormatString:='%IFV1(%ARTI%TITL,%IFV2(%ARTI,%ARTI,<unknown artist>) - %IFV2(%TITL,%TITL,<untitled>))';
+ hwHint:=THintWindow.Create(Self);
+ hwHint.Color:=clInfoBk;
+
 
   DragMode:=false;
   ShownOnce := False;
 
   Width:=0;
   Height:=0;
+
   //
   PlugDir:=ExtractFileDir( Application.ExeName );
   CreateDir(PlugDir+'\Config');
@@ -243,27 +340,52 @@ begin
   WorkTimer.Enabled:=false;
   ProgressBar.Maximum:=0;
 
+  // to prevent flickering
+  left:=GetIniInt('Main', 'left', 25, -Width+10, Screen.Width-10, IniFile);
+  top:=GetIniInt('Main', 'top', 25, -Width+10, Screen.Height-10, IniFile);
+
+
+   // Построение фильтра
+  ExtFile:=PlugDir+'\Extensions.lst';
+ // ExtListBox.Clear;
+  // Загрузка списка дополнительных расширений
+  FilterAdd:='Plugins supported formats (';
+
+  NumOfExt:=GetIniInt('ext', 'num', 0, 0, 1000, ExtFile);
+  for i:=0 to NumOfExt do
+   begin
+     FilterAdd:=FilterAdd+GetIniString('ext', IntToStr(i), '', ExtFile);
+     if i<>NumOfExt then FilterAdd:=FilterAdd+', ';
+   end;
+
+  FilterAdd:=FilterAdd+')|';
+  for i:=0 to NumOfExt do
+   begin
+     FilterAdd:=FilterAdd+'*.'+GetIniString('ext', IntToStr(i), '', ExtFile)+';';
+   end;
+
+   OpenDialog.Filter:=OpenDialog.Filter+'|'+FilterAdd;
+
   // Инициализация проигрывателя
-  Player:=TBASSPlayerX.Create(Application.Handle, PlugDir);
+  sfpath:=GetIniString('main', 'soundfontpath', '', IniFile);
+  Player:=TBASSPlayerX.Create(Application.Handle, PlugDir, sfpath);
   Player.OnPlayEnd:=GetPlayEnd;
 
   MyPlayList:=TPlaylist.Create;
+
 end;
 
 procedure TAmpViewMainForm.FormShow(Sender: TObject);
 var
  i: integer;
- ExtFile: string;
- NumOfExt: integer;
- FilterAdd: string;
+ style:hwnd;
 begin
-
  PlayListForm.PlayList.Clear;
 
 // Загрузка скина
- if FileExists(PlugDir+'\Skins\'+GetIniString('main', 'skin', 'Lister.avsz', IniFile))
-  then LoadSkin(PlugDir+'\Skins\'+GetIniString('main', 'skin', 'Lister.avsz', IniFile))
-  else LoadSkin(PlugDir+'\Skins\Lister.avsz');
+ if FileExists(PlugDir+'\Skins\'+GetIniString('main', 'skin', 'ListerExtended.avsz', IniFile))
+  then LoadSkin(PlugDir+'\Skins\'+GetIniString('main', 'skin', 'ListerExtended.avsz', IniFile))
+  else LoadSkin(PlugDir+'\Skins\ListerExtended.avsz');
 
  // Загрузка языка
  if FileExists(PlugDir+'\Language\'+GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile))
@@ -272,15 +394,19 @@ begin
    begin
     LoadLang(PlugDir+'\Language\'+GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng');
     SetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile);
-   end;   
+   end;
  LoadHotKeys(KeysFile);
-                       
+
  // Опции
  left:=GetIniInt('Main', 'left', 25, -Width+10, Screen.Width-10, IniFile);
  top:=GetIniInt('Main', 'top', 25, -Width+10, Screen.Height-10, IniFile);
+ //left:=-1000;
+ //top:=-1000;
  SetWindowPos(PlayListForm.Handle, HWND_TOP, Left,  Top, Width, Height, SWP_NOACTIVATE or SWP_NOMOVE or SWP_NOSIZE);
  SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
  ItemTimeMode.Checked:=GetIniBool('main', 'timeleftmode', false, IniFile);
+ ItemShufflePlay.Checked:=GetIniBool('main', 'ShufflePlay', false, IniFile);
+ UseHints:=GetIniBool('main', 'UseProgessBarHints', true, IniFile);
 
  // Уровень звука
  VolumeBar.Maximum:=100;
@@ -317,8 +443,8 @@ begin
 
  if MyPlayList.Count>0 then
   begin
-   OpenTrack(MyPlayList.GetFileName(CurTrack));
-   Player.Play;
+   if OpenTrack(MyPlayList.GetFileName(CurTrack))=OPENTRACK_OK then
+     Player.Play;
   end;
 
  SetButtonStates;
@@ -327,27 +453,11 @@ begin
  PlayListBtn.Checked:=PlayListForm.Visible;
  ActionPlayList.Execute;
 
-   // Построение фильтра
-  ExtFile:=PlugDir+'\Extensions.lst';
- // ExtListBox.Clear;
-  // Загрузка списка дополнительных расширений
-  FilterAdd:='Plugins supported formats (';
-
-  NumOfExt:=GetIniInt('ext', 'num', 0, 0, 1000, ExtFile);
-  for i:=0 to NumOfExt do
-   begin
-     FilterAdd:=FilterAdd+GetIniString('ext', IntToStr(i), '', ExtFile);
-     if i<>NumOfExt then FilterAdd:=FilterAdd+', ';
-   end;
-
-  FilterAdd:=FilterAdd+')|';
-  for i:=0 to NumOfExt do
-   begin
-     FilterAdd:=FilterAdd+'*.'+GetIniString('ext', IntToStr(i), '', ExtFile)+';';
-   end;
-
-   OpenDialog.Filter:=OpenDialog.Filter+'|'+FilterAdd;
-
+  if not IsEmbedded then
+    begin
+    style := GetWindowLong(Application.Handle, GWL_EXSTYLE);
+    SetWindowLong(Application.Handle, GWL_EXSTYLE, style and not WS_EX_TOOLWINDOW);
+    end;
 end;
 
 
@@ -413,7 +523,7 @@ begin
      then TransparentColor:=true
      else
       begin
-       TransparentColor:=false;       
+       TransparentColor:=false;
        windowRgn := BitmapToRgn(MainPicture, TransparentColorValue);
        SetWindowRgn(Handle, WindowRgn, True);
       end;
@@ -576,8 +686,17 @@ begin
       rlr:=Path+GetIniString('Volume', 'RulerImage', 'VolumeRuler.png', FN);
       tnrml:=Path+GetIniString('Volume', 'ThumbNormal', 'VolumeThumbNormal.png', FN);
       tprsd:=Path+GetIniString('Volume', 'ThumbPressed', 'VolumeThumbPressed.png', FN);
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      VolumeBar.IsThumbCenter:=GetIniInt('Volume', 'ThumbCenter', 0, 0, 1, FN)=1;
+
+      //CreateProgress;
+      //LoadImages(rlr, tnrml, tprsd);
+      VolumeBar.RulerImage:=rlr;
+      VolumeBar.ThumbNormalImage:=tnrml;
+      VolumeBar.ThumbPressedImage:=tprsd;
+      VolumeBar.Create({True});
+      {VolumeBar.LoadRuler(rlr);
+      VolumeBar.LoadThumbNormal(tnrml);
+      VolumeBar.LoadThumbPressed(tprsd);}
      end;
 
   // ProgressBar
@@ -590,8 +709,13 @@ begin
       rlr:=Path+GetIniString('Progress', 'RulerImage', 'ScrollRuler.png', FN);
       tnrml:=Path+GetIniString('Progress', 'ThumbNormal', 'ScrollThumbNormal.png', FN);
       tprsd:=Path+GetIniString('Progress', 'ThumbPressed', 'ScrollThumbPressed.png', FN);
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      ProgressBar.IsThumbCenter:=GetIniInt('Progress', 'ThumbCenter', 0, 0, 1, FN)=1;
+      ProgressBar.RulerImage:=rlr;
+      ProgressBar.ThumbNormalImage:=tnrml;
+      ProgressBar.ThumbPressedImage:=tprsd;
+      ProgressBar.Create;
+      //CreateProgress;
+      //LoadImages(rlr, tnrml, tprsd);
       Position:=Player.Position;
      end;
 
@@ -661,7 +785,7 @@ begin
      TimerImage.Top:=GetIniInt('Timer', 'top', 0,0,H, FN);
      TimerImage.Width:=GetIniInt('Timer', 'width', 0,0,800, FN);
      TimerImage.Height:=GetIniInt('Timer', 'height', 0,0,800, FN);
-     TimerImage.SetupBitmap;
+     TimerImage.SetupBitmap;       
 
      if not SF then TimerImage.Bitmap.Font.Size:=(TimerImage.Bitmap.Font.Size * 80) div 100;
 
@@ -686,96 +810,144 @@ begin
       rlr:=Path+GetIniString('EQ', 'RulerImage', 'EQRuler.png', FN);
       tnrml:=Path+GetIniString('EQ', 'ThumbNormal', 'EQThumbNormal.png', FN);
       tprsd:=Path+GetIniString('EQ', 'ThumbPressed', 'EQThumbPressed.png', FN);
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd); }
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       EQ1.Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ2 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ3 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ4 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ5 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ6 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ7 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ8 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ9 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EQ0 do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with EchoSlider do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
     // Полосы эквалайзера
     with ReverbSlider do
      begin
-      CreateProgress;
-      LoadImages(rlr, tnrml, tprsd);
+      {CreateProgress;
+      LoadImages(rlr, tnrml, tprsd);}
+      RulerImage:=rlr;
+      ThumbNormalImage:=tnrml;
+      ThumbPressedImage:=tprsd;
+      Create;
       Maximum:=30;
      end;
 
@@ -844,6 +1016,7 @@ begin
        ListOptions.SelectedBackColor:=HexToInt(GetIniString('PlayList', 'SelBackColor', '#FFFFFF', FN));
        ListOptions.SelectedPlayedBackColor:=HexToInt(GetIniString('PlayList', 'SelPlayBackColor', '#FFFFFF', FN));
        PlayList.Color:=ListOptions.BackColor1;
+       PlayList.Canvas.Font:=ListOptions.SelectedPlayedFont;
 
        // Кнопка Close
        PLCloseBtn.Visible:=GetIniBool('PLCloseButton', 'visible', false, FN);
@@ -862,6 +1035,11 @@ begin
       PlayList.Repaint;
       RedrawPlayList;
     end;
+   end
+ else
+   begin
+   ErrorMessage('Could not decompress skin');
+   exit;
    end;
 
  DrawInfo;
@@ -900,9 +1078,13 @@ begin
   ItemAbout.Caption:=GetIniString('Menus', 'ItemAbout', 'About', FileName);
   ItemOptions.Caption:=GetIniString('Menus', 'ItemOptions', 'Options', FileName);
 //  ItemOptionsMenu.Caption:=ItemOptions.Caption;
+  ItemOpen.Caption:=GetIniString('Menus', 'ItemOpen', 'Open...', FileName);
+  ItemOpenFolder.Caption:=GetIniString('Menus', 'ItemOpenFolder', 'Open Folder...', FileName);
+  ItemDetach.Caption:=GetIniString('Menus', 'ItemDetach', 'Detach', FileName);
   ItemClose.Caption:=GetIniString('Menus', 'ItemClose', 'Close', FileName);
   ItemTopMost.Caption:=GetIniString('Menus', 'ItemTopMost', 'Stay on Top', FileName);
   ItemTimeMode.Caption:=GetIniString('Menus', 'ItemTimeMode', 'Time left mode', FileName);
+  ItemShufflePlay.Caption:=GetIniString('Menus', 'ItemShufflePlay', 'Shuffle play', FileName);
   ItemControlMenu.Caption:=GetIniString('Menus', 'ItemControl', 'Control', FileName);
   ItemPlay.Caption:=PlayBtn.Hint;
   ItemPause.Caption:=PauseBtn.Hint;
@@ -929,9 +1111,9 @@ begin
 
     ItemSavePlayList.Caption:=GetIniString('Menus', 'ItemSavePlayList', 'Save Playlist...', FileName);
 
-    ShowFullNameItem.Caption:=GetIniString('Menus', 'ItemShowFullNames', 'Show full names', FileName);
-    ShowFileNamesItem.Caption:=GetIniString('Menus', 'ItemShowFileNames', 'Show file-names', FileName);
-    ShowTrackCaptionItem.Caption:=GetIniString('Menus', 'ItemTrackCaptions', 'Show track captions', FileName);
+    ShowFullNameItem.Caption:=GetIniString('Menus', 'ItemShowFullNames', 'Full names', FileName);
+    ShowFileNamesItem.Caption:=GetIniString('Menus', 'ItemShowFileNames', 'File names', FileName);
+    ShowTrackCaptionItem.Caption:=GetIniString('Menus', 'ItemTrackCaptions', 'Track captions', FileName);
     ShowNumbersItem.Caption:=GetIniString('Menus', 'ItemShowNumbers', 'Show numbers', FileName);
     ShowTracksLength.Caption:=GetIniString('Menus', 'ItemShowTrackLength', 'Show track length', FileName);
     PLCloseBtn.Hint:=CloseBtn.Hint;
@@ -957,7 +1139,7 @@ begin
     LanguageBox.Caption:=GetIniString('Options', 'BoxLanguage', 'Language', FileName);
     TranslatorBox.Caption:=GetIniString('Options', 'BoxTranslator', 'Translator', FileName);
     EffectsBox.Caption:=GetIniString('Options', 'BoxEffects', 'Effects', FileName);
-    RewindStepBox.Caption:=GetIniString('Options', 'BoxRewindStep', 'Step of rewind (seconds)', FileName);
+    RewindStepBox.Caption:=GetIniString('Options', 'BoxRewindStep', 'Fast forward step size (seconds)', FileName);
     InformationBox.Caption:=GetIniString('Options', 'BoxInformation', 'Information', FileName);
     SkinBox.Caption:=GetIniString('Options', 'BoxSkin', 'Skin', FileName);
     OnEndTrackBox.Caption:=GetIniString('Options', 'BoxOnEndTrack', 'On end of a track', FileName);
@@ -966,24 +1148,27 @@ begin
     SampleBox.Caption:=GetIniString('Options', 'BoxSample', 'Sample', FileName);
     HotKeyGroupBox.Caption:=GetIniString('Options', 'PageInternalHotKeys', 'Internal HotKeys', FileName);
     GlobalBox.Caption:=GetIniString('Options', 'PageGlobalHotKeys', 'Global HotKeys', FileName);
-    PressKeyBox1.Caption:=GetIniString('Options', 'BoxPressKey', 'Press key or keys combination', FileName);
+    PressKeyBox1.Caption:=GetIniString('Options', 'BoxPressKey', 'Press a key or a keys combination', FileName);
     PressKeyBox2.Caption:=PressKeyBox1.Caption;
     MouseBox.Caption:=GetIniString('Options', 'PageMouse', 'Mouse', FileName);
-    FormatTrackBox.Caption:=GetIniString('Options', 'BoxFormatTrackCaption', 'Format of track''s captions', FileName);
+    FormatTrackBox.Caption:=GetIniString('Options', 'BoxFormatTrackCaption', 'Format of track captions', FileName);
     OtherGroupBox.Caption:=GetIniString('Options', 'TreeItemOther', 'Other', FileName);
     ExtGroupBox.Caption:=GetIniString('Options', 'BoxExtensions', 'Extensions', FileName);
     ConfigGroupBox.Caption:=GetIniString('Options', 'BoxConfig', 'Configuration', FileName);    
     // Надписи (Label)
     LabelSelectLanguage.Caption:=GetIniString('Options', 'LabelSelectLanguage', 'Select language from list:', FileName);
     // Флажки (CheckBox)
-    UseShadows.Caption:=GetIniString('Options', 'CheckBoxUseShadows', 'To resolve display of shadows', FileName);
-    UseAntiAliasing.Caption:=GetIniString('Options', 'CheckBoxUseAntiAliasing', 'To resolve use of AntiAliasing', FileName);
+    UseShadows.Caption:=GetIniString('Options', 'CheckBoxUseShadows', 'Allow use of shadows', FileName);
+    UseAntiAliasing.Caption:=GetIniString('Options', 'CheckBoxUseAntiAliasing', 'Allow use of antialiasing', FileName);
+    ProgressBarHintsCheckBox.Caption:=GetIniString('Options', 'CheckBoxProgessBarHints', 'Show time/volume hints', FileName);
     IgnoreSkinFontCheckBox.Caption:=GetIniString('Options', 'CheckBoxIgnoreSkinFont', 'Ignore skin font', FileName);
-    NotQVCheckBox.Caption:=GetIniString('Options', 'CheckBoxNotQV', 'Not use AmpView for QuickView', FileName)+'   [Ctrl+Q]';
-    NotNVCheckBox.Caption:=GetIniString('Options', 'CheckBoxNotNV', 'Not use AmpView for Normal View', FileName)+'   [F3]';
-    UseControl.Caption:=GetIniString('Options', 'CheckBoxUseControl', 'Change Volume with mouse well only if [Ctrl] key pressed', FileName);
-    WarningCheckBox.Caption:=GetIniString('Options', 'CheckBoxWarning', 'Show warnings of the files deleting', FileName);
-    DefaultConfigCheckBox.Caption:=GetIniString('Options', 'CheckBoxDefaultConfig', 'Use only default configuration file for all users', FileName);    
+    NotQVCheckBox.Caption:=GetIniString('Options', 'CheckBoxNotQV', 'Do not use AmpView in QuickView mode', FileName)+'   [Ctrl+Q]';
+    NotNVCheckBox.Caption:=GetIniString('Options', 'CheckBoxNotNV', 'Do not use AmpView in Normal View', FileName)+'   [F3]';
+    UseControl.Caption:=GetIniString('Options', 'CheckBoxUseControl', 'Change Volume with mouse wheel only if [Ctrl] key is pressed', FileName);
+    UseRelativePathsCheckBox.Caption:=GetIniString('Options', 'CheckBoxUseRelativePaths', 'Use relative paths', FileName);
+    TrackWarningCheckBox.Caption:=GetIniString('Options', 'CheckBoxWarningDelTracks', 'Show warnings when deleting tracks', FileName);
+    FileWarningCheckBox.Caption:=GetIniString('Options', 'CheckBoxWarningDelFiles', 'Show warnings when deleting files', FileName);
+    DefaultConfigCheckBox.Caption:=GetIniString('Options', 'CheckBoxDefaultConfig', 'Use one configuration file for all users', FileName);
     // Дерево
     OptionsList.Items[0]:=GetIniString('Options', 'TreeItemInterface', 'Interface', FileName);
     OptionsList.Items[1]:=GetIniString('Options', 'TreeItemPlugins', 'Plugins', FileName);
@@ -1007,6 +1192,22 @@ begin
     HotKeysPages.Pages[0].Caption:=HotKeyGroupBox.Caption;
     HotKeysPages.Pages[1].Caption:=GlobalBox.Caption;
     HotKeysPages.Pages[2].Caption:=MouseBox.Caption;
+   end;
+ with FileInfoForm do
+   begin
+    TabSheetMetadata.Caption:=GetIniString('FileInfo', 'FI_TabMetadata', 'Metadata', FileName);
+    ListView1.Columns[0].Caption:=GetIniString('FileInfo', 'FI_MetadataName', 'Name', FileName);
+    ListView1.Columns[1].Caption:=GetIniString('FileInfo', 'FI_MetadataValue', 'Value', FileName);
+    TabSheetProperties.Caption:=GetIniString('FileInfo', 'FI_TabProperties', 'Properties', FileName);
+    TypeLabel.Caption:=GetIniString('FileInfo', 'FI_Type', 'Type:', FileName);
+    DurationLabel.Caption:=GetIniString('FileInfo', 'FI_Duration', 'Duration:', FileName);
+    FileSizeLabel.Caption:=GetIniString('FileInfo', 'FI_FileSize', 'File size:', FileName);
+    BitrateLabel.Caption:=GetIniString('FileInfo', 'FI_Bitrate', 'Bitrate:', FileName);
+    ChannelModeLabel.Caption:=GetIniString('FileInfo', 'FI_ChannelMode', 'Channel Mode:', FileName);
+    SampleRateLabel.Caption:=GetIniString('FileInfo', 'FI_SampleRate', 'Sample Rate:', FileName);
+    LastModifiedLabel.Caption:=GetIniString('FileInfo', 'FI_LastModified', 'Last Modified:', FileName);
+    CloseButton.Caption:=GetIniString('FileInfo', 'FI_CloseButton', 'Close', FileName);
+    ActionCopy.Caption:=GetIniString('FileInfo', 'FI_Copy', 'Copy', FileName);
    end;
  except
  end;
@@ -1078,6 +1279,10 @@ begin
   DefKey:=TextToHotKey('Ctrl+P', true);
   ActionOptions.ShortCut:=GetIniInt('main', 'Options', DefKey, 0, MaxInt, FileName);
 
+  // Select all
+  DefKey:=TextToHotKey('Ctrl+A', true);
+  ActionSelectAll.ShortCut:=GetIniInt('main', 'SelectAll', DefKey, 0, MaxInt, FileName);
+
   // File info
   DefKey:=TextToHotKey('Alt+3', true);
   ActionFileInfo.ShortCut:=GetIniInt('main', 'FileInfo', DefKey, 0, MaxInt, FileName);
@@ -1096,52 +1301,61 @@ begin
   // "Play"
   SeparateHotKey(GetIniInt('global', 'Play', 0, 0, MaxInt, FileName), Modifiers, Key);
   PlayGlobal := GlobalAddAtom('PlayGlobal');
+  UnregisterHotKey(Handle, PlayGlobal);
   RegisterHotKey(Handle, PlayGlobal, Modifiers, Key);
   TrayItemPlay.ShortCut:=GetIniInt('global', 'Play', 0, 0, MaxInt, FileName);
 
   // "Stop"
   SeparateHotKey(GetIniInt('global', 'Stop', 0, 0, 0, FileName), Modifiers, Key);
   StopGlobal := GlobalAddAtom('StopGlobal');
+  UnregisterHotKey(Handle, StopGlobal);
   RegisterHotKey(Handle, StopGlobal, Modifiers, Key);
   TrayItemStop.ShortCut:=GetIniInt('global', 'Stop', 0, 0, MaxInt, FileName);
 
   // "Pause"
   SeparateHotKey(GetIniInt('global', 'Pause', 0, 0, MaxInt, FileName), Modifiers, Key);
   PauseGlobal := GlobalAddAtom('PauseGlobal');
+  UnregisterHotKey(Handle, PauseGlobal);
   RegisterHotKey(Handle, PauseGlobal, Modifiers, Key);
   TrayItemPause.ShortCut:=GetIniInt('global', 'Pause', 0, 0, MaxInt, FileName);
 
   // "Restore"
   SeparateHotKey(GetIniInt('global', 'Restore', 0, 0, MaxInt, FileName), Modifiers, Key);
   RestoreGlobal := GlobalAddAtom('RestoreGlobal');
+  UnregisterHotKey(Handle, RestoreGlobal);
   RegisterHotKey(Handle, RestoreGlobal, Modifiers, Key);
   TrayItemRestore.ShortCut:=GetIniInt('global', 'Restore', 0, 0, MaxInt, FileName);
 
   // "Mute"
   SeparateHotKey(GetIniInt('global', 'Mute', 0, 0, MaxInt, FileName), Modifiers, Key);
   MuteGlobal := GlobalAddAtom('MuteGlobal');
+  UnregisterHotKey(Handle, MuteGlobal);
   RegisterHotKey(Handle, MuteGlobal, Modifiers, Key);
 //  TrayItemMute.ShortCut:=GetIniInt('global', 'Mute', 32845, 0, MaxInt, FileName);
 
   // "VolumeUp"
   SeparateHotKey(GetIniInt('global', 'VolumeUp', 0, 0, MaxInt, FileName), Modifiers, Key);
   VolumeUpGlobal := GlobalAddAtom('VolumeUp');
+  UnregisterHotKey(Handle, VolumeUpGlobal);
   RegisterHotKey(Handle, VolumeUpGlobal, Modifiers, Key);
 
   // "VolumeDown"
   SeparateHotKey(GetIniInt('global', 'VolumeDown', 0, 0, MaxInt, FileName), Modifiers, Key);
   VolumeDownGlobal := GlobalAddAtom('VolumeDown');
+  UnregisterHotKey(Handle, VolumeDownGlobal);
   RegisterHotKey(Handle, VolumeDownGlobal, Modifiers, Key);
 
   // "NextTrack"
   SeparateHotKey(GetIniInt('global', 'NextTrack', 0, 0, MaxInt, FileName), Modifiers, Key);
   NextTrackGlobal := GlobalAddAtom('NextTrack');
+  UnregisterHotKey(Handle, NextTrackGlobal);
   RegisterHotKey(Handle, NextTrackGlobal, Modifiers, Key);
   TrayItemNextTrack.ShortCut:=GetIniInt('global', 'NextTrack', 0, 0, MaxInt, FileName);
 
   // "PrevTrack"
   SeparateHotKey(GetIniInt('global', 'PrevTrack', 0, 0, MaxInt, FileName), Modifiers, Key);
   PrevTrackGlobal := GlobalAddAtom('PrevTrack');
+  UnregisterHotKey(Handle, PrevTrackGlobal);
   RegisterHotKey(Handle, PrevTrackGlobal, Modifiers, Key);
   TrayItemPreviousTtrack.ShortCut:=GetIniInt('global', 'PrevTrack', 0, 0, MaxInt, FileName);
 
@@ -1150,6 +1364,14 @@ end;
 
 procedure TAmpViewMainForm.SetTopMost(TopMost: boolean);
 begin
+ if IsEmbedded then Exit;
+ if not Assigned(PlayListForm) then Exit;
+ if not Assigned(AmpViewMainForm) then Exit;
+ if PlayListForm=nil then Exit;
+ if AmpViewMainForm=nil then Exit;
+ // dumb way of catching bug. playlistform is destroyed, but assigned and not nil
+ if not Assigned(PlayListForm.PlayList) then Exit;
+
  if TopMost
   // iiaa?o anao
   then
@@ -1176,17 +1398,18 @@ var
  temp: integer;
  exist: boolean;
  FS: string;
+ top_item,bottom_item:integer;
 begin
  exist:=false;
   // I?iaa?ea iaee?ey oaeea a nienea
   for i:=0 to MyPlayList.Count-1 do
    begin
     // anee oaee o?a anou
-    if TrackFile=MyPlayList.GetFileName(i)
+    if LowerCase(TrackFile)=lowercase(MyPlayList.GetFileName(i))
      then
       begin
        exist:=true;
-       CurTrack:=i;
+       //CurTrack:=i;   // when drag, don't set to current track
        Break;
       end;
    end;
@@ -1194,7 +1417,8 @@ begin
   if exist then exit;
 
   ext:=ExtractFileExt(TrackFile);
-  FS:=GetIniString('main', 'FormatString', '%ARTI - %TITL', IniFile);
+  //FS:=GetIniString('main', 'FormatString', '%ARTI - %TITL', IniFile);
+  FS:=GetIniString('main', 'FormatString', DefaultFormatString, IniFile);
 
   if (ext='.m3u') or (ext='m3u8')
    then
@@ -1212,6 +1436,12 @@ begin
 
    if redraw then
     begin
+    top_item:=0; bottom_item:=0;
+    if PlayListForm.PlayList.Items.Count>0 then
+      begin
+      top_item:=PlayListForm.PlayList.TopItem.Index;
+      bottom_item:=top_item+PlayListForm.PlayList.VisibleRowCount-1;
+      end;
      PlayListForm.PlayList.Clear;
 //     ClearGrid();
 //     PlayListForm.PlayList.Clear;
@@ -1231,38 +1461,70 @@ begin
         end;
        PlayList.Repaint;
        RedrawPlayList;
+       if bottom_item>PlayList.Items.Count-1 then bottom_item:=PlayList.Items.Count-1;
+       if bottom_item>=0 then
+         begin
+         PlayList.Items[top_item].MakeVisible(False);
+         PlayList.Items[bottom_item].MakeVisible(False);
+         end;
       end;
     end;
 
-  CurTrack:=MyPlayList.Count-1;
+  //CurTrack:=MyPlayList.Count-1;
 end;
 
 
 
 // Ioe?uoea o?aea
-procedure TAmpViewMainForm.OpenTrack(const FileName: string);
+function TAmpViewMainForm.OpenTrack(const FileName: string):integer;
 var
  len: integer;
  FS: string;
+ sfpath:string;
 begin
+  result:=OPENTRACK_OK;
   with Player do
    begin
     if Player<>nil then
     Destroy;
 
-    Player:=TBASSPlayerX.Create(Application.Handle, PlugDir);
+    sfpath:=GetIniString('main', 'soundfontpath', '', IniFile);
+    Player:=TBASSPlayerX.Create(Application.Handle, PlugDir, sfpath);
     Player.OnPlayEnd:=GetPlayEnd;
 
-    OpenFile(FileName);
+    if not FileExists(filename) then
+      begin
+      MyPlayList.SetLength(CurTrack,-1);
+      if CurTrack=MyPlayList.Count-1 then // prevent looping in an empty list
+        begin
+        ActionStop.Execute;
+        result:=OPENTRACK_STOP;
+        exit;
+        end;
+      //ActionNextTrack.Execute;
+      result:=OPENTRACK_FILE_NOT_EXIST;
+      Exit;
+      end;
+    if not OpenFile(FileName) then
+      begin
+      ErrorMessage('Could not open '+FileName);
+      result:=OPENTRACK_ERROR;
+      Exit;
+      end;
     // Eioi?iaoey
     ProgressBar.Maximum:=Player.TrackLength div 100;
 
-    FS:=GetIniString('main', 'FormatString', '%ARTI - %TITL', IniFile);
+    FS:=GetIniString('main', 'FormatString', DefaultFormatString, IniFile);
     SkinText.TrackCaption:=Player.GetTrackCaption(FileName, FS);
 
     MyPlayList.SetText(CurTrack, SkinText.TrackCaption);
+    if MyPlayList.GetLength(CurTrack)=-1 then
+      begin
+      MyPlayList.SetLength(CurTrack, Player.GetTrackLength(FileName));
+      PlayListForm.RedrawPlayList; // redraw only if -1
+      end;
     MyPlayList.SetLength(CurTrack, Player.GetTrackLength(FileName));
-//    PlayListForm.PlayList.Perform(LB_SETTOPINDEX, Pred(CurTrack), 0);    
+//    PlayListForm.PlayList.Perform(LB_SETTOPINDEX, Pred(CurTrack), 0);
 
     SkinText.TrackCaption:=SkinText.TrackCaption+' ('+Player.GetFullTime+')';
 
@@ -1274,19 +1536,30 @@ begin
 
   DrawInfo;
 
-  len:=GetTextWidth(TrackCaptionImage.Canvas.Handle, SkinText.TrackCaption, false);
+  len:=GetTextWidth(TrackCaptionImage.Bitmap.Canvas.Handle, SkinText.TrackCaption, false);
   CaptionOffset:=(TrackCaptionImage.Width-len) div 2;
   DrawCaption(CaptionOffset);
 
-  SetNewTrayHint(AmpViewMainForm.handle, AmpViewMainForm.Icon.Handle, PChar(SkinText.TrackCaption));
+  if (ParamCount=0) or (not firsttime) then
+    begin
+    if not IsEmbedded then // isembedded is not determined on first open
+      SetNewTrayHint(AmpViewMainForm.handle, AmpViewMainForm.Icon.Handle, PChar(SkinText.TrackCaption));
+    end;
+  firsttime:=false;
 
+  IsOpening:=true;
   SetVolume(VolumeBar.Position);
+  IsOpening:=False;
 
   SetButtonStates;
+
+  //ProgressBar.ShowHint:=True;
 
   WorkTimer.Enabled:=true;
 
   SetIniString('main', 'LastFolder', ExtractFilePath(FileName), IniFile);
+
+  result:=OPENTRACK_OK;
 end;
 
 
@@ -1321,7 +1594,7 @@ begin
       if GetIniBool('main', 'UseAntiAliasing', false, IniFile)
        then MainImage.Bitmap.RenderTextW(x+1, y+1, text, 3, Color32(clBlack))
 //       else MainImage.Bitmap.RenderTextW(x+1, y+1, text, 0, Color32(clBlack));
-       else
+       else    
         begin
          MainImage.Bitmap.Canvas.Brush.Color:=clBlack;
          MainImage.Bitmap.Textout(x+1, y+1, text);
@@ -1331,7 +1604,7 @@ begin
   // io?eniaea iniiaiiai oaenoa
   // Anee ?ac?aoaii eniieuciaaiea naea?eaaiey
   if GetIniBool('main', 'UseAntiAliasing', false, IniFile)
-   then MainImage.Bitmap.RenderTextW(x, y, text, 3, Color32(Font.Color))
+   then MainImage.Bitmap.RenderTextW(x+1, y+1, text, 3, Color32(Font.Color))
 //   else MainImage.Bitmap.RenderTextW(x, y, text, 0, Color32(Font.Color));
    else
     begin
@@ -1407,19 +1680,53 @@ begin
   TrackCaptionImage.Hint:=SkinText.TrackCaption;
 end;
 
+procedure TAmpViewMainForm.ShowCustomHint(str:string;x,y:integer;disappear:Boolean);
+var hwRect:TRect;
+begin
+  if ((not IsEmbedded) and (Application.Active)) or
+     ((IsEmbedded and IsEmbeddedActive)) then
+    begin
+    hwRect := hwHint.CalcHintRect(Screen.Width, str, nil); { вычисляем размер }
+
+    OffsetRect(hwRect, -(hwRect.Right-hwRect.Left) div 2, hwRect.Top-hwRect.Bottom);
+
+    //with control.Parent.ClientToScreen(VolumeBar.BoundsRect.TopLeft) do
+    //  OffsetRect(hwRect, x, Y-5); { смещаем в нужную точку }
+    OffsetRect(hwRect, x, y);
+
+    hwHint.ActivateHint(hwRect, str); { Перемещай этим методом }
+    hwHintTimer.Enabled:=false;
+    hwHintTimer.Enabled:=disappear;
+    end;
+end;
 
 procedure TAmpViewMainForm.SetVolume(VolumeLevel: integer);
+var vol:string;
+    p:TPoint;
 begin
   SetIniInt('main', 'volume', VolumeLevel, IniFile);
+
   VolumeBar.Position:=VolumeLevel;
+  vol:=IntToStr(VolumeBar.Position)+'%';
+                      // why active is false?
+  if (UseHints) and {(AmpViewMainForm.Active) and} (VolumeBar.Visible) and not (IsOpening) then
+    begin
+    p.x:=volumebar.left+VolumeBar.ThumbPos;
+    p.y:=volumebar.top-5;
+    p:=VolumeBar.Parent.ClientToScreen(p);
+    ShowCustomHint(vol,p.x,p.y,True);
+    end;
+  if not UseHints then DrawTimer(vol);
+  LastVolUpd:=GetTickCount;
 
   Player.Volume:=VolumeLevel;
   MuteBtn.Checked:=false;
 end;
 
-
-
 procedure TAmpViewMainForm.GetNextTrack;
+var fnd:Boolean;
+    i:integer;
+    res:Integer;
 begin
  // Anee a nienea anaai 1 o?ae, oi auoiaei
  if MyPlayList.Count=1 then
@@ -1429,23 +1736,66 @@ begin
   end;
 
  // Anee oaeouee o?ae - iineaaiee, oi eaai e ia?aiio
- if CurTrack>=MyPlayList.Count-1
-  then CurTrack:=0
-  // eia?a - e neaao?uaio
-  else CurTrack:=CurTrack+1;
+  if GetIniBool('main', 'ShufflePlay', false, IniFile)=false then
+  begin
+   if CurTrack>=MyPlayList.Count-1
+    then CurTrack:=0
+    // eia?a - e neaao?uaio
+    else CurTrack:=CurTrack+1;
+  end;
+
+  if GetIniBool('main', 'ShufflePlay', false, IniFile)=true then
+    begin
+    Inc(ShuffleHistoryPos);
+    if ShuffleHistoryPos>ShuffleHistory.Count-1 then
+      begin
+      CurTrack:=Random(MyPlayList.Count);
+      ShuffleHistory.Add(MyPlayList.GetFileName(CurTrack));
+      end
+    else
+      begin
+      fnd:=false;
+      for i:=0 to MyPlayList.Count-1 do
+        begin
+        // anee oaee o?a anou
+        if LowerCase(ShuffleHistory.Strings[ShuffleHistoryPos])=LowerCase(MyPlayList.GetFileName(i)) then
+          begin
+          fnd:=True;
+          CurTrack:=i;
+          Break;
+          end;
+        end;
+      if not fnd then
+        begin
+        CurTrack:=Random(MyPlayList.Count);
+        ShuffleHistory.Add(MyPlayList.GetFileName(CurTrack));
+        ShuffleHistoryPos:=ShuffleHistory.Count-1;
+        end;
+      end;
+    end; // shuffle
 
   // Ioe?uaaai o?ae
   Player.Stop;
-  OpenTrack(MyPlayList.GetFileName(CurTrack));
-  PlayListForm.PlayList.ItemIndex:=CurTrack;
-  Player.Play;
+  res:=OpenTrack(MyPlayList.GetFileName(CurTrack));
+  if res=OPENTRACK_FILE_NOT_EXIST then
+    begin
+    GetNextTrack;
+    exit;
+    end;
+  if res=OPENTRACK_OK then
+    Player.Play;
   PlayListForm.PlayList.Repaint;
   PlayListForm.RedrawPlayList;
+  PlayListForm.PlayList.ItemIndex:=CurTrack;
+  PlayListForm.PlayList.ItemFocused:=PlayListForm.PlayList.Items[PlayListForm.PlayList.ItemIndex];
+  PlayListForm.PlayList.Selected.MakeVisible(false);
   SetButtonStates;
 end;
 
 
 procedure TAmpViewMainForm.GetPrevTrack;
+var i:integer;
+    res:integer;
 begin
  // Anee a nienea anaai 1 o?ae, oi auoiaei
  if MyPlayList.Count=1 then
@@ -1454,18 +1804,47 @@ begin
    exit;
   end;
  // Anee oaeouee o?ae - ia?aue, oi eaai e iineaaiaio
- if CurTrack<=0
-  then CurTrack:=MyPlayList.Count-1
-  // eia?a - e i?aauaouaio
-  else CurTrack:=CurTrack-1;
+  if GetIniBool('main', 'ShufflePlay', false, IniFile)=false then
+    begin
+   if CurTrack<=0
+    then CurTrack:=MyPlayList.Count-1
+    // eia?a - e i?aauaouaio
+    else CurTrack:=CurTrack-1;
+    end;
+
+  if GetIniBool('main', 'ShufflePlay', false, IniFile)=true then
+    begin
+    if ShuffleHistory.Count<=0 then Exit;
+    if ShuffleHistoryPos<=0 then exit;
+    Dec(ShuffleHistoryPos);
+    if ShuffleHistoryPos>ShuffleHistory.Count-1 then ShuffleHistoryPos:=ShuffleHistory.Count-1;
+    for i:=0 to MyPlayList.Count-1 do
+      begin
+      // anee oaee o?a anou
+      if LowerCase(ShuffleHistory.Strings[ShuffleHistoryPos])=LowerCase(MyPlayList.GetFileName(i)) then
+        begin
+        if i=CurTrack then Exit; // to prevent restarting playing song
+        CurTrack:=i;
+        Break;
+        end;
+      end;
+    end; // shuffle
 
   // Ioe?uaaai o?ae
   Player.Stop;
-  OpenTrack(MyPlayList.GetFileName(CurTrack));
-  PlayListForm.PlayList.ItemIndex:=CurTrack;
-  Player.Play;
+  res:=OpenTrack(MyPlayList.GetFileName(CurTrack));
+  if res=OPENTRACK_FILE_NOT_EXIST then
+    begin
+    GetPrevTrack;
+    exit;
+    end;
+  if res=OPENTRACK_OK then
+    Player.Play;
   PlayListForm.PlayList.Repaint;
   PlayListForm.RedrawPlayList;
+  PlayListForm.PlayList.ItemIndex:=CurTrack;
+  PlayListForm.PlayList.ItemFocused:=PlayListForm.PlayList.Items[PlayListForm.PlayList.ItemIndex];
+  PlayListForm.PlayList.Selected.MakeVisible(false);
   SetButtonStates;
 end;
 
@@ -1482,6 +1861,7 @@ var
  exists: boolean;
 begin
  FilesList:=TStringList.Create;
+ FilesList.Clear;
 
  dir:=ExtractFilePath(MyPlayList.GetFileName(CurTrack));
  // Neaie?iaaiea iaiee
@@ -1490,7 +1870,7 @@ begin
   // Auae?aai neaao?uee
   for i:=0 to FilesList.Count-1 do
    begin
-    if FilesList[i]=ExtractFileName(MyPlayList.GetFileName(CurTrack))
+    if LowerCase(FilesList[i])=LowerCase(ExtractFileName(MyPlayList.GetFileName(CurTrack)))
      then
       begin
        if i=FilesList.Count-1
@@ -1509,7 +1889,7 @@ begin
   for i:=0 to MyPlayList.Count-1 do
    begin
     // anee oaee o?a anou
-    if fn=MyPlayList.GetFileName(i)
+    if LowerCase(fn)=LowerCase(MyPlayList.GetFileName(i))
      then
       begin
        CurTrack:=i;
@@ -1526,8 +1906,13 @@ begin
       CurTrack:=MyPlayList.Count-1;
      end;
     Player.Stop;
-    OpenTrack(MyPlayList.GetFileName(CurTrack));
-    Player.Play;
+    if OpenTrack(MyPlayList.GetFileName(CurTrack))=OPENTRACK_OK then
+      Player.Play;
+    PlayListForm.PlayList.Repaint;
+    PlayListForm.RedrawPlayList;
+    PlayListForm.PlayList.ItemIndex:=CurTrack;
+    PlayListForm.PlayList.ItemFocused:=PlayListForm.PlayList.Items[PlayListForm.PlayList.ItemIndex];
+    PlayListForm.PlayList.Selected.MakeVisible(false);
     SetButtonStates;
    end;
 end;
@@ -1547,7 +1932,7 @@ begin
  len:=CData.cbData;
  for i:=0 to len-1 do
   begin
-   FileName:=FileName+(PChar(CData.lpData)+i)^;
+   FileName:=FileName+(PAnsiChar(CData.lpData)+i)^;
   end;
 
  // I?iaa?ea iaee?ey oaeea
@@ -1559,8 +1944,24 @@ begin
  Player.Stop;
  AddFile(FileName, true);
 
- OpenTrack(MyPlayList.GetFileName(CurTrack));
- Player.Play;
+ for i:=0 to MyPlayList.Count-1 do
+   begin
+    // anee oaee o?a anou
+    if LowerCase(FileName)=LowerCase(MyPlayList.GetFileName(i))
+     then
+      begin
+       CurTrack:=i;
+       Break;
+      end;
+   end;
+
+ if OpenTrack(MyPlayList.GetFileName(CurTrack))=OPENTRACK_OK then
+   Player.Play;
+ PlayListForm.PlayList.Repaint;
+ PlayListForm.RedrawPlayList;
+ PlayListForm.PlayList.ItemIndex:=CurTrack;
+ PlayListForm.PlayList.ItemFocused:=PlayListForm.PlayList.Items[PlayListForm.PlayList.ItemIndex];
+ PlayListForm.PlayList.Selected.MakeVisible(false);
 
  SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
  SetButtonStates;
@@ -1569,6 +1970,7 @@ end;
 procedure TAmpViewMainForm.DrawTimer(value: string);
 var
  p1, p2: TPoint;
+ left1:integer;
 begin
   p1.X:=TimerImage.Left;
   p1.Y:=TimerImage.Top;
@@ -1576,6 +1978,9 @@ begin
   p2.Y:=TimerImage.Top+TimerImage.Height;
 
   TimerImage.Bitmap.Draw(0, 0, MakeRect(p1.x, p1.Y, p2.X,p2.y), MainPicture);
+
+  left1:=(TimerImage.Width-TimerImage.Bitmap.TextWidth(value)) div 2;
+
   // Anee ?ac?aoaii eniieuciaaiea oaie
   if GetIniBool('main', 'UseShadows', false, IniFile) then
    begin
@@ -1584,28 +1989,58 @@ begin
      begin
       // Anee ?ac?aoaii eniieuciaaiea naea?eaaiey
       if GetIniBool('main', 'UseAntiAliasing', false, IniFile)
-       then TimerImage.Bitmap.RenderTextW(1, 1, value, 3, Color32(clBlack))
+       then TimerImage.Bitmap.RenderTextW(left1, 1, value, 3, Color32(clBlack))
 //       else TimerImage.Bitmap.RenderTextW(1, 1, value, 0, Color32(clBlack));
        else
         begin
          TimerImage.Bitmap.Canvas.Brush.Color:=clBlack;
-         TimerImage.Bitmap.TextOut(1, 1, value);
+         TimerImage.Bitmap.TextOut(left1, 1, value);
         end;
      end;
    end;
   // ?enoai oaeno
   // Anee ?ac?aoaii eniieuciaaiea naea?eaaiey
    if GetIniBool('main', 'UseAntiAliasing', false, IniFile)
-    then TimerImage.Bitmap.RenderTextW(0, 0, value, 3, Color32(TimerImage.Bitmap.Font.Color))
+    then TimerImage.Bitmap.RenderTextW(left1, 0, value, 3, Color32(TimerImage.Bitmap.Font.Color))
 //    else TimerImage.Bitmap.RenderText(0, 0,  value, 0, Color32(TimerImage.Bitmap.Font.Color));
     else
      begin
       TimerImage.Bitmap.Canvas.Brush.Color:=TimerImage.Bitmap.Font.Color;
-      TimerImage.Bitmap.TextOut(1, 1, value);
-     end; 
+      TimerImage.Bitmap.TextOut(left1, 1, value);
+     end;
   //
 end;
 
+procedure TAmpViewMainForm.AddFolderRec(const Path: string;SL:TStrings);
+var SR:TSearchRec;
+    a:integer;
+    fnd:Boolean;
+begin
+ if FindFirst(Path+'\*.*', faAnyFile, SR)=0 then
+   repeat
+   if sr.Name='.' then continue;
+   if sr.Name='..' then continue;
+   if sr.Attr and faDirectory=faDirectory then
+     begin
+     AddFolderRec(Path+'\'+sr.Name,SL);
+     continue;
+     end;
+   fnd:=false;
+   for a:=0 to FileFormatsSL.Count-1 do
+     begin
+     if lowercase(ExtractFileExt(sr.Name))=lowercase(ExtractFileExt(FileFormatsSL.Strings[a])) then
+       begin
+       fnd:=true;
+       break;
+       end;
+     end;
+   if fnd then
+     begin
+     SL.Add(Path+'\'+SR.Name);
+     end;
+   until FindNext(sr)<>0;
+ FindClose(SR);
+end;
 
 // Aiaaaeaiea iaiee e nieneo
 procedure TAmpViewMainForm.AddFolder(const Path: string);
@@ -1613,15 +2048,25 @@ var
  i: integer;
  FilesList: TStringList;
  temp: integer;
+ top_item,bottom_item:integer;
 begin
  FilesList:=TStringList.Create;
- ScanDir(Path+'\', FilesList);
+ FilesList.Clear;
+
+ AddFolderRec(Path,FilesList);
+
+ {ScanDir(Path+'\', FilesList);}
 
  for i:=0 to FilesList.Count-1 do
   begin
-   AddFile(Path+'\'+FilesList[i], false);
+   AddFile({Path+'\'+}FilesList[i], false);
   end;
-
+  top_item:=0; bottom_item:=0;
+  if PlayListForm.PlayList.Items.Count>0 then
+    begin
+    top_item:=PlayListForm.PlayList.TopItem.Index;
+    bottom_item:=top_item+PlayListForm.PlayList.VisibleRowCount-1;
+    end;
   PlayListForm.PlayList.Clear;
 //  ClearGrid(PlayListForm.PlayList);
   temp:=MyPlayList.Count-1;
@@ -1642,6 +2087,12 @@ begin
      end;
     PlayList.Repaint;
     PlayListForm.RedrawPlayList;
+    if bottom_item>PlayList.Items.Count-1 then bottom_item:=PlayList.Items.Count-1;
+    if bottom_item>=0 then
+      begin
+      PlayList.Items[top_item].MakeVisible(False);
+      PlayList.Items[bottom_item].MakeVisible(False);
+      end;
   end;
 end;
 
@@ -1651,13 +2102,14 @@ const
   CS_DROPSHADOW = $00020000;
 begin
   inherited;
-  if DetectWinVersion=wvXP
-   then Params.WindowClass.Style := Params.WindowClass.Style or CS_DROPSHADOW;
+  //if DetectWinVersion=wvXP   // shadow from main form on a playlist form is not that good
+  // then Params.WindowClass.Style := Params.WindowClass.Style or CS_DROPSHADOW;
 end;
 
 
 procedure TAmpViewMainForm.WMHotkey(var msg: TWMHotkey);
 begin
+ if OptionsForm.Visible then Exit;
  if msg.hotkey=PlayGlobal then ActionPlay.Execute;
  if msg.hotkey=StopGlobal then ActionStop.Execute;
  if msg.hotkey=PauseGlobal then ActionPause.Execute;
@@ -1672,6 +2124,7 @@ end;
 
 procedure TAmpViewMainForm.ActionCloseExecute(Sender: TObject);
 begin
+  Player.Stop;
   MyPlayList.SaveM3U(PlugDir+'\PlayLists\'+GetUserNameString+'.m3u');
   Player.Destroy;
   Close;
@@ -1689,55 +2142,257 @@ procedure TAmpViewMainForm.ActionRewindExecute(Sender: TObject);
 var
  step: cardinal;
  pos: cardinal;
+ pos1:double;
 begin
-  step:=GetIniInt('main', 'ScrollStep', 5, 1,100, IniFile);
-  pos:=((Player.Position div 100)-step*1000)*100;
-  Player.Position:=pos;
+  step:=GetIniInt('main', 'ScrollStep', 3, 1,100, IniFile);
+  //pos:=((Player.Position div 100)-step*1000)*100;
+  //Player.Position:=pos;
+  pos1:=Player.PositionSeconds;
+  Player.PositionSeconds:=pos1-step*accel;
   ProgressBar.Position:=Player.Position div 100;
+  WorkTimerTimer(Self);
 end;
 
 procedure TAmpViewMainForm.ActionForwardExecute(Sender: TObject);
 var
  step: cardinal;
  pos: cardinal;
+ pos1:double;
 begin
-  step:=GetIniInt('main', 'ScrollStep', 5, 1,100, IniFile);
-  pos:=((Player.Position div 100)+step*1000)*100;
-  Player.Position:=pos;
+  step:=GetIniInt('main', 'ScrollStep', 3, 1,100, IniFile);
+  //pos:=((Player.Position div 100)+step*1000)*100;
+  //Player.Position:=pos;
+  pos1:=Player.PositionSeconds;
+  Player.PositionSeconds:=pos1+step*accel;
   ProgressBar.Position:=Player.Position div 100;
+  WorkTimerTimer(Self);
 end;
 
 procedure TAmpViewMainForm.ActionVolumeUpExecute(Sender: TObject);
 var
  pos: integer;
+ //vol:string;
 begin
   pos:=VolumeBar.Position+10;
   if pos>=VolumeBar.Maximum then pos:=VolumeBar.Maximum;
   SetVolume(pos);
+  //vol:=IntToStr(VolumeBar.Position)+'%';
+  //DrawTimer(vol);
+  //LastVolUpd:=GetTickCount;
 end;
 
 procedure TAmpViewMainForm.ActionVolumeDownExecute(Sender: TObject);
 var
  pos: integer;
+ //vol:string;
 begin
   pos:=VolumeBar.Position-10;
-  if pos<=0 then pos:=1;
+  if pos<=0 then pos:=0;
   SetVolume(pos);
+  //vol:=IntToStr(VolumeBar.Position)+'%';
+  //DrawTimer(vol);
+  //LastVolUpd:=GetTickCount;
+end;
+
+procedure GetFileIcon(ext:string;var Icon:TIcon;var Desc:string);
+var
+  iCount : integer;
+  Extension : string;
+  FileInfo : SHFILEINFO;
+begin
+
+  try
+  // Loop through all stored extensions and retrieve relevant info
+    Extension := '*.'+ext;
+
+    // Get description type
+    SHGetFileInfo(PChar(Extension),
+                  FILE_ATTRIBUTE_NORMAL,
+                  FileInfo,
+                  SizeOf(FileInfo),
+                  SHGFI_TYPENAME or SHGFI_USEFILEATTRIBUTES
+                  );
+    Desc:=FileInfo.szTypeName;
+
+    // Get icon and copy into ImageList
+    SHGetFileInfo(PChar(Extension),
+                  FILE_ATTRIBUTE_NORMAL,
+                  FileInfo,
+                  SizeOf(FileInfo),
+                  SHGFI_ICON {or SHGFI_SMALLICON }or
+                  SHGFI_SYSICONINDEX or SHGFI_USEFILEATTRIBUTES
+                  );
+    Icon.Handle := FileInfo.hIcon;
+  finally
+
+  end;
+end;
+
+function ReportTime(const Name: string; const FileTime: TFileTime):string;
+var
+  SystemTime, LocalTime: TSystemTime;
+begin
+  if not FileTimeToSystemTime(FileTime, SystemTime) then
+    RaiseLastOSError;
+  if not SystemTimeToTzSpecificLocalTime(nil, SystemTime, LocalTime) then
+    RaiseLastOSError;
+  result:=DateTimeToStr(SystemTimeToDateTime(LocalTime));
 end;
 
 procedure TAmpViewMainForm.ActionFileInfoExecute(Sender: TObject);
-//var
-// FileName: string;
+var
+ FileName: string;
+ br:string;
+ fad: TWin32FileAttributeData;
+ sizestring,sizebytes:string;
+ s:integer;
+ FI:TFileInfo;
+ Icon:TIcon;
+ icondesc:string;
+ LI:TListItem;
+ SL:TStringList;
+ a:integer;
+ lf:string;
 begin
-// if MyPlayList.Count<=0 then exit;
+ if MyPlayList.Count<=0 then exit;
+ FileName:='';
+ with PlayListForm do
+  begin
+   if (PlayList.ItemIndex>=0) and (PlayList.Focused)
+    then
+      begin
+      FileName:=MyPlayList.GetFileName(PlayList.ItemIndex);
+      FileInfoForm.caption:=MyPlayList.GetText(PlayList.ItemIndex);
+      end
+    else
+      begin
+      FileName:=MyPlayList.GetFileName(CurTrack);
+      FileInfoForm.caption:=MyPlayList.GetText(CurTrack);
+      end;
+  end;
+if not fileexists(FileName) then
+  begin
+  ErrorMessage('File not found: '+FileName);
+  exit;
+  end;
+Icon:=TIcon.Create;
+GetFileIcon(ExtractFileExt(FileName),Icon,icondesc);
+FileInfoForm.FileIconImage.Picture.Assign(Icon);
+FileInfoForm.FileIconImage.Hint:=icondesc;
+FileInfoForm.FileIconImage.ShowHint:=True;
+Icon.Free;
 
-// with PlayListForm do
-//  begin
-//   if (PlayList.ItemIndex>=0) and (PlayList.Focused)
-//    then FileName:=MyPlayList.GetFileName(PlayList.ItemIndex)
-//    else FileName:=MyPlayList.GetFileName(CurTrack);
-//  end;
+ lf:=PlugDir+'\Language\'+GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile);
 
+FileInfoForm.FileNameEdit.Text:={ExtractFileName(}FileName{)};
+FileInfoForm.FileNameEdit.Hint:=FileName;
+FileInfoForm.FileNameEdit.ShowHint:=True;
+FI:=Player.GetFileInfo(FileName);
+sizestring:='';
+s:=FI.FileSize;
+sizebytes:=IntToStr(s)+' '+GetIniString('FileInfo', 'FI_bytes', 'bytes', lf);
+if s>1024*1024*1024 then sizestring:=floattostrf(s/1024/1024/1024,ffFixed,7,2)+' GB ('+sizebytes+')' else
+if s>1024*1024 then sizestring:=floattostrf(s/1024/1024,ffFixed,7,2)+' MB ('+sizebytes+')' else
+if s>1024 then sizestring:=floattostrf(s/1024,ffFixed,7,2)+' kB ('+sizebytes+')'
+else sizestring:=sizebytes;
+FileInfoForm.FileSizeEdit.Text:=sizestring;
+  if not GetFileAttributesEx(PChar(FileName), GetFileExInfoStandard, @fad) then
+    RaiseLastOSError;
+FileInfoForm.LastModifiedEdit.Text:=ReportTime(FileName,fad.ftLastWriteTime);
+FileInfoForm.TypeEdit.Text:=FI.Format;
+FileInfoForm.DurationEdit.Text:=FI.Duration;
+FileInfoForm.BitRateEdit.Text:=FI.BitRate;
+FileInfoForm.SampleRateEdit.Text:=FI.SampleRate;
+FileInfoForm.ChannelModeEdit.Text:=FI.ChannelMode;
+
+FileInfoForm.ListView1.Clear;
+if FI.Tags.Artist<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Artist', 'Artist', lf);
+  LI.SubItems.Add(FI.Tags.Artist);
+  end;
+if FI.Tags.Title<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Title', 'Title', lf);
+  LI.SubItems.Add(FI.Tags.Title);
+  end;
+if FI.Tags.Album<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Album', 'Album', lf);
+  LI.SubItems.Add(FI.Tags.Album);
+  end;
+if FI.Tags.Genre<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Genre', 'Genre', lf);
+  LI.SubItems.Add(FI.Tags.Genre);
+  end;
+if FI.Tags.Year<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Year', 'Year', lf);
+  LI.SubItems.Add(FI.Tags.Year);
+  end;
+if FI.Tags.Track<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Track', 'Track', lf);
+  LI.SubItems.Add(FI.Tags.Track);
+  end;
+if FI.Tags.Composer<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Composer', 'Composer', lf);
+  LI.SubItems.Add(FI.Tags.Composer);
+  end;
+if FI.Tags.Copyright<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Copyright', 'Copyright', lf);
+  LI.SubItems.Add(FI.Tags.Copyright);
+  end;
+if FI.Tags.Subtitle<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Subtitle', 'Subtitle', lf);
+  LI.SubItems.Add(FI.Tags.Subtitle);
+  end;
+if FI.Tags.AlbumArtist<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_AlbumArtist', 'AlbumArtist', lf);
+  LI.SubItems.Add(FI.Tags.AlbumArtist);
+  end;
+if FI.Tags.DiscNumber<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_DiscNumber', 'DiscNumber', lf);
+  LI.SubItems.Add(FI.Tags.DiscNumber);
+  end;
+if FI.Tags.Publisher<>'' then
+  begin
+  LI:=FileInfoForm.ListView1.Items.Add;
+  LI.Caption:=GetIniString('FileInfo', 'FI_tag_Publisher', 'Publisher', lf);
+  LI.SubItems.Add(FI.Tags.Publisher);
+  end;
+if FI.Tags.Comment<>'' then
+  begin
+  SL:=TStringList.Create;
+  SL.Clear;
+  SL.Text:=FI.Tags.Comment;
+  for a:=0 to SL.Count-1 do
+    begin
+    LI:=FileInfoForm.ListView1.Items.Add;
+    if a=0 then LI.Caption:=GetIniString('FileInfo', 'FI_tag_Comment', 'Comment', lf);
+    LI.SubItems.Add(SL.Strings[a]);
+    end;
+  SL.Free;
+  end;
+
+FileInfoForm.ShowModal;
 end;
 
 procedure TAmpViewMainForm.ActionMuteExecute(Sender: TObject);
@@ -1809,6 +2464,7 @@ procedure TAmpViewMainForm.ActionTopMostExecute(Sender: TObject);
 var
  TopMost: boolean;
 begin
+ if IsEmbedded then exit;
  TopMost:=ActionTopMost.Checked;
  SetIniBool('main', 'TopMost', not TopMost, IniFile);
  SetTopMost(not TopMost);
@@ -1875,8 +2531,8 @@ begin
 
     // Ioe?uoea oaeea
     Player.Stop;
-    OpenTrack(MyPlayList.GetFileName(CurTrack));
-    Player.Play;
+    if OpenTrack(MyPlayList.GetFileName(CurTrack))=OPENTRACK_OK then
+      Player.Play;
     SetButtonStates;
 
 
@@ -1884,6 +2540,7 @@ end;
 
 procedure TAmpViewMainForm.ActionMinimizeToTrayExecute(Sender: TObject);
 begin
+ if IsEmbedded then exit;
 // Application.Minimize;
  WorkTimer.Enabled:=false;
  //
@@ -1894,6 +2551,7 @@ end;
 
 procedure TAmpViewMainForm.ActionRestoreFromTrayExecute(Sender: TObject);
 begin
+ if IsEmbedded then exit;
  if Player.Mode=pmPlayed then
   begin
    WorkTimerTimer(self);
@@ -1915,33 +2573,53 @@ end;
 procedure TAmpViewMainForm.ActionCaseWindowExecute(Sender: TObject);
 begin
   if AmpViewMainForm.Focused
-   then PlayListForm.PlayList.SetFocus
+   then
+     begin
+     if not PlayListForm.Visible then Exit;
+     if not PlayListForm.PlayList.Visible then Exit;
+     PlayListForm.PlayList.SetFocus;
+     end
    else AmpViewMainForm.SetFocus;
 end;
 
 procedure TAmpViewMainForm.WorkTimerTimer(Sender: TObject);
 var
- time: string[6];
+ time: string[9];
  Len: integer;
 begin
 
   if (not ProgressBar.Pressed)
-   then ProgressBar.Position:=Player.Position div 100
-   else exit;
+   then ProgressBar.Position:=Player.Position div 100;
+   //else exit; // actually not exit
+  UseHints:=GetIniBool('main', 'UseProgessBarHints', true, IniFile);
   time:=Player.GetTrackTime(GetIniBool('main', 'timeleftmode', false, IniFile));
-  DrawTimer(time);
+  if LastVolUpd>GetTickCount then LastVolUpd:=GetTickCount; // not needed actually. only if wrong value/overflow
+  if ((not UseHints) and (not VolumeBar.Pressed) and (not ProgressBar.Pressed) and (GetTickCount-LastVolUpd>500))
+  or (UseHints) then
+    begin
+    DrawTimer(time);
+    LastVolUpd:=GetTickCount;
+    end;
   //
 
-  len:=GetTextWidth(TrackCaptionImage.Canvas.Handle, SkinText.TrackCaption, false);
+  if LastScrollUpd>GetTickCount then LastScrollUpd:=GetTickCount;
 
-  // Прокрутка заголовка
-  if len<=TrackCaptionImage.Width then exit;
+  if GetTickCount-LastScrollUpd>WorkTimer.Interval then
+    begin
+    len:=GetTextWidth(TrackCaptionImage.Bitmap.Canvas.Handle, SkinText.TrackCaption, false);
 
-  if CaptionOffset<=(-len)
-   then CaptionOffset:=len
-   else CaptionOffset:=CaptionOffset-3;
+    // Прокрутка заголовка
+    if len<=TrackCaptionImage.Width then exit;
 
-  DrawCaption(CaptionOffset);
+    if CaptionOffset<(-len)
+     then
+     CaptionOffset:=TrackCaptionImage.Width
+     else CaptionOffset:=CaptionOffset-3;
+
+    DrawCaption(CaptionOffset);
+
+    LastScrollUpd:=GetTickCount;
+    end;
 end;
 
 procedure TAmpViewMainForm.TimerImageDblClick(Sender: TObject);
@@ -1954,11 +2632,13 @@ end;
 
 procedure TAmpViewMainForm.MinBtnClick(Sender: TObject);
 begin
+  if IsEmbedded then Exit;
   ActionMinimizeToTray.Execute;
 end;
 
 procedure TAmpViewMainForm.CloseBtnClick(Sender: TObject);
 begin
+  if IsEmbedded then Exit;
   ActionClose.Execute;
 end;
 
@@ -1974,10 +2654,30 @@ end;
 
 // Индикатор прогресса
 procedure TAmpViewMainForm.ProgressBarMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+var
+ time: string[9];
+ left: boolean;
+ pos: cardinal;
 begin
- if ProgressBar.Pressed then exit;
- Player.Position:=ProgressBar.Position*100;
+{ if ProgressBar.Pressed then exit;
+// in this implementation, the next line will be never executed
+ Player.Position:=ProgressBar.Position*100;}
+
+ if not UseHints then
+   begin
+   pos:=ProgressBar.Position*100;
+
+   left:=GetIniBool('main', 'timeleftmode', false, IniFile);
+
+    if left
+     then time:='-'+Player.BassLenToTime(Player.TrackLength-Pos)
+     else time:=' '+Player.BassLenToTime(Pos);
+
+    DrawTimer(time);
+   end;
+
 end;
+
 procedure TAmpViewMainForm.ProgressBarMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
 begin
 // if not ProgressBar.Pressed then exit;
@@ -1985,18 +2685,235 @@ begin
 end;
 
 
+procedure TAmpViewMainForm.ProgressBarMouseMove(Sender: TObject;  Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+var
+ time: string[9];
+ left: boolean;
+ pos: cardinal;
+ hhint:string;
+ p:TPoint;
+begin
+
+  hhint:=Player.BassLenToTime(ProgressBar.MouseOverPos*100);
+  //ProgressBar.Hint:=hhint;
+  //Application.ActivateHint(ProgressBar.ClientToScreen(Point(x,y)));
+
+  if UseHints then
+    begin
+    p.x:=ProgressBar.left+x+5;
+    p.y:=ProgressBar.top-10;
+    p:=ProgressBar.Parent.ClientToScreen(p);
+
+    if Player.TrackFile<>'' then
+      ShowCustomHint(hhint,p.x,p.y,false);
+    end;
+
+ if not ProgressBar.Pressed then exit;
+
+ if not UseHints then
+   begin
+   pos:=ProgressBar.Position*100;
+
+   left:=GetIniBool('main', 'timeleftmode', false, IniFile);
+
+    if left
+     then time:='-'+Player.BassLenToTime(Player.TrackLength-Pos)
+     else time:=' '+Player.BassLenToTime(Pos);
+
+    DrawTimer(time);
+   end;
+   
+end;
+
 // Регулятор громкости
 procedure TAmpViewMainForm.VolumeBarMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+//var vol:string;
 begin
- if VolumeBar.Pressed then exit;
+ //if VolumeBar.Pressed then exit;
+
  SetVolume(VolumeBar.Position);
+//vol:=IntToStr(VolumeBar.Position)+'%';
+//DrawTimer(vol);
 end;
 
 procedure TAmpViewMainForm.VolumeBarMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+//var vol:string;
 begin
  if not VolumeBar.Pressed then exit;
+//vol:=IntToStr(VolumeBar.Position)+'%';
+//DrawTimer(vol);
  SetVolume(VolumeBar.Position);
+end;
+
+function TAmpViewMainForm.IsEmbedded:boolean;
+var
+   class1 : array[0 .. 255] of Char;
+   p:HWND;
+begin
+result:=false;
+p:=GetAncestor(Handle,GA_PARENT);
+if p>0 then
+  begin
+  GetClassName(p, class1, 256);
+  if string(class1)='AMPVIEW_PLAYER' then result:=True;
+  end;
+end;
+
+function TAmpViewMainForm.IsEmbeddedActive:boolean;
+var
+   class1 : array[0 .. 255] of Char;
+   p,pp,ppp:HWND;
+   aw:HWND;
+begin
+result:=false;
+p:=GetAncestor(Handle,GA_PARENT);
+if p>0 then
+  begin
+  GetClassName(p, class1, 256);
+  if string(class1)<>'AMPVIEW_PLAYER' then p:=0;
+  end;
+if p=0 then Exit;
+pp:=GetAncestor(p,GA_PARENT);
+if pp>0 then
+  begin
+  GetClassName(pp, class1, 256);
+  if string(class1)<>'TLister' then pp:=0;
+  end;
+if pp=0 then exit;
+ppp:=GetAncestor(pp,GA_PARENT);
+if ppp>0 then
+  begin
+  GetClassName(ppp, class1, 256);
+  if string(class1)<>'TTOTAL_CMD' then ppp:=0;
+  end;
+aw:=GetActiveWindow;
+if (aw=Handle) or (aw=PlayListForm.Handle) or (aw=p) or (aw=pp) or (aw=ppp) then result:=True;
+end;
+
+procedure TAmpViewMainForm.DoDeactivate;
+var
+   class1 , str1 : array[0 .. 255] of Char;
+   p,res,win:HWND;
+   a:integer;
+begin
+{win:=Handle;
+GetClassName(win, class1, 256);
+GetWindowText(win, str1, 256);
+Memo1.Lines.Add('handle: '+IntToStr(win));
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+Memo1.Lines.Add('');
+for a:=1 to 5 do
+begin
+p:=GetParent(win);
+Memo1.Lines.Add('parent handle: '+IntToStr(p));
+if p=0 then break;
+GetClassName(p, class1, 256);
+GetWindowText(p, str1, 256);
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+win:=p;
+end;
+Memo1.Lines.Add('');
+win:=Handle;
+for a:=1 to 5 do
+begin
+p:=GetAncestor(win,GA_PARENT);
+Memo1.Lines.Add('ancestor handle: '+IntToStr(p));
+if p=0 then break;
+GetClassName(p, class1, 256);
+GetWindowText(p, str1, 256);
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+win:=p;
+end;
+
+Memo1.Lines.Add('');
+win:=Handle;
+for a:=1 to 5 do
+begin
+p:=GetWindow(win,GW_OWNER);
+Memo1.Lines.Add('owner handle: '+IntToStr(p));
+if p=0 then break;
+GetClassName(p, class1, 256);
+GetWindowText(p, str1, 256);
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+win:=p;
+end;
+
+Memo1.Lines.Add('');
+win:=GetActiveWindow;
+GetClassName(win, class1, 256);
+GetWindowText(win, str1, 256);
+Memo1.Lines.Add('active window: '+IntToStr(win));
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+
+Memo1.Lines.Add('');
+win:=GetForegroundWindow;
+GetClassName(win, class1, 256);
+GetWindowText(win, str1, 256);
+Memo1.Lines.Add('foreground window: '+IntToStr(win));
+Memo1.Lines.Add('class: '+string(class1));
+Memo1.Lines.Add('str: '+string(str1));
+
+Memo1.Lines.Add('');
+win:=GetFocus;
+GetClassName(win, class1, 256);
+GetWindowText(win, str1, 256);
+Memo1.Lines.Add('focus window: '+IntToStr(win));
+Memo1.Lines.Add('class: '+string(class1));
+//Memo1.Lines.Add('str: '+string(str1));   }
+
+{p:=GetAncestor(Handle,GA_PARENT);
+if p>0 then
+  begin
+  GetClassName(p, class1, 256);
+  if string(class1)='AMPVIEW_PLAYER' then
+    begin
+    //SendMessage(p, WM_SYSCOMMAND, SC_RESTORE, 0);
+    //ShowWindow(p,SW_SHOW);
+    //AttachThreadInput(GetCurrentThreadId, GetWindowThreadProcessId(p, nil), True);
+    SetForegroundWindow(p);
+    SetActiveWindow(p);
+    res:=Windows.SetFocus(p);
+    end;
+  end;   }
+end;
+
+procedure TAmpViewMainForm.PostMsgParent(msg:TMessage);
+var
+   class1 : array[0 .. 255] of Char;
+   p,res:HWND;
+begin
+p:=GetAncestor(Handle,GA_PARENT);
+if p>0 then
+  begin
+  GetClassName(p, class1, 256);
+  if string(class1)='AMPVIEW_PLAYER' then
+    begin
+    SendMessage(p, msg.Msg, msg.WParam, msg.LParam);
+    end;
+  end;
+end;
+
+function TAmpViewMainForm.GetParentHandle:HWND;
+var
+   class1 : array[0 .. 255] of Char;
+   p,res:HWND;
+begin
+result:=0;
+p:=GetAncestor(Handle,GA_PARENT);
+if p>0 then
+  begin
+  GetClassName(p, class1, 256);
+  if string(class1)='AMPVIEW_PLAYER' then
+    begin
+    result:=p;
+    end;
+  end;
 end;
 
 procedure TAmpViewMainForm.MainImageMouseDown(Sender: TObject;
@@ -2007,6 +2924,7 @@ begin
   if Button <> mbRight then
    begin
     // Aee??aiai ?a?ei ia?aoaneeaaiey
+    if IsEmbedded then exit;
     DragMode := true;
     x0 := x;
     y0 := y;
@@ -2020,7 +2938,20 @@ end;
 
 procedure TAmpViewMainForm.MainImageMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
+var
+  MyPoint : TPoint;
 begin
+MyPoint := ProgressBar.ScreenToClient(Mouse.CursorPos);
+  if PtInRect(ProgressBar.ClientRect, MyPoint) then
+  begin
+    // Mouse is inside the control, do something here
+  end else
+    begin
+    if not (ssCtrl in Shift) then
+      hwHint.ReleaseHandle;;
+    end;
+
+  if not (ssLeft in Shift) and not (ssMiddle in Shift) then dragmode:=false;
     // Ia?aiauaai oi?io
   if DragMode = true then
   begin
@@ -2074,23 +3005,6 @@ begin
   mouse_event(MOUSEEVENTF_LEFTUP, 0,0, 0,0);
 end;
 
-procedure TAmpViewMainForm.ProgressBarMouseMove(Sender: TObject;  Shift: TShiftState; X, Y: Integer; Layer: TCustomLayer);
-var
- time: string[6];
- left: boolean;
- pos: cardinal;
-begin
- if not ProgressBar.Pressed then exit;
- pos:=ProgressBar.Position*100;
-
- left:=GetIniBool('main', 'timeleftmode', false, IniFile);
-
-  if left
-   then time:='-'+Player.BassLenToTime(Player.TrackLength-Pos)
-   else time:=' '+Player.BassLenToTime(Pos);
-
-  DrawTimer(time);
-end;
 
 procedure TAmpViewMainForm.OpenDialogClose(Sender: TObject);
 begin
@@ -2172,6 +3086,8 @@ end;
 
 procedure TAmpViewMainForm.FormDestroy(Sender: TObject);
 begin
+  FileFormatsSL.Free;
+  hwHint.Free;
   DeleteTrayIcon(AmpViewMainForm.Handle);
 end;
 
@@ -2179,13 +3095,148 @@ end;
 // Установка поверх всех окон
 procedure TAmpViewMainForm.WMDeactivate(var Msg: TMessage);
 begin
+
+ //exit; // actually bugs when deactivates
+ hwHint.ReleaseHandle;
  SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
-end;
-procedure TAmpViewMainForm.WMActivate(var Msg: TMessage);
-begin
- SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
+ inherited;
 end;
 
+procedure TAmpViewMainForm.WMActivateApp(var Msg: TMessage);
+begin
+{if IsEmbedded then
+  if msg.WParam<>0 then DoDeactivate; }
+ //exit; // actually bugs when deactivates
+ if msg.WParam=0 then hwHint.ReleaseHandle; // does not work
+ SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
+ inherited;
+end;
+
+procedure TAmpViewMainForm.WMActivate(var Msg: TMessage);
+begin
+if msg.WParam=0 then hwHint.ReleaseHandle; // does not work
+inherited;
+end;
+
+procedure TAmpViewMainForm.WMPreventLoop(var Msg: TMessage);
+begin
+PreventLoop:=Msg.WParam=1;
+end;
+
+procedure TAmpViewMainForm.WMAttached(var Msg: TMessage);
+begin
+if IsEmbedded then
+  begin
+  DeleteTrayIcon(AmpViewMainForm.Handle);
+  if hMutex<>0 then
+    begin
+    CloseHandle(hMutex);
+    hMutex:=0;
+    ActionClose.ShortCut:=0;
+    ActionClose.SecondaryShortCuts.Clear;
+    ActionClose.Visible:=false;
+    if msg.WParam=0 then // quickview
+      begin
+      ActionDetach.Enabled:=True;
+      ActionDetach.Visible:=True;
+      end;
+    ActionTopMost.Enabled:=false;
+    ActionTopMost.Visible:=false;
+    CloseBtn.Visible:=false;
+    MinBtn.Visible:=false;
+    end;
+  end;
+end;
+
+procedure TAmpViewMainForm.WMDetached(var Msg: TMessage);
+begin
+hMutex:= CreateMutex(nil, true , 'AmpView_MediaPlayer');
+ActionClose.ShortCut:=TextToHotKey('Esc',true);
+ActionClose.SecondaryShortCuts.Add('Alt+F4');
+ActionClose.Visible:=true;
+ActionDetach.Enabled:=false;
+ActionDetach.Visible:=false;
+ActionTopMost.Enabled:=true;
+ActionTopMost.Visible:=true;
+CloseBtn.Visible:=true;
+MinBtn.Visible:=true;
+SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
+end;
+
+
+procedure TAmpViewMainForm.WMKeyDown(var Msg: TMessage);
+var prmsg:TMessage;
+begin
+
+if (msg.WParam=VK_UP) then
+  begin
+  if not PlayListForm.Visible then Exit;
+  if not PlayListForm.PlayList.Visible then Exit;
+  PlayListForm.SetFocus;
+  PlayListForm.PlayList.SetFocus;
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYDOWN,VK_UP,0);
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYUP,VK_UP,0);
+  Exit;
+  end;
+if (msg.WParam=VK_DOWN) then
+  begin
+  if not PlayListForm.Visible then Exit;
+  if not PlayListForm.PlayList.Visible then Exit;
+  PlayListForm.SetFocus;
+  PlayListForm.PlayList.SetFocus;
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYDOWN,VK_DOWN,0);
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYUP,VK_DOWN,0);
+  exit;
+  end;
+if (msg.WParam=VK_LEFT) or (msg.WParam=VK_RIGHT) then
+  begin
+  if accel=0 then accel:=1;
+  if (msg.lparam and $40000000)=0 then accel:=1 else accel:=accel+0.1;
+  if (msg.WParam=VK_RIGHT) then ActionForward.Execute;
+  if (msg.WParam=VK_LEFT) then ActionRewind.Execute;
+  Exit;
+  end;
+
+inherited;
+
+if PreventLoop then exit;
+if IsEmbedded then
+  begin
+  prmsg.Msg:=WM_USER + 101;
+  prmsg.WParam:=1;
+  prmsg.LParam:=0;
+  PostMsgParent(prmsg);
+  PostMsgParent(msg);
+  prmsg.Msg:=WM_USER + 101;
+  prmsg.WParam:=0;
+  prmsg.LParam:=0;
+  PostMsgParent(prmsg);
+  end;
+
+end;
+
+procedure TAmpViewMainForm.WMKeyUp(var Msg: TMessage);
+var prmsg:TMessage;
+begin
+if (msg.WParam=VK_LEFT) or (msg.WParam=VK_RIGHT) then
+  begin
+
+  end;
+
+if PreventLoop then exit;
+if IsEmbedded then
+  begin
+  prmsg.Msg:=WM_USER + 101;
+  prmsg.WParam:=1;
+  prmsg.LParam:=0;
+  PostMsgParent(prmsg);
+  PostMsgParent(msg);
+  prmsg.Msg:=WM_USER + 101;
+  prmsg.WParam:=0;
+  prmsg.LParam:=0;
+  PostMsgParent(prmsg);
+  end;
+end;
 
 procedure TAmpViewMainForm.WMQueryEndSession(var Msg: TWMQueryEndSession);
 begin
@@ -2221,16 +3272,108 @@ end;
 
 
 procedure TAmpViewMainForm.ActionOpenFolderExecute(Sender: TObject);
+var dir:string;
 begin
-  AddFolder(GetDir('Select directory:'));
+  dir:=GetDir('Select directory:');
+  if dir='' then exit;
+
+  Screen.Cursor:=crHourGlass;
+
+  AddFolder(dir);
+
+  Screen.Cursor:=crDefault;
 
   PlayListBtn.Repaint;
 
   // Ioe?uoea oaeea
   Player.Stop;
-  OpenTrack(MyPlayList.GetFileName(CurTrack));
-  Player.Play;
+  if OpenTrack(MyPlayList.GetFileName(CurTrack))=OPENTRACK_OK then
+    Player.Play;
   SetButtonStates;
 end;
 
+procedure TAmpViewMainForm.VolumeBarMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer;
+  Layer: TCustomLayer);
+begin
+SetVolume(VolumeBar.Position);
+end;
+
+procedure TAmpViewMainForm.ActionSelectAllExecute(Sender: TObject);
+begin
+if not PlayListForm.Visible then Exit;
+if not PlayListForm.PlayList.Visible then Exit;
+PlayListForm.PlayList.SelectAll;
+PlayListForm.SetFocus;
+end;
+
+procedure TAmpViewMainForm.hwHintTimerTimer(Sender: TObject);
+begin
+hwHint.ReleaseHandle;
+hwHintTimer.Enabled:=false;
+end;
+
+procedure TAmpViewMainForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+ step: cardinal;
+ pos: cardinal;
+begin
+// actually does not work when wm_keydown present
+exit;
+if (Key=VK_UP) and (Shift=[]) then
+  begin
+  if not PlayListForm.Visible then Exit;
+  if not PlayListForm.PlayList.Visible then Exit;
+  PlayListForm.SetFocus;
+  PlayListForm.PlayList.SetFocus;
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYDOWN,VK_UP,0);
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYUP,VK_UP,0);
+  end;
+if (Key=VK_DOWN) and (Shift=[]) then
+  begin
+  if not PlayListForm.Visible then Exit;
+  if not PlayListForm.PlayList.Visible then Exit;
+  PlayListForm.SetFocus;
+  PlayListForm.PlayList.SetFocus;
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYDOWN,VK_DOWN,0);
+  SendMessage(PlayListForm.PlayList.Handle,WM_KEYUP,VK_DOWN,0);
+  end;
+{if (Key=VK_RIGHT) and (Shift=[]) then
+  begin
+  ActionForward.Execute;
+  end;
+if (Key=VK_LEFT) and (Shift=[]) then
+  begin
+  ActionRewind.Execute;
+  end;          }
+end;
+
+procedure TAmpViewMainForm.ActionDetachExecute(Sender: TObject);
+var msg:TMessage;
+begin
+if not IsEmbedded then exit;
+msg.Msg:=WM_USER+112;
+msg.WParam:=0;
+msg.LParam:=0;
+PostMsgParent(msg);
+end;
+
+procedure TAmpViewMainForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+DeleteTrayIcon(AmpViewMainForm.Handle);
+end;
+
+procedure TAmpViewMainForm.ActionShufflePlayExecute(Sender: TObject);
+var prev:Boolean;
+begin
+prev:=GetIniBool('main', 'ShufflePlay', false, IniFile);
+SetIniBool('main', 'ShufflePlay', not prev, IniFile);
+ItemShufflePlay.Checked:=GetIniBool('main', 'ShufflePlay', false, IniFile);
+end;
+
 end.
+
+
+

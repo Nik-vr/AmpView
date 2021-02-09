@@ -17,12 +17,14 @@ object PlayListForm: TPlayListForm
   KeyPreview = True
   OldCreateOrder = False
   Scaled = False
+  OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   OnMouseWheelDown = FormMouseWheelDown
   OnMouseWheelUp = FormMouseWheelUp
   OnShow = FormShow
-  PixelsPerInch = 120
+  PixelsPerInch = 96
   TextHeight = 16
   object PLMainImage: TImage32
     Left = 0
@@ -63,8 +65,8 @@ object PlayListForm: TPlayListForm
       OnClick = PLCloseBtnClick
     end
     object PlayList: TListView
-      Left = 10
-      Top = 10
+      Left = 13
+      Top = 3
       Width = 191
       Height = 86
       BevelInner = bvNone
@@ -72,20 +74,22 @@ object PlayListForm: TPlayListForm
       BorderStyle = bsNone
       Columns = <
         item
-          Width = 0
         end
         item
+          Width = 0
         end
         item
           Alignment = taRightJustify
         end>
       Ctl3D = False
+      DragMode = dmAutomatic
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clNone
       Font.Height = -13
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       FlatScrollBars = True
+      HideSelection = False
       MultiSelect = True
       ReadOnly = True
       RowSelect = True
@@ -97,7 +101,10 @@ object PlayListForm: TPlayListForm
       OnAdvancedCustomDraw = PlayListAdvancedCustomDraw
       OnAdvancedCustomDrawItem = PlayListAdvancedCustomDrawItem
       OnDblClick = PlayListDblClick
+      OnDragDrop = PlayListDragDrop
+      OnDragOver = PlayListDragOver
       OnKeyDown = PlayListKeyDown
+      OnKeyUp = PlayListKeyUp
     end
   end
   object InfoBox: TListBox
@@ -107,8 +114,8 @@ object PlayListForm: TPlayListForm
     Height = 26
     Style = lbOwnerDrawVariable
     BorderStyle = bsNone
-    ItemHeight = 16
     TabOrder = 1
+    OnClick = InfoBoxClick
     OnDblClick = InfoBoxDblClick
     OnDrawItem = InfoBoxDrawItem
     OnMouseDown = InfoBoxMouseDown
@@ -237,6 +244,11 @@ object PlayListForm: TPlayListForm
     object ActionSavePlayList: TAction
       Caption = 'Save PlayList...'
       OnExecute = ActionSavePlayListExecute
+    end
+    object ActionCopyNames: TAction
+      Caption = 'ActionCopyNames'
+      ShortCut = 16451
+      OnExecute = ActionCopyNamesExecute
     end
   end
 end

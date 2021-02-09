@@ -20,7 +20,7 @@ var
   ZStream: TZDecompressionStream;
   CStream: TMemoryStream;
   B: Byte;
-  Tab: array [1..256] of Char;
+  Tab: array [1..256] of AnsiChar;
   S: string;
   Count, FileSize, I: Integer;
   Buffer: array [0..1023] of Byte;

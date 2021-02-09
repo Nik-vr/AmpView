@@ -90,14 +90,14 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=AmpView\
-UnitOutputDir=Units\
+OutputDir=
+UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=Components\;Components\BASS;Components\ZLib;Components\ZLib\FastestZlib
-Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;soaprtl;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;websnap;adortl;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband;GR32_D7;GR32_DSGN_D7
+SearchPath=
+Packages=
 Conditionals=
-DebugSourceDirs=c:\Users\terran\Documents\AmpView\Components\ZLib\
+DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
@@ -112,8 +112,8 @@ RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
-MajorVer=3
-MinorVer=5
+MajorVer=1
+MinorVer=0
 Release=0
 Build=0
 Debug=0
@@ -121,18 +121,19 @@ PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=1033
-CodePage=1252
+Locale=1049
+CodePage=1251
 [Version Info Keys]
 CompanyName=
-FileDescription=AmpView
-FileVersion=3.5.0.0
+FileDescription=
+FileVersion=1.0.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
-ProductName=AmpView
-ProductVersion=3.5.0.0
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

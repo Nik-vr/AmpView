@@ -1,33 +1,37 @@
 ; ----------------------------------------------- ;
-; Language file for AmpView 3.2 beta 7            ;
+; Language file for AmpView 3.5                   ;
 ; English language                                ;
 ;                                                 ;
 ; AmpView © 2004-2007 Nikolay Petrochenko         ;
 ;                                                 ;
-; If you translate this file in anoter language,  ;
-; please, send it to me (Nik_vr@mail.ru)          ;
+; If you have translated this file to another     ;
+; language, please send it to me (Nik_vr@mail.ru) ;
 ; ----------------------------------------------- ;
 
-; Information on the translator
+; Information about the translator
 [main]
 LangName=English
 translator=Nikolay Petrochenko
 mail=Nik_vr@mail.ru
 
-; Strings, used in the popup menu
+; Strings used in the popup menu
 [menus]
 ItemAbout=About...
 ItemOptions=Options
+ItemOpen=Open...
+ItemOpenFolder=Open Folder...
 ItemFileInfo=File info...
 ItemClose=Close
+ItemDetach=Detach
 ItemTopMost=Stay on Top
 ItemView=View
-ItemShowFileNames=File-names
+ItemShowFileNames=File names
 ItemShowFullNames=Full names
 ItemTrackCaptions=Track captions
 ItemShowNumbers=Show numbers
 ItemShowTrackLength=Show track length
 ItemTimeMode=Time left mode
+ItemShufflePlay=Shuffle play
 ItemControl=Control
 ItemNextFile=Next file from current folder
 ItemShuffle=Shuffle
@@ -39,7 +43,7 @@ ItemSortByFileName=by filename
 ItemSortByTitle=by title
 ItemSavePlayList=Save Playlist...
 
-; tray menus
+; Tray menus
 ItemVolumeUp=Volume Up
 ItemVolumeDown=Volume Down
 ItemRestore=Restore window
@@ -60,7 +64,7 @@ ButtonOpen=Open file
 ButtonPlayList=Show/Hide Playlist
 ButtonInfo=File info
 
-; strings, used in the option's window
+; Strings used in the Options window
 [options]
 
 ; Options tree (page-names)
@@ -79,15 +83,16 @@ BoxOther=Other
 BoxInputPlugins=Input-plugins
 BoxSkin=Skin
 BoxInformation=Information
-BoxRewindStep=Step of rewind (seconds)
+BoxRewindStep=Fast forward step size (seconds)
 BoxOnEndTrack=On end of a track
 BoxFont=Font
 BoxSample=Sample
-BoxPressKey=Press key or keys combination
-BoxFormatTrackCaption=Format of track's captions
+BoxPressKey=Press a key or a keys combination
+BoxFormatTrackCaption=Format of track captions
 BoxPlugins=Available Plugins
 BoxExtensions=Extensions
 BoxConfig=Configuration
+
 ; Actions
 OnEndActionStop=Stop track
 OnEndActionNext=Open next track from list
@@ -104,14 +109,17 @@ ButtonDelete=Delete
 LabelSelectLanguage=Select language from list:
 
 ; CheckBoxes
-CheckBoxUseShadows=To resolve display of shadows
-CheckBoxUseAntiAliasing=To resolve use of AntiAliasing
+CheckBoxProgessBarHints=Show time/volume hints
+CheckBoxUseShadows=Allow use of shadows
+CheckBoxUseAntiAliasing=Allow use of antialiasing
 CheckBoxIgnoreSkinFont=Ignore skin font
-CheckBoxNotQV=Not use AmpView for QuickView
-CheckBoxNotNV=Not use AmpView for Normal View
-CheckBoxUseControl=Change Volume with mouse well only if [Ctrl] key pressed
-CheckBoxWarning=Show warnings of the files deleting
-CheckBoxDefaultConfig=Use only default configuration file for all users
+CheckBoxNotQV=Do not use AmpView in QuickView mode
+CheckBoxNotNV=Do not use AmpView in Normal View
+CheckBoxUseControl=Change Volume with mouse wheel only if [Ctrl] key is pressed
+CheckBoxUseRelativePaths=Use relative paths
+CheckBoxWarningDelTracks=Show warnings when deleting tracks
+CheckBoxWarningDelFiles=Show warnings when deleting files
+CheckBoxDefaultConfig=Use one configuration file for all users
 PageInternalHotKeys=Internal HotKeys
 PageGlobalHotKeys=Global HotKeys
 PageMouse=Mouse
@@ -121,6 +129,36 @@ PagePlayList=PlayList
 
 ; Other strings
 [strings]
-WarningDeleteFiles=Are you sure that want to delete this files?
-WarningDeleteTracks=Are you sure that want to delete this tracks?
+WarningDeleteFiles=Are you sure you want to delete these files?
+WarningDeleteTracks=Are you sure you want to delete these tracks?
 WarningCaption=Warning
+
+; Strings used in the file info window
+[fileinfo]
+FI_TabMetadata=Metadata
+FI_MetadataName=Name
+FI_MetadataValue=Value
+FI_tag_Artist=Artist
+FI_tag_Title=Title
+FI_tag_Album=Album
+FI_tag_Genre=Genre
+FI_tag_Year=Year
+FI_tag_Track=Track
+FI_tag_Composer=Composer
+FI_tag_Copyright=Copyright
+FI_tag_Subtitle=Subtitle
+FI_tag_AlbumArtist=AlbumArtist
+FI_tag_DiscNumber=DiscNumber
+FI_tag_Publisher=Publisher
+FI_tag_Comment=Comment
+FI_TabProperties=Properties
+FI_Type=Type:
+FI_Duration=Duration:
+FI_FileSize=File size:
+FI_Bitrate=Bitrate:
+FI_ChannelMode=Channel Mode:
+FI_SampleRate=Sample Rate:
+FI_LastModified=Last Modified:
+FI_bytes=bytes
+FI_CloseButton=Close
+FI_Copy=Copy

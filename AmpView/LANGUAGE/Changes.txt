@@ -93,3 +93,43 @@ Version 3.2 beta 7
 ------------------
  Add: [Strings] -> BoxConfig=Configuration
  Add: [Strings] -> CheckBoxDefaultConfig=Use only default configuration file for all users
+ 
+Version 3.5
+------------------
+ Add: [FileInfo] -> FI_TabMetadata=Metadata
+ Add: [FileInfo] -> FI_MetadataName=Name
+ Add: [FileInfo] -> FI_MetadataValue=Value
+ Add: [FileInfo] -> FI_tag_Artist=Artist
+ Add: [FileInfo] -> FI_tag_Title=Title
+ Add: [FileInfo] -> FI_tag_Album=Album
+ Add: [FileInfo] -> FI_tag_Genre=Genre
+ Add: [FileInfo] -> FI_tag_Year=Year
+ Add: [FileInfo] -> FI_tag_Track=Track
+ Add: [FileInfo] -> FI_tag_Composer=Composer
+ Add: [FileInfo] -> FI_tag_Copyright=Copyright
+ Add: [FileInfo] -> FI_tag_Subtitle=Subtitle
+ Add: [FileInfo] -> FI_tag_AlbumArtist=AlbumArtist
+ Add: [FileInfo] -> FI_tag_DiscNumber=DiscNumber
+ Add: [FileInfo] -> FI_tag_Publisher=Publisher
+ Add: [FileInfo] -> FI_tag_Comment=Comment
+ Add: [FileInfo] -> FI_TabProperties=Properties
+ Add: [FileInfo] -> FI_Type=Type:
+ Add: [FileInfo] -> FI_Duration=Duration:
+ Add: [FileInfo] -> FI_FileSize=File size:
+ Add: [FileInfo] -> FI_Bitrate=Bitrate:
+ Add: [FileInfo] -> FI_ChannelMode=Channel Mode:
+ Add: [FileInfo] -> FI_SampleRate=Sample Rate:
+ Add: [FileInfo] -> FI_LastModified=Last Modified:
+ Add: [FileInfo] -> FI_bytes=bytes
+ Add: [FileInfo] -> FI_CloseButton=Close
+ Add: [FileInfo] -> FI_Copy=Copy
+ Add: [Menus] -> ItemDetach=Detach
+ Add: [Menus] -> ItemOpen=Open...
+ Add: [Menus] -> ItemOpenFolder=Open Folder... 
+ Del: [Options] -> CheckBoxWarning=Show warnings when deleting files
+ Add: [Options] -> CheckBoxWarningDelTracks=Show warnings when deleting tracks
+ Add: [Options] -> CheckBoxWarningDelFiles=Show warnings when deleting files
+ Add: [Menus] -> ItemShufflePlay=Shuffle play
+ Add: [Options] -> CheckBoxUseRelativePaths=Use relative paths
+ Add: [Options] -> CheckBoxProgessBarHints=Show time/volume hints
+ 

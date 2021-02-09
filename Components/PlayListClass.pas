@@ -39,7 +39,7 @@ type TPlaylist = Class(TObject)
     procedure SetLength( i : Integer; Len : LongInt);
 
     procedure DeleteItem ( i : Integer);
-    procedure InsertItem ( i : Integer; FileName, Title : String);
+    procedure InsertItem ( i : Integer; FileName, Title : String; FileLen:integer);
 
     function SearchByTitle (Title : String) : Integer;
     function SearchByFileName (FileName : String) : Integer;
@@ -54,6 +54,7 @@ type TPlaylist = Class(TObject)
 
 implementation
 
+uses viewer;
 
 function GetNameFromM3U(EXTstring: string; Default: string): string;
 var
@@ -183,6 +184,7 @@ var
   Temp: String;
   Dir: string;
 begin
+  result:=false;
   if not FileExists(FileName) then exit;
   CurPlaylist := FileName;
   Dir:=ExtractFileDir(FileName);
@@ -195,6 +197,11 @@ begin
    FileINI:= TStringList.Create;
    FileINI.LoadFromFile(LowerCase(FileName));
    //
+   if FileIni.Count<1 then
+     begin
+     result:=false;
+     Exit;
+     end;
    if Copy(FileIni[0], 1, 7)<>'#EXTM3U' then
     begin
      result:=LoadPlainList(FileName, ClearCurrent);
@@ -222,6 +229,12 @@ begin
            FileList.Add(Dir+'\'+temp);
            FileLength.Add(GetLengthFromM3U(FileINI[i-1]));
            FileTitle.Add(GetNameFromM3U(FileINI[i-1], ExtractFileName(temp)));
+          end
+        else
+          begin
+          FileList.Add(temp);
+          FileLength.Add('-1');
+          FileTitle.Add(GetNameFromM3U(FileINI[i-1], ExtractFileName(temp)));
           end;
       end;
     end;
@@ -235,6 +248,11 @@ end;
 // Ïîëó÷åíèå èìåíè ôàéëà
 function TPlaylist.GetFileName( i : Integer) : String;
 begin
+if i>=FileList.Count then
+  begin
+  result:='-1';
+  Exit;
+  end;
  result := FileList[i];
 end;
 
@@ -277,11 +295,11 @@ end;
 
 
 // Âñòàâêà çàïèñè
-procedure TPlaylist.InsertItem ( i : Integer; FileName, Title : String);
+procedure TPlaylist.InsertItem ( i : Integer; FileName, Title : String; FileLen:integer);
 begin
   FileList.Insert(i, FileName);
   FileTitle.Insert(i, Title);
-  FileLength.Insert (i, '0');
+  FileLength.Insert (i, IntToStr(FileLen){'0'});
 end;
 
 
@@ -323,13 +341,16 @@ var
  i: Integer;
  FileINI: string;
  Temp: String;
+ fn:string;
 begin
   try
    FileINI := FileName;
    Temp := ExtractFilePath(FileName);
    For i := 1 to FileList.Count do
     begin
-     SetIniString('playlist', 'File' + IntToStr(i), ExtractRelativePath(Temp, FileList[i - 1]), FileINI);
+    fn:=FileList[i - 1];
+    if GetIniBool('main', 'UseRelativePaths', False, IniFile) then fn:=ExtractRelativePath(Temp, FileList[i - 1]);
+     SetIniString('playlist', 'File' + IntToStr(i), fn, FileINI);
      SetIniString('playlist', 'Title' + IntToStr(i), FileTitle[i -1], FileIni);
      SetIniString('playlist', 'Length' + IntToStr(i), FileLength[i -1], FileIni);
     end;
@@ -347,17 +368,29 @@ var
   i: Integer;
   FileINI: TStringList;
   Temp: String;
+  fn:string;
 begin
+  result:=false;
   try
    FileINI := TStringList.Create;
    Temp := ExtractFilePath(FileName);
+   if not DirectoryExists(Temp) then
+     begin
+       if not CreateDir(Temp) then Exit;
+     end;
    FileINI.Add('#EXTM3U');
    For i := 1 to FileList.Count do
     begin
-     FileINI.Add('#EXTINF:' + FileLength[i - 1] + ',' + FileTitle[i - 1]);
-     FileINI.Add(ExtractRelativePath(Temp, FileList[i - 1]));
+    fn:=FileList[i - 1];
+    if GetIniBool('main', 'UseRelativePaths', False, IniFile) then fn:=ExtractRelativePath(Temp, FileList[i - 1]);
+    FileINI.Add('#EXTINF:' + FileLength[i - 1] + ',' + FileTitle[i - 1]);
+    FileINI.Add(fn);
     end;
+   {$IFDEF UNICODE}
+   FileINI.SaveToFile(FileName,TEncoding.UTF8);
+   {$ELSE}
    FileINI.SaveToFile(FileName);
+   {$IFEND}
    FileINI.Free;
    result := True;
   except
@@ -372,6 +405,7 @@ var
  i: Integer;
  FileINI: TStringList;
  Temp: String;
+ fn:string;
 begin
   try
    FileINI := TStringList.Create;
@@ -387,8 +421,10 @@ begin
                '<Playlist>');
    For i := 1 to FileList.Count do
     begin
+     fn:=FileList[i - 1];
+     if GetIniBool('main', 'UseRelativePaths', False, IniFile) then fn:=ExtractRelativePath(Temp, FileList[i - 1]);
      FileINI.Add('<Song>' + #13 +
-                 '<File>' + ExtractRelativePath(Temp, FileList[i - 1]) + '</File>' + #13 +
+                 '<File>' + fn + '</File>' + #13 +
                  '<Title>' + FileTitle[i - 1] + '</Title>' + #13 +
                  '<Length>' + FileLength[i - 1] + '</Length>'+ #13 +
                  '</Song>' + #13);
