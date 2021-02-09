@@ -77,7 +77,7 @@ function FindMaxInt(list: TStringList): integer;
 
 implementation
 
-uses ActiveX, ShlObj;
+uses ActiveX, ShlObj, Viewer;
 
 // Окно сообщения
 procedure ErrorMessage(Msg: string);
@@ -703,7 +703,7 @@ end;
 function BitmapToRgn(Image: TBitmap32; transColor: TColor): HRGN;
 var
   TmpRgn: HRGN;
-  x, y: integer;
+  x, y, x1: integer;
   ConsecutivePixels: integer;
   CurrentPixel: TColor;
   CreatedRgns: integer;
@@ -720,6 +720,7 @@ begin
   begin
     CurrentColor := Image.Canvas.Pixels[0,y];
     ConsecutivePixels := 1;
+    x1:=0;
     for x := 0 to Image.Width - 1 do
     begin
       CurrentPixel := Image.Canvas.Pixels[x,y];
@@ -738,11 +739,12 @@ begin
         CurrentColor := CurrentPixel;
         ConsecutivePixels := 1;
       end;
+      x1:=x;
     end;
 
     if (CurrentColor = transColor) and (ConsecutivePixels > 0) then
     begin
-      TmpRgn := CreateRectRgn(x-ConsecutivePixels, y, x, y+1);
+      TmpRgn := CreateRectRgn(x1-ConsecutivePixels, y, x1, y+1);
       CombineRgn(Result, Result, TmpRgn, RGN_DIFF);
 //!!!!!      inc(CreatedRgns);
       DeleteObject(TmpRgn);
@@ -838,11 +840,21 @@ end;
 
 procedure ScanDir(Dir: string; List: TStrings);
 var
- i: integer;
+ i,a: integer;
  SR: TSearchRec;
-begin
- List.Clear;
- // Для файлов mp3
+begin           
+ //List.Clear;
+ for a:=0 to FileFormatsSL.Count-1 do
+   begin
+   i := FindFirst(dir+FileFormatsSL.Strings[a], faAnyFile, SR);
+    while i = 0 do
+     begin
+      List.Add({Dir+'\'+}SR.Name);
+      i := FindNext(SR);
+     end;
+    FindClose(SR);
+   end;
+ {// Для файлов mp3
  i := FindFirst(dir+'*.mp3', faAnyFile, SR);
   while i = 0 do
    begin
@@ -881,7 +893,7 @@ begin
     List.Add(SR.Name);
     i := FindNext(SR);
    end;
-  FindClose(SR);
+  FindClose(SR); }
 end;
 
 
@@ -958,9 +970,10 @@ const
 begin
  result:='00:00';
 
+ if len<0 then begin result:='-'; exit; end;
   if len<=l
    then result:=FormatDateTime ('nn:ss', len / kd)
-   else result:=FormatDateTime ('hh"/"nn', len / kd)
+   else result:=FormatDateTime ('h:nn:ss', len / kd)
 
 // result:= FormatDateTime ('nn:ss', len / kd);
  //
@@ -988,7 +1001,7 @@ begin
   min := 0; // пусть первый элемент минимальный
   for i := 1 to list.Count-1 do
    begin
-    if List[i] < List[min] then  min := i;
+    if LowerCase(List[i]) < LowerCase(List[min]) then  min := i;
    end;
   result:=min;
 end;
@@ -1016,7 +1029,7 @@ begin
   max := 0; // пусть первый элемент минимальный
   for i := 1 to list.Count-1 do
    begin
-    if List[i] > List[max] then  max := i;
+    if LowerCase(List[i]) > LowerCase(List[max]) then  max := i;
    end;
   result:=max;
 end;

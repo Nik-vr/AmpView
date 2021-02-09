@@ -35,6 +35,22 @@ type
      BandWidth  : float;   // Bandwidth, in semitones, in the range from 1 to 36
   end;
 
+type TTags = record
+  Artist:string;
+  Title:string;
+  Album:string;
+  Genre:string;
+  Year:string;
+  Comment:string;
+  Track:string;
+  Composer:string;
+  Copyright:string;
+  Subtitle:string;
+  AlbumArtist:string;
+  DiscNumber:string;
+  Publisher:string;
+  end;
+
 type
   TFileInfo = record
     BitRate: string;
@@ -42,6 +58,10 @@ type
     ChannelMode: string;
 //    TrackCaption: string;
 //    FileLength: integer;
+    Duration: string;
+    FileSize: integer;
+    Format:string;
+    Tags:TTags;
   end;
 
   TEQGains = array [0..NumEQBands-1] of float;  // -15.0 ~ +15.0
@@ -92,28 +112,32 @@ type TBASSPlayerX = Class(TObject)
 
 
     procedure ProcMessage(var Msg: TMessage);
-     function GetFileInfo: TFileInfo;
+     function GetCurrentFileInfo(var Channel: DWORD;FN:String): TFileInfo;
      function GetTrackPosition: cardinal;
     procedure SetTrackPosition(const Value: cardinal);
+     function GetTrackPositionSeconds: double;
+    procedure SetTrackPositionSeconds(const Value: double);
     procedure FSetVolume(const Value: integer);
   public
-    constructor Create(Handle: HWND; const DllPath: string);
+    constructor Create(Handle: HWND; const DllPath: string; const sfpath: string);
 
     function SetAEQGain(BandNum : integer; EQGain : float) : boolean;
     property Mode: TPlayerMode read FMode;
     property FileInfo: TFileInfo read FFileInfo;
     property TrackFile: string read FTrackFile;
     property Position: cardinal read GetTrackPosition write SetTrackPosition;
+    property PositionSeconds: double read GetTrackPositionSeconds write SetTrackPositionSeconds;
     property Volume: integer read FVolume write FSetVolume;
     property TrackLength: cardinal read FTrackLength;
 
     function GetTrackTime(Left: boolean): string;
     function GetFullTime: string;
     function GetTrackCaption(FileName: string; FormatString: string): string;
-    function GetTrackLength(FileName: string): cardinal;
+    function GetTrackLength(FileName: string): int64;
+    function GetFileInfo(FileName: string): TFileInfo;
     procedure Mute;
     procedure UnMute;
-    procedure OpenFile(const FileName: string);
+    function OpenFile(const FileName: String):boolean;
     procedure Play;
     procedure Stop;
     procedure Pause;
@@ -137,12 +161,14 @@ var
   flabuf : array[0..FLABUFLEN-1, 0..2] of SmallInt;  // buffer
   flapos : Integer;         // cur.pos
   flas, flasinc : FLOAT;    // sweep pos/min/max/inc
+  hnd:HWND;
 
 
 // This procedure is called when a stream reaches the end.
 procedure PlayEndSync(SyncHandle : HSYNC; Channel, data, user : DWORD); stdcall;
 begin
-   PostMessage(user, WM_GetToEnd, 0, 0);
+   //PostMessage(user, WM_GetToEnd, 0, 0);
+   PostMessage(hnd, WM_GetToEnd, 0, 0);
 end;
 
 
@@ -156,6 +182,7 @@ end;
 
 function fmod(a, b: FLOAT): FLOAT;
 begin
+  if b=0 then raise Exception.Create('Division by zero');
    Result := a - (b * Trunc(a / b));
 end;
 
@@ -202,24 +229,38 @@ end;
 
 
 // Создание объектов
-constructor TBASSPlayerX.Create(Handle: HWND; const DllPath: string);
+constructor TBASSPlayerX.Create(Handle: HWND; const DllPath: string; const sfpath:string);
 var
  SR: TSearchRec;
  i: integer;
 begin
-  Load_BASSDLL(DllPath + '\bass.dll');
-  Load_BASSWMADLL(DllPath + '\basswma.dll');
-  BASS_Init(-1, 44100, BASS_DEVICE_SPEAKERS, Handle, nil);
+  if not Load_BASSDLL(DllPath + '\bass.dll') then
+    begin
+    ErrorMessage('Can''t load bass.dll');
+    exit;
+    end;
+  if not Load_BASSWMADLL(DllPath + '\basswma.dll') then // why the wma is important if I don't play wma?
+    begin
+    ErrorMessage('Can''t load basswma.dll');
+    exit;
+    end;
+  if not BASS_Init(-1, 44100, BASS_DEVICE_SPEAKERS, Handle, nil) then
+    begin
+    ErrorMessage('Can''t initialize device');
+    Exit;
+    end;
   //
-  if BASS_MIDI_StreamGetFonts(0,sf,1)>=1 then sfont := sf.font;
+  BASS_SetConfigPtr(BASS_CONFIG_MIDI_DEFFONT {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}, PChar(sfpath));
+  if BASS_MIDI_StreamGetFonts(0,PBASS_MIDI_FONT(@sf),1)>=1 then sfont := sf.font;
   //
   i := FindFirst(DllPath+'\Formats\bass*.dll', faAnyFile, sR);
   while i = 0 do
   begin
-    if (BASS_PluginLoad(pchar(DllPath+'\Formats\'+sR.Name), 0) <> 0) then
+    if (BASS_PluginLoad(pchar(DllPath+'\Formats\'+sR.Name), 0{$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}) <> 0) then
      begin
 //        ErrorMessage('OK!');
      end; // plugin loaded...
+     //i:=BASS_ErrorGetCode();
     i := FindNext(sR);
   end;
   FindClose(sR);
@@ -228,6 +269,7 @@ begin
   FVolume:=100;
   FPosition:=0;
   MessageHandle := AllocateHWnd(ProcMessage);
+  hnd:=MessageHandle;
   //
    FEQBands.Bands := NumEQBands;
    for i := 0 to (NumEQBands-1) do
@@ -253,45 +295,112 @@ end;
 
 
 // Открытие трека
-procedure TBASSPlayerX.OpenFile(const FileName: String);
+function TBASSPlayerX.OpenFile(const FileName: String):boolean;
 var
  BASS_Flags: cardinal;
 begin
+
+result:=false;
  // Открытие канала
  FTrackFile:=FileName;
 
  BASS_Flags:=0;
 
- FChannel:=Bass_StreamCreateFile(false, PChar(FTrackFile), 0, 0, BASS_Flags);
+ FChannel:=Bass_StreamCreateFile(false, PChar(FTrackFile), 0, 0, BASS_Flags {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
 
  if FChannel = 0
-  then FChannel := Bass_WMA_StreamCreateFile(false, PChar(FTrackFile), 0, 0, 0);
+  then FChannel := Bass_WMA_StreamCreateFile(false, PChar(FTrackFile), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
 
  if FChannel = 0
-  then FChannel :=BASS_MusicLoad(FALSE, PChar(FTrackFile), 0, 0, BASS_MUSIC_PRESCAN or BASS_MUSIC_STOPBACK, 0);
+  then FChannel :=BASS_MusicLoad(FALSE, PChar(FTrackFile), 0, 0, BASS_MUSIC_PRESCAN or BASS_MUSIC_STOPBACK {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}, 0);
 
  if FChannel = 0
-  then FChannel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FTrackFile),0,0,BASS_SAMPLE_LOOP,0);
+  then FChannel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FTrackFile),0,0,BASS_MIDI_DECAYEND{BASS_SAMPLE_LOOP} {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF},0);
 
  if FChannel = 0
   then exit;
 
  // Информация
- FFileInfo:=GetFileInfo;
  FTrackLength:=BASS_ChannelGetLength(FChannel, BASS_POS_BYTE);
-
+ FFileInfo:=GetCurrentFileInfo(FChannel,FTrackFile);
+     result:=true;
 end;
 
 
 // Получение информации о файле
-function TBASSPlayerX.GetFileInfo: TFileInfo;
+function TBASSPlayerX.GetCurrentFileInfo(var Channel:DWORD; FN:String): TFileInfo;
 var
  chInfo: BASS_CHANNELINFO;
  time: real;
- len: cardinal;
+ len: int64;
  br: integer;
+ TrackLength:Int64;
+
+ function FileSize(const aFilename: String): Int64;
+  var
+    info: TWin32FileAttributeData;
+  begin
+    result := -1;
+
+    if NOT GetFileAttributesEx(PChar(aFileName), GetFileExInfoStandard, @info) then
+      EXIT;
+
+    result := Int64(info.nFileSizeLow) or Int64(info.nFileSizeHigh shl 32);
+  end;
+
+function BassLenToTime(var Channel:DWORD; len: cardinal): string;
+const
+ kd=1000 * 24 * 60 * 60;
+ l=3600000;
+var
+  FloatLen : FLOAT;
+  temp: cardinal;
 begin
- BASS_ChannelGetInfo(FChannel, chInfo);
+   result:= '00:00';
+   //
+   FloatLen:= BASS_ChannelBytes2Seconds(Channel, Len);
+   temp:= round(1000 * FloatLen);   // sec -> milli sec
+   if temp<=l
+    then result:=FormatDateTime ('nn:ss', temp / kd)
+    else result:=FormatDateTime ('h:nn:ss', temp / kd)    
+end;
+ 
+begin
+ BASS_ChannelGetInfo(Channel, chInfo);
+
+ with Result do
+   case chInfo.ctype of
+   $10002: format:='Ogg Vorbis';
+   $10003: format:='MP1';
+   $10004: format:='MP2';
+   $10005: format:='MP3';
+   $10006: format:='AIFF';
+   $10007: format:='CoreAudio';
+   $10008: format:='Media Foundation';
+   $40000: format:='WAV';
+   $50001: format:='WAV PCM';
+   $50003: format:='WAV Float';
+   $20001: format:='MultiTracker';
+   $20002: format:='ScreamTracker 3';
+   $20003: format:='FastTracker 2';
+   $20004: format:='Impulse Tracker';
+   $10900: format:='FLAC';
+   $10901: format:='FLAC Ogg';
+   $10a00: format:='Musepack';
+   $10d00: format:='MIDI';
+   $11200: format:='Opus';
+   $10300: format:='WMA';
+   $10301: format:='WMA MP3';
+   $10b00: format:='AAC';
+   $10b01: format:='MP4';
+   $11000: format:='AC3';
+   $10500: format:='WavPack';
+   $11700: format:='DSD';
+   $10e00: format:='ALAC';
+   $10700: format:='Monkey''s Audio';
+   else
+   format:=IntToHex(chInfo.ctype,5){''};
+   end;
 
  result.SampleRate:=IntToStr(chInfo.freq)+' Hz';
 
@@ -302,13 +411,36 @@ begin
     then result.ChannelMode:='Stereo'
     else result.ChannelMode:=IntToStr(chInfo.chans)+' ch';
 
-  time:=BASS_ChannelBytes2Seconds(FChannel, BASS_ChannelGetLength(FChannel, BASS_POS_BYTE)); // playback duration
-  len:=BASS_StreamGetFilePosition(FChannel, BASS_FILEPOS_END); // file length
+  time:=BASS_ChannelBytes2Seconds(Channel, BASS_ChannelGetLength(Channel, BASS_POS_BYTE)); // playback duration
+  len:=BASS_StreamGetFilePosition(Channel, BASS_FILEPOS_END); // file length
+  len:=FileSize(FN);
 
   br:= Round ( len/(125*time)+0.5 ); // bitrate (Kbps)
 //Round
 //  if
   result.BitRate:=IntToStr(br)+' kB/s';
+  TrackLength:=BASS_ChannelGetLength(Channel, BASS_POS_BYTE);
+  Result.Duration:=BassLenToTime(Channel, TrackLength); // local procedure!
+  result.FileSize:=len;
+
+   {$IFDEF UNICODE}TAGS_SetUTF8(True);{$ENDIF}
+
+  with Result.Tags do
+    begin
+    Artist:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%ARTI')) {$IFDEF UNICODE}){$ENDIF};
+    Title:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%TITL')) {$IFDEF UNICODE}){$ENDIF};
+    Album:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%ALBM')) {$IFDEF UNICODE}){$ENDIF};
+    Genre:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%GNRE')) {$IFDEF UNICODE}){$ENDIF};
+    Year:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%YEAR')) {$IFDEF UNICODE}){$ENDIF};
+    Comment:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%CMNT')) {$IFDEF UNICODE}){$ENDIF};
+    Track:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%TRCK')) {$IFDEF UNICODE}){$ENDIF};
+    Composer:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%COMP')) {$IFDEF UNICODE}){$ENDIF};
+    Copyright:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%COPY')) {$IFDEF UNICODE}){$ENDIF};
+    Subtitle:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%SUBT')) {$IFDEF UNICODE}){$ENDIF};
+    AlbumArtist:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%AART')) {$IFDEF UNICODE}){$ENDIF};
+    DiscNumber:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%DISC')) {$IFDEF UNICODE}){$ENDIF};
+    Publisher:={$IFDEF UNICODE}UTF8ToString({$ENDIF} TAGS_Read(Channel, PAnsiChar('%PUBL')) {$IFDEF UNICODE}){$ENDIF};
+    end;
 end;
 
 
@@ -316,24 +448,33 @@ end;
 function TBASSPlayerX.GetTrackCaption(FileName: string; FormatString: string): string;
 var
  Channel: HStream;
+ AnsiFormatString:ansistring;
 begin
   result:=ExtractFileName(FileName);
 
   try
-   Channel := Bass_StreamCreateFile(false, PChar(FileName), 0, 0, 0);
+   Channel := Bass_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
    if Channel = 0
-    then Channel := Bass_WMA_StreamCreateFile(false, PChar(FileName), 0, 0, 0);
+    then Channel := Bass_WMA_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
+
+   if Channel = 0
+    then Channel :=BASS_MusicLoad(FALSE, PChar(FileName), 0, 0, BASS_MUSIC_PRESCAN or BASS_MUSIC_STOPBACK {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}, 0);
 
    if Channel = 0
     then
      begin
-      Channel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FileName),0,0,BASS_SAMPLE_LOOP,0);
-      Result:=String(BASS_ChannelGetTags(Channel,BASS_TAG_MIDI_TRACK));
+      Channel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FileName),0,0,BASS_SAMPLE_LOOP {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF},0);
+      if Channel<>0 then
+        begin
+        Result:=String(BASS_ChannelGetTags(Channel,BASS_TAG_MIDI_TRACK));
+        end;
      end;
-
+   AnsiFormatString:=FormatString;
+   {$IFDEF UNICODE}TAGS_SetUTF8(True);{$ENDIF}
    if Channel <> 0
-    then result:=TAGS_Read(Channel, PChar(FormatString))
+    then result:={$IFDEF UNICODE}UTF8ToString({$ENDIF}TAGS_Read(Channel, PAnsiChar(AnsiFormatString)) {$IFDEF UNICODE}){$ENDIF}
     else exit;
+
 //
   except
    exit;
@@ -343,23 +484,56 @@ begin
 end;
 
 
+function TBASSPlayerX.GetFileInfo(FileName: string): TFileInfo;
+var
+ Channel: HStream;
+begin
+  ZeroMemory(@result,SizeOf(Result));
+
+  try
+   Channel := Bass_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
+   if Channel = 0
+    then Channel := Bass_WMA_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
+
+   if Channel = 0
+    then Channel :=BASS_MusicLoad(FALSE, PChar(FileName), 0, 0, BASS_MUSIC_PRESCAN or BASS_MUSIC_STOPBACK {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}, 0);
+
+   if Channel = 0
+    then
+     begin
+      Channel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FileName),0,0,BASS_SAMPLE_LOOP {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF},0);
+     end;
+   if Channel = 0 then Exit;
+
+   result:=GetCurrentFileInfo(Channel,FileName);
+
+//
+  except
+   exit;
+  end;
+
+end;
+
 // Получение времени трека
-function TBASSPlayerX.GetTrackLength(FileName: string): cardinal;
+function TBASSPlayerX.GetTrackLength(FileName: string): int64;
 var
  Channel: HStream;
  FloatLen : FLOAT;
- len: cardinal;
+ len: int64;
 begin
-  result:=0;
+  result:=-1;
 
  try
-  Channel:=Bass_StreamCreateFile(false, PChar(FileName), 0, 0, 0);
+  Channel:=Bass_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
 
   if Channel = 0
-   then Channel := Bass_WMA_StreamCreateFile(false, PChar(FileName), 0, 0, 0);
+   then Channel := Bass_WMA_StreamCreateFile(false, PChar(FileName), 0, 0, 0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF});
 
   if Channel = 0
-   then Channel :=BASS_MusicLoad(false, PChar(FileName), 0, 0, 0, 0);
+   then Channel :=BASS_MusicLoad(false, PChar(FileName), 0, 0, BASS_MUSIC_PRESCAN or BASS_MUSIC_STOPBACK {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF}, 0);
+
+ if Channel = 0
+  then Channel := BASS_MIDI_StreamCreateFile(FALSE, PChar(FileName),0,0,0 {$IFDEF UNICODE} or BASS_UNICODE {$ENDIF},0);
 
   if Channel = 0 then exit;
 
@@ -410,6 +584,15 @@ begin
  FPosition:=Value;
 end;
 
+function TBASSPlayerX.GetTrackPositionSeconds: double;
+begin
+ result:=BASS_ChannelBytes2Seconds(FChannel,BASS_ChannelGetPosition(FChannel, BASS_POS_BYTE));
+end;
+
+procedure TBASSPlayerX.SetTrackPositionSeconds(const Value: double);
+begin
+ SetTrackPosition(BASS_ChannelSeconds2Bytes(FChannel,Value));
+end;
 
 function TBASSPlayerX.BassLenToTime(len: cardinal): string;
 const
@@ -425,7 +608,7 @@ begin
    temp:= round(1000 * FloatLen);   // sec -> milli sec
    if temp<=l
     then result:=FormatDateTime ('nn:ss', temp / kd)
-    else result:=FormatDateTime ('hh"/"nn', temp / kd)    
+    else result:=FormatDateTime ('h:nn:ss', temp / kd)    
 end;
 
 
@@ -450,8 +633,10 @@ end;
 
 procedure TBASSPlayerX.UnMute;
 begin
-  BASS_SetConfig(BASS_CONFIG_GVOL_MUSIC, FVolume);
-  BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, FVolume);
+//  BASS_SetConfig(BASS_CONFIG_GVOL_MUSIC, FVolume);
+//  BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, FVolume);
+  BASS_SetConfig(BASS_CONFIG_GVOL_MUSIC, 10000);
+  BASS_SetConfig(BASS_CONFIG_GVOL_STREAM, 10000);
 //  BASS_SetVolume(FVolume);
 end;
 

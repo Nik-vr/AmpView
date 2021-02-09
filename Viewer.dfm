@@ -4,12 +4,12 @@ object AmpViewMainForm: TAmpViewMainForm
   BorderIcons = [biMinimize]
   BorderStyle = bsNone
   Caption = 'AmpView'
-  ClientHeight = 217
-  ClientWidth = 373
+  ClientHeight = 163
+  ClientWidth = 280
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -10
   Font.Name = 'Tahoma'
   Font.Style = []
   Icon.Data = {
@@ -50,19 +50,21 @@ object AmpViewMainForm: TAmpViewMainForm
     000083FF000081E10000C0800000F0810000F0030000F8030000FC030000FC01
     00000C010000080100000801000084010000860100008F010000FFFB0000}
   OldCreateOrder = False
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   OnMouseWheelDown = FormMouseWheelDown
   OnMouseWheelUp = FormMouseWheelUp
   OnPaint = FormPaint
   OnShow = FormShow
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 12
   object MainImage: TImage32
     Left = 0
     Top = 0
-    Width = 341
-    Height = 157
+    Width = 256
+    Height = 118
     Bitmap.ResamplerClassName = 'TNearestResampler'
     BitmapAlign = baTopLeft
     PopupMenu = MainPopupMenu
@@ -73,10 +75,10 @@ object AmpViewMainForm: TAmpViewMainForm
     OnMouseMove = MainImageMouseMove
     OnMouseUp = MainImageMouseUp
     object TimerImage: TImage32
-      Left = 8
-      Top = 7
-      Width = 67
-      Height = 31
+      Left = 6
+      Top = 5
+      Width = 50
+      Height = 24
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       Scale = 1.000000000000000000
@@ -87,10 +89,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnMouseDown = TimerImageMouseDown
     end
     object TrackCaptionImage: TImage32
-      Left = 14
-      Top = 66
-      Width = 312
-      Height = 15
+      Left = 11
+      Top = 50
+      Width = 234
+      Height = 11
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -103,14 +105,16 @@ object AmpViewMainForm: TAmpViewMainForm
       OnMouseDown = TrackCaptionImageMouseDown
     end
     object ProgressBar: TProgressBar32
-      Left = 15
-      Top = 90
-      Width = 311
-      Height = 16
+      Left = 11
+      Top = 68
+      Width = 234
+      Height = 12
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
+      ParentShowHint = False
       Scale = 1.000000000000000000
       ScaleMode = smNormal
+      ShowHint = False
       TabOrder = 2
       Visible = False
       OnMouseDown = ProgressBarMouseDown
@@ -118,24 +122,27 @@ object AmpViewMainForm: TAmpViewMainForm
       OnMouseUp = ProgressBarMouseUp
     end
     object VolumeBar: TProgressBar32
-      Left = 240
-      Top = 125
-      Width = 87
-      Height = 11
+      Left = 180
+      Top = 94
+      Width = 65
+      Height = 8
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
+      ParentShowHint = False
       Scale = 1.000000000000000000
       ScaleMode = smNormal
+      ShowHint = False
       TabOrder = 3
       Visible = False
       OnMouseDown = VolumeBarMouseDown
       OnMouseMove = VolumeBarMouseMove
+      OnMouseUp = VolumeBarMouseUp
     end
     object MinBtn: TButton32
-      Left = 275
-      Top = 5
-      Width = 26
-      Height = 16
+      Left = 206
+      Top = 4
+      Width = 20
+      Height = 12
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -146,10 +153,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = MinBtnClick
     end
     object CloseBtn: TButton32
-      Left = 305
-      Top = 5
-      Width = 26
-      Height = 16
+      Left = 229
+      Top = 4
+      Width = 19
+      Height = 12
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -160,10 +167,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = CloseBtnClick
     end
     object OpenBtn: TButton32
-      Left = 240
-      Top = 40
-      Width = 26
-      Height = 18
+      Left = 180
+      Top = 30
+      Width = 20
+      Height = 14
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -174,10 +181,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionOpenExecute
     end
     object InfoBtn: TButton32
-      Left = 300
-      Top = 40
-      Width = 26
-      Height = 18
+      Left = 225
+      Top = 30
+      Width = 20
+      Height = 14
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -188,10 +195,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionFileInfoExecute
     end
     object PlayListBtn: TButton32
-      Left = 270
-      Top = 40
-      Width = 26
-      Height = 18
+      Left = 203
+      Top = 30
+      Width = 19
+      Height = 14
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -202,10 +209,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionPlayListExecute
     end
     object PrevBtn: TButton32
-      Left = 20
-      Top = 120
-      Width = 24
-      Height = 24
+      Left = 15
+      Top = 90
+      Width = 18
+      Height = 18
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -216,10 +223,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionPrevTrackExecute
     end
     object NextBtn: TButton32
-      Left = 140
-      Top = 120
-      Width = 24
-      Height = 24
+      Left = 105
+      Top = 90
+      Width = 18
+      Height = 18
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -230,10 +237,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionNextTrackExecute
     end
     object MuteBtn: TButton32
-      Left = 175
-      Top = 120
-      Width = 18
-      Height = 18
+      Left = 131
+      Top = 90
+      Width = 14
+      Height = 14
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -244,10 +251,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionMuteExecute
     end
     object PlayBtn: TButton32
-      Left = 50
-      Top = 120
-      Width = 26
-      Height = 26
+      Left = 38
+      Top = 90
+      Width = 19
+      Height = 20
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -258,10 +265,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionPlayExecute
     end
     object PauseBtn: TButton32
-      Left = 80
-      Top = 120
-      Width = 26
-      Height = 26
+      Left = 60
+      Top = 90
+      Width = 20
+      Height = 20
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -272,10 +279,10 @@ object AmpViewMainForm: TAmpViewMainForm
       OnClick = ActionPauseExecute
     end
     object StopBtn: TButton32
-      Left = 110
-      Top = 120
-      Width = 26
-      Height = 26
+      Left = 83
+      Top = 90
+      Width = 19
+      Height = 20
       Bitmap.ResamplerClassName = 'TNearestResampler'
       BitmapAlign = baTopLeft
       ParentShowHint = False
@@ -288,9 +295,12 @@ object AmpViewMainForm: TAmpViewMainForm
   end
   object MainPopupMenu: TPopupMenu
     Left = 80
-    Top = 165
-    object ItemAbout: TMenuItem
-      Action = ActionAbout
+    Top = 133
+    object ItemOpen: TMenuItem
+      Action = ActionOpen
+    end
+    object ItemOpenFolder: TMenuItem
+      Action = ActionOpenFolder
     end
     object N2: TMenuItem
       Caption = '-'
@@ -300,6 +310,9 @@ object AmpViewMainForm: TAmpViewMainForm
     end
     object N3: TMenuItem
       Caption = '-'
+    end
+    object ItemShufflePlay: TMenuItem
+      Action = ActionShufflePlay
     end
     object ItemTimeMode: TMenuItem
       Action = ActionTimeLeftMode
@@ -346,19 +359,28 @@ object AmpViewMainForm: TAmpViewMainForm
     object N9: TMenuItem
       Caption = '-'
     end
+    object ItemAbout: TMenuItem
+      Action = ActionAbout
+    end
+    object N8: TMenuItem
+      Caption = '-'
+    end
     object ItemClose: TMenuItem
       Action = ActionClose
+    end
+    object ItemDetach: TMenuItem
+      Action = ActionDetach
     end
   end
   object ActionList: TActionList
     Left = 45
-    Top = 165
+    Top = 133
     object ActionClose: TAction
       Category = #1054#1082#1085#1086
       Caption = 'Close'
-      ShortCut = 27
       SecondaryShortCuts.Strings = (
         'Alt+F4')
+      ShortCut = 27
       OnExecute = ActionCloseExecute
     end
     object ActionAbout: TAction
@@ -370,31 +392,29 @@ object AmpViewMainForm: TAmpViewMainForm
     object ActionRewind: TAction
       Category = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
       Caption = 'Rewind'
-      ShortCut = 37
       OnExecute = ActionRewindExecute
     end
     object ActionForward: TAction
       Category = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
       Caption = 'Forward'
-      ShortCut = 39
       OnExecute = ActionForwardExecute
     end
     object ActionVolumeUp: TAction
       Category = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
       Caption = 'Volume Up'
-      ShortCut = 107
       SecondaryShortCuts.Strings = (
         'Ctrl+Up'
         'Num +')
+      ShortCut = 107
       OnExecute = ActionVolumeUpExecute
     end
     object ActionVolumeDown: TAction
       Category = #1059#1087#1088#1072#1074#1083#1077#1085#1080#1077
       Caption = 'Volume Down'
-      ShortCut = 109
       SecondaryShortCuts.Strings = (
         'Ctrl+Down'
         'Num-')
+      ShortCut = 109
       OnExecute = ActionVolumeDownExecute
     end
     object ActionFileInfo: TAction
@@ -446,9 +466,9 @@ object AmpViewMainForm: TAmpViewMainForm
     object ActionPlayList: TAction
       Category = #1054#1082#1085#1086
       Caption = 'Show/Hide PlayList'
-      ShortCut = 32848
       SecondaryShortCuts.Strings = (
         'L')
+      ShortCut = 32848
       OnExecute = ActionPlayListExecute
     end
     object ActionNextTrack: TAction
@@ -494,24 +514,43 @@ object AmpViewMainForm: TAmpViewMainForm
       OnExecute = ActionEQExecute
     end
     object ActionOpenFolder: TAction
-      Caption = 'ActionOpenFolder'
+      Caption = 'Open Folder...'
       OnExecute = ActionOpenFolderExecute
+    end
+    object ActionSelectAll: TAction
+      Category = #1054#1082#1085#1086
+      Caption = 'ActionSelectAll'
+      ShortCut = 16449
+      OnExecute = ActionSelectAllExecute
+    end
+    object ActionDetach: TAction
+      Category = #1054#1082#1085#1086
+      Caption = 'Detach'
+      Enabled = False
+      ShortCut = 16452
+      Visible = False
+      OnExecute = ActionDetachExecute
+    end
+    object ActionShufflePlay: TAction
+      Category = #1054#1082#1085#1086
+      Caption = 'Shuffle play'
+      OnExecute = ActionShufflePlayExecute
     end
   end
   object XPManifest1: TXPManifest
     Left = 115
-    Top = 165
+    Top = 133
   end
   object WorkTimer: TTimer
     Enabled = False
-    Interval = 500
+    Interval = 200
     OnTimer = WorkTimerTimer
     Left = 10
-    Top = 165
+    Top = 133
   end
   object TrayPopupMenu: TPopupMenu
     Left = 150
-    Top = 165
+    Top = 173
     object TrayItemRestore: TMenuItem
       Action = ActionRestoreFromTray
       Default = True
@@ -549,5 +588,18 @@ object AmpViewMainForm: TAmpViewMainForm
     object TrayItemClose: TMenuItem
       Action = ActionClose
     end
+  end
+  object hwHintTimer: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = hwHintTimerTimer
+    Left = 200
+    Top = 136
+  end
+  object DelayedExecutionTimer: TTimer
+    Enabled = False
+    Interval = 1
+    Left = 160
+    Top = 120
   end
 end

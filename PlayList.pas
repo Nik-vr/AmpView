@@ -5,7 +5,12 @@ interface
 uses Windows, Messages, SysUtils, Controls, StdCtrls, GR32_Image,
      Menus, SkinTypes, Forms, ShellAPI, Graphics, ActnList,
      GR32_Layers, GRButton32, BASSPlayerX, Classes, ComCtrls,
-     MyDialogs, ExtCtrls;
+     {$IF CompilerVersion <24}
+       MyDialogs,
+     {$ELSE}
+       Dialogs,
+     {$IFEND}
+     ExtCtrls, System.Actions, clipbrd;
 
 type
   TPlayListForm = class(TForm)
@@ -46,6 +51,7 @@ type
     ItemSavePlayList: TMenuItem;
     PlayList: TListView;
     InfoBox: TListBox;
+    ActionCopyNames: TAction;
     procedure ActionDeleteFilesExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ShowNumbersItemClick(Sender: TObject);
@@ -95,10 +101,23 @@ type
     procedure InfoBoxDblClick(Sender: TObject);
     procedure InfoBoxMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure InfoBoxClick(Sender: TObject);
+    procedure PlayListDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure PlayListDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure FormActivate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure PlayListKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ActionCopyNamesExecute(Sender: TObject);
   private
       { Private declarations }
     procedure WMDropFiles(var Msg: TWMDropFiles); message WM_DROPFILES;
     procedure WMDeactivate(var Msg: TMessage); message WM_KILLFOCUS;
+    procedure WMActivate(var Msg: TMessage); message WM_ACTIVATE;
+    procedure WMKeyDown(var Msg: TMessage); message WM_KEYDOWN;
+    procedure WMKeyUp(var Msg: TMessage); message WM_KEYUP;
     { Private declarations }
   public
     FShowHoriz: Boolean;
@@ -114,7 +133,7 @@ var
   PLImages: TSizeableWindow;    // Р РёСЃСѓРЅРєРё РґР»СЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ playlist'Р°
   ListOptions: TListOptions;
 //  PLCloseButton: TSimpleButton;      // РљРЅРѕРїРєР° PlayList
-  SaveDialog: TMySaveDialog;
+  SaveDialog: {$IF CompilerVersion >= 24.0} TSaveDialog {$ELSE} TMySaveDialog {$IFEND} ;
   //
   isResizing: boolean = false;
   oldPos: TPoint;
@@ -126,6 +145,7 @@ var
   SortByTitleReverse: boolean;
   SortByFileNameReverse: boolean;
   SortByLengthReverse: boolean;
+  keydowncnt:integer;
 
 implementation
 
@@ -275,7 +295,7 @@ begin
    end;
  SetIniInt('PlayList', 'ShowMode', 0, IniFile);
  PlayList.Repaint;
- RedrawPlayList; 
+ RedrawPlayList;
 end;
 
 procedure TPlayListForm.ShowTrackCaptionItemClick(Sender: TObject);
@@ -325,7 +345,8 @@ begin
   InfoBox.Visible:=false; 
   DragAcceptFiles(Handle, true);
   RightBottomImage.Cursor:=crSizeNWSE;
-  SaveDialog:=TMySaveDialog.Create(PlayListForm);
+
+  SaveDialog:={$IF CompilerVersion >= 24.0} TSaveDialog {$ELSE} TMySaveDialog {$IFEND}.Create(PlayListForm);
   SaveDialog.Filter:='M3U Playlist|*.m3u|PLS Playlist|*.pls|XML Playlist|*.xml';
 end;
 
@@ -340,6 +361,9 @@ var
   FileName: string;
 begin
   h := Msg.Drop;
+
+  Screen.Cursor:=crHourGlass;
+  Application.ProcessMessages;
 
   // РґРѕР±Р°РІР»РµРЅРёРµ С„Р°Р№Р»РѕРІ РІ СЃРїРёСЃРѕРє
   num:=DragQueryFile(h,Dword(-1),nil,0);
@@ -358,6 +382,8 @@ begin
 
   DragFinish(h);
 
+  Screen.Cursor:=crDefault;
+
 end;
 
 procedure TPlayListForm.FormDestroy(Sender: TObject);
@@ -368,7 +394,38 @@ end;
 
 procedure TPlayListForm.WMDeactivate(var Msg: TMessage);
 begin
+ //Exit;
  AmpViewMainForm.SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
+ inherited;
+end;
+
+procedure TPlayListForm.WMActivate(var Msg: TMessage);
+begin
+//
+inherited;
+end;
+
+procedure TPlayListForm.WMKeyDown(var Msg: TMessage);
+begin
+if (msg.WParam=VK_LEFT) or (msg.WParam=VK_RIGHT) then
+  begin
+  PostMessage(AmpViewMainForm.Handle, msg.Msg, msg.WParam, msg.LParam);
+  exit;
+  end;
+if AmpViewMainForm.IsEmbedded then
+  begin
+  AmpViewMainForm.PostMsgParent(msg);
+  end;
+  inherited;
+end;
+
+procedure TPlayListForm.WMKeyUp(var Msg: TMessage);
+begin
+if AmpViewMainForm.IsEmbedded then
+  begin
+  AmpViewMainForm.PostMsgParent(msg);
+  end;
+  inherited;
 end;
 
 procedure TPlayListForm.PLPopupMenuPopup(Sender: TObject);
@@ -399,10 +456,10 @@ begin
  i:=0; num:=0;
  MsgType := MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2 + MB_APPLMODAL;
  lf:=PlugDir+'\Language\'+GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile);
- ms:=GetIniString('Strings', 'WarningDeleteTracks', 'Are you sure that want to delete this tracks?', lf);
+ ms:=GetIniString('Strings', 'WarningDeleteTracks', 'Are you sure you want to delete these tracks?', lf);
  wr:=GetIniString('Strings', 'WarningCaption', 'Warning', lf);
 
- if GetIniBool('main', 'ShowWarnings', true, IniFile) then
+ if GetIniBool('main', 'ShowWarningsDelTracks', false, IniFile) then
   begin
    if MessageBox( Handle, PChar(ms), PChar(wr), MsgType)=IDNO then exit;
   end;
@@ -433,6 +490,7 @@ begin
   if num>MyPlayList.Count-1 then exit;
   PlayList.SetFocus;
   PlayList.ItemIndex:=num;
+  PlayList.ItemFocused:=PlayList.Items[PlayList.ItemIndex];
 
 end;
 
@@ -503,8 +561,8 @@ const
   CS_DROPSHADOW = $00020000;
 begin
   inherited;
-  if DetectWinVersion=wvXP
-   then Params.WindowClass.Style := Params.WindowClass.Style or CS_DROPSHADOW;
+  //if DetectWinVersion=wvXP
+  // then Params.WindowClass.Style := Params.WindowClass.Style or CS_DROPSHADOW;
 end;
 
 
@@ -532,14 +590,30 @@ begin
  AmpViewMainForm.PlayListBtn.Checked:=false;
 end;
 
+procedure TPlayListForm.ActionCopyNamesExecute(Sender: TObject);
+var a:integer;
+    s:string;
+begin
+if PlayList.SelCount<=0 then exit;
+s:='';
+for a := 0 to PlayList.Items.Count-1 do
+  begin
+  if not PlayList.Items[a].Selected then continue;
+  s:=s+PlayList.Items[a].Caption+#13#10;
+  end;
+if s<>'' then Clipboard.AsText:=s;
+end;
+
 procedure TPlayListForm.ActionDeleteFilesExecute(Sender: TObject);
 var
- i: integer;
+ i,ii: integer;
  num: integer;
  MsgType: integer;
  lf: string;
  wr: string;
  ms: string;
+ cnt:Integer;
+ skipline:Boolean;
 begin
  // Проверка
  if MyPlayList.Count<0 then exit;
@@ -548,13 +622,40 @@ begin
  i:=0; num:=0;
  MsgType := MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2 + MB_APPLMODAL;
  lf:=PlugDir+'\Language\'+GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile);
- ms:=GetIniString('Strings', 'WarningDeleteFiles', 'Are you sure that want to delete this files?', lf);
+ ms:=GetIniString('Strings', 'WarningDeleteFiles', 'Are you sure you want to delete these files?', lf);
  wr:=GetIniString('Strings', 'WarningCaption', 'Warning', lf);
 
- if GetIniBool('main', 'ShowWarnings', true, IniFile) then
+ cnt:=0;
+ for ii:=0 to MyPlayList.Count-1 do
+   begin
+   if PlayList.Items[ii].Selected then inc(cnt);
+   end;
+
+ ms:=ms+' ('+inttostr(cnt)+')'#13#10;
+ cnt:=0;
+ skipline:=false;
+ for ii:=0 to MyPlayList.Count-1 do
+  begin
+   // Если трек выделен
+   if PlayList.Items[ii].Selected then
+    begin
+      if (cnt<5) or (ii>=MyPlayList.Count-3) then
+        begin
+        ms:=ms+#13#10+MyPlayList.GetFileName(ii);
+        end
+      else if (cnt>=5) and (not skipline) and (ii<MyPlayList.Count-3) then
+        begin
+          ms:=ms+#13#10'...';
+          skipline:=true;
+        end;
+      inc(cnt);
+    end;
+  end;
+
+ if GetIniBool('main', 'ShowWarningsDelFiles', true, IniFile) then
   begin
    if MessageBox( Handle, PChar(ms), PChar(wr), MsgType)=IDNO then exit;
-  end; 
+  end;
 
  // Проход по списку треков
  while i<=MyPlayList.Count-1 do
@@ -583,7 +684,7 @@ begin
   if num>MyPlayList.Count-1 then exit;
   PlayList.SetFocus;
   PlayList.ItemIndex:=num;
-
+  PlayList.ItemFocused:=PlayList.Items[PlayList.ItemIndex];
 
 
 end;
@@ -599,7 +700,10 @@ begin
  while i<=PlayList.SelCount-1 do
   begin
    if PlayList.Items[i].Selected
-    then CopyFile(PChar(MyPlayList.GetFileName(i)), PChar(QF+'\'+ExtractFileName(MyPlayList.GetFileName(i))), true)
+    then
+      begin
+      CopyFile(PChar(MyPlayList.GetFileName(i)), PChar(QF+'\'+ExtractFileName(MyPlayList.GetFileName(i))), true)
+      end
     else i:=i+1;
   end;
 end;
@@ -680,7 +784,19 @@ end;
 
 procedure TPlayListForm.PlayListKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var flags:LongInt;
 begin
+
+ if (Key=VK_LEFT) or (Key=VK_RIGHT) then
+   begin
+   flags:=0;
+   if keydowncnt>0 then flags:=$40000000;
+   flags:=flags+keydowncnt;
+   SendMessage(AmpViewMainForm.Handle,WM_KEYDOWN,Key,flags);
+   inc(keydowncnt);
+   exit;
+   end;
+
  if PlayList.ItemIndex<0 then exit;
 
  if Key=13 then
@@ -693,7 +809,8 @@ begin
 //    PlayList.ItemIndex:=CurTrack;
     PlayList.Repaint;
     SetButtonStates;
-   end;
+    Exit;
+   end;   
 end;
 
 
@@ -703,10 +820,25 @@ var
  i, lines: integer;
  text: string;
  ScrollBarWidth: integer;
+ top_item, bottom_item:integer;
 begin
+
+  top_item:=0; bottom_item:=0;
+  if PlayList.Items.Count>0 then
+    begin
+    top_item:=PlayList.TopItem.Index;
+    bottom_item:=top_item+PlayList.VisibleRowCount-1;
+    end;
+
+  PlayList.Items.BeginUpdate;
+
   PlayList.Clear;
 
-  if MyPlayList.Count<=0 then exit;
+  if MyPlayList.Count<=0 then
+    begin
+    PlayList.Items.EndUpdate;
+    exit;
+    end;
 
   lines:=MyPlayList.Count-1;
   for i:=0 to lines do
@@ -733,11 +865,12 @@ begin
 
  // Длина треков (вкл/выкл)
  if ShowTracksLength.Checked
-  then PlayList.Columns[2].Width:=PlayList.Canvas.TextWidth('099:990')
+  then PlayList.Columns[2].Width:=PlayList.Canvas.TextWidth('909:99:909') // '099:990'
   else PlayList.Columns[2].Width:=0;
 
  // Размеры колонок
- PlayList.Columns[1].Width:=PlayList.Width-PlayList.Columns[0].Width-PlayList.Columns[2].Width-ScrollBarWidth;
+ //PlayList.Columns[1].Width:=PlayList.Width-PlayList.Columns[0].Width-PlayList.Columns[2].Width-ScrollBarWidth;
+ PlayList.Columns[0].Width:=PlayList.Width-PlayList.Columns[1].Width-PlayList.Columns[2].Width-ScrollBarWidth;
 
  // Отрисовка в сетке списка треков
  for i:=0 to lines do
@@ -759,18 +892,27 @@ begin
       then text:=MyPlayList.GetFileName(i)
       else text:=ExtractFileName( MyPlayList.GetFileName(i) );
 
-   // Нумерация треков   
+   // Нумерация треков
    if ShowNumbersItem.Checked
+
     then text:=IntToStr(i+1)+'. '+text;
-
    // "Красивая" обрезка длинных строк
-   if GetTextWidth(Canvas.Handle, text, true)>=PlayList.Columns[1].Width
-    then text:=BeautyStr(text, PlayList.Columns[1].Width)
-    else text:=BeautyStr(text, PlayList.Columns[1].Width);
+   if GetTextWidth(Canvas.Handle, text, true)>=PlayList.Columns[0].Width
+    then text:=BeautyStr(text, PlayList.Columns[0].Width)
+    else text:=BeautyStr(text, PlayList.Columns[0].Width);
 
+   PlayList.Items[i].Caption:=text;
    PlayList.Items[i].SubItems[0]:=text;
 
  end;
+
+ if bottom_item>PlayList.Items.Count-1 then bottom_item:=PlayList.Items.Count-1;
+ if bottom_item>=0 then
+   begin
+   PlayList.Items[top_item].MakeVisible(False);
+   PlayList.Items[bottom_item].MakeVisible(False);
+   end;
+ PlayList.Items.EndUpdate;
 
  PlayList.Repaint;
 
@@ -792,43 +934,43 @@ begin
    //  Brush.Color:=ListOptions.BackColor1;
 
    // Текущий трек
-   if Item.Index=CurTrack
-    then
+   if Item.Index=CurTrack then
      begin
-      // Выделенная строка
-      if (Item.Index=PlayList.ItemIndex) //and Focused
-       then
-        begin
-         Canvas.Font:=ListOptions.SelectedPlayedFont;
-         Canvas.Brush.Color:=ListOptions.SelectedPlayedBackColor;
-        end
-       else
-        // Невыделенные строки
-        begin
-         Canvas.Font:=ListOptions.PlayedFont;
-         if (Item.Index mod 2)=0
-          then Canvas.Brush.Color:=ListOptions.BackColor1
-          else Canvas.Brush.Color:=ListOptions.BackColor2;
-        end;
+     // Выделенная строка
+     if (Item.Index=PlayList.ItemIndex) then//and Focused
+       begin
+       Canvas.Font:=ListOptions.SelectedPlayedFont;
+       Canvas.Brush.Color:=ListOptions.SelectedPlayedBackColor;
+       Canvas.FillRect(Item.DisplayRect(drBounds));
+       end
+     else
+       // Невыделенные строки
+       begin
+       Canvas.Font:=ListOptions.PlayedFont;
+       if (Item.Index mod 2)=0
+         then Canvas.Brush.Color:=ListOptions.BackColor1
+         else Canvas.Brush.Color:=ListOptions.BackColor2;
+       end;
      end
    // Р•СЃР»Рё С„Р°Р№Р» РЅРµ РїСЂРѕРёРіСЂС‹РІР°РµС‚СЃСЏ
     else
      begin
-      // Р•СЃР»Рё РєСѓСЂСЃРѕСЂ РЅР° С„Р°Р№Р»Рµ
-      if (Item.Index=PlayList.ItemIndex) and Focused
-       then
-        begin
-         Canvas.Font:=ListOptions.SelectedFont;
-         Canvas.Brush.Color:=ListOptions.SelectedBackColor;
-        end
-       else
-        begin
-         Canvas.Font:=ListOptions.Font;
-         if (Item.Index mod 2)=0
-          then Canvas.Brush.Color:=ListOptions.BackColor1
-          else Canvas.Brush.Color:=ListOptions.BackColor2;
-        end;
+     // Р•СЃР»Рё РєСѓСЂСЃРѕСЂ РЅР° С„Р°Р№Р»Рµ
+     if {(}Item.selected{Index=PlayList.ItemIndex) and Focused  } then
+       begin
+       Canvas.Font:=ListOptions.SelectedFont;
+       Canvas.Brush.Color:=ListOptions.SelectedBackColor;
+       Canvas.FillRect(Item.DisplayRect(drBounds));
+       end
+     else
+       begin
+       Canvas.Font:=ListOptions.Font;
+       if (Item.Index mod 2)=0
+         then Canvas.Brush.Color:=ListOptions.BackColor1
+         else Canvas.Brush.Color:=ListOptions.BackColor2;
+       end;
      end;
+
 
   // Р•СЃР»Рё РІРєР»СЋС‡РµРЅРѕ РёРіРЅРѕСЂРёСЂРѕРІР°РЅРёРµ С€СЂРёС„С‚Р°
    if GetIniBool('main', 'IgnorePLFont', false, IniFile) then
@@ -840,7 +982,10 @@ begin
     begin
 //      PlayList.DefaultRowHeight:=ListOptions.Font.Size*2;
     end;
+   Canvas.TextOut(Item.DisplayRect(drBounds).Left+5, Item.DisplayRect(drBounds).Top+3, item.Caption);
+   Canvas.TextOut(clientwidth-canvas.TextWidth('     '+item.SubItems[1])-5, Item.DisplayRect(drBounds).Top+3, '     '+item.SubItems[1]+'     ');
 
+   if focused and item.Focused then DrawFocusRect(canvas.Handle,Item.DisplayRect(drBounds));
 
   end;
 
@@ -862,28 +1007,30 @@ begin
  // выбор цветов и отрисовка
   with Control as TListBox do
   begin
-   Canvas.Brush.Color:=ListOptions.BackColor1;
-
-   // Если курсор на файле
-   if odSelected in State
-    then
      begin
-      Canvas.Font:=ListOptions.SelectedFont;
-      Canvas.Brush.Color:=ListOptions.SelectedBackColor;
-     end
-    else
-     begin
-      Canvas.Font:=ListOptions.Font;
-      if (Index mod 2)=0
-       then Canvas.Brush.Color:=ListOptions.BackColor1
-       else Canvas.Brush.Color:=ListOptions.BackColor2;
-     end;
+     Canvas.Brush.Color:=ListOptions.BackColor1;
 
-    if ((Index)=(InfoBox.Items.Count-1)) or (Index=0) then Canvas.Font.Color:=ListOptions.PlayedFont.Color;
+     // Если курсор на файле
+     if odSelected in State
+      then
+       begin
+        Canvas.Font:=ListOptions.SelectedFont;
+        Canvas.Brush.Color:=ListOptions.SelectedBackColor;
+       end
+      else
+       begin
+        Canvas.Font:=ListOptions.Font;
+        if (Index mod 2)=0
+         then Canvas.Brush.Color:=ListOptions.BackColor1
+         else Canvas.Brush.Color:=ListOptions.BackColor2;
+       end;
 
-    Canvas.FillRect(Rect);
-    text:=Items[index];
-    Canvas.TextOut(Rect.Left + 2, Rect.Top, text);
+      if ((Index)=(InfoBox.Items.Count-1)) or (Index=0) then Canvas.Font.Color:=ListOptions.PlayedFont.Color;
+      if ((Index)=(InfoBox.Items.Count-1)) or (Index=0) then Canvas.Font.Style:=Canvas.Font.Style+[fsBold] else Canvas.Font.Style:=Canvas.Font.Style-[fsBold];
+      Canvas.FillRect(Rect);
+      text:=Items[index];
+      Canvas.TextOut(Rect.Left + 2, Rect.Top, text);
+      end;
     // Зарисовка рамки фокуса
     if odFocused in State then DrawFocusRect(Canvas.Handle, Rect);
   end;
@@ -905,9 +1052,14 @@ begin
 
    temp:='AmpView. '+version;
 
-   Items.Add(AmpViewMainForm.ItemAbout.Caption);
+   //Items.Add(AmpViewMainForm.ItemAbout.Caption);
+
+   Items.Add('AmpView version '+version);
+   //Items.Add('');
+   //Items.Add('                 version '+version);
 
    Items.Add('');
+   Items.Add('(c) 2020, mod');
    if GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile)='Russian.lng'
     then Items.Add('Автор (c) 2004-2007 Николай Петроченко')
     else Items.Add('Author (c) 2004-2007 Nikolay Petrochenko');
@@ -917,8 +1069,7 @@ begin
    Items.Add(OptionsForm.LanguageBox.Caption+': ' + GetIniString('main', 'language', GetLocaleInformation(LOCALE_SENGLANGUAGE)+'.lng', IniFile) );
    Items.Add(OptionsForm.TranslatorBox.Caption+': '+OptionsForm.TranslatorLabel.Caption);
    Items.Add('');
-   Items.Add(OptionsForm.SkinBox.Caption);
-   Items.Add(SkinText.Description);
+   Items.Add(OptionsForm.SkinBox.Caption+': '+SkinText.Description);
    Items.Add(SkinText.Author);
    Items.Add('');
    Items.Add('[ '+AmpViewMainForm.CloseBtn.Hint+' ]');      
@@ -936,6 +1087,92 @@ procedure TPlayListForm.InfoBoxMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
  if Button=mbRight then InfoBox.Visible:=false;
+end;
+
+procedure TPlayListForm.InfoBoxClick(Sender: TObject);
+begin
+if InfoBox.ItemIndex<0 then exit;
+ if (InfoBox.ItemIndex)=(InfoBox.Items.Count-1) then
+ InfoBox.Visible:=false;
+end;
+
+procedure TPlayListForm.PlayListDragOver(Sender, Source: TObject; X,
+  Y: Integer; State: TDragState; var Accept: Boolean);
+begin
+  If Source = PlayList then
+    begin
+      Accept := True;
+    end;
+end;
+
+procedure TPlayListForm.PlayListDragDrop(Sender, Source: TObject; X,
+  Y: Integer);
+var
+  MyItem : TListItem;
+  src_indx,indx,top_item, bottom_item:integer;
+  add1:integer;
+begin
+  if Source = PlayList then
+    with Source as TListView do
+      begin
+      if GetItemAt(X,Y)<>nil then
+        begin
+        indx:=GetItemAt(X,Y).Index;
+        if indx<0 then Exit;
+        if ItemIndex<0 then Exit;
+        if Selected=nil then exit;
+        src_indx:=Selected.Index;
+        if src_indx=indx then exit;
+        top_item:=PlayList.TopItem.Index;
+        //PlayList.Items.BeginUpdate;
+        bottom_item:=top_item+PlayList.VisibleRowCount-1;
+        if bottom_item>Items.Count-1 then bottom_item:=Items.Count-1;
+        add1:=0;
+        if (src_indx<indx) then add1:=1;
+        MyPlayList.InsertItem ( indx+add1 , MyPlayList.GetFileName(src_indx), MyPlayList.GetText(src_indx), MyPlayList.GetLength(src_indx));
+        MyItem:=Items.Insert(indx+add1);
+        MyItem.Assign(Selected);
+        add1:=0;
+        if (src_indx>indx) then add1:=1;
+        MyPlayList.DeleteItem(src_indx+add1);
+        //Selected.Delete;
+        Items.Delete(src_indx+add1);
+        RedrawPlayList;
+        PlayList.SetFocus;
+        PlayList.ItemIndex:=indx;
+        if bottom_item>PlayList.Items.Count-1 then bottom_item:=PlayList.Items.Count-1;
+        if bottom_item>=0 then
+          begin
+          PlayList.Items[top_item].MakeVisible(False);
+          PlayList.Items[bottom_item].MakeVisible(False);
+          end;
+        //PlayList.Items.EndUpdate;
+        end;
+      end;
+end;
+
+procedure TPlayListForm.FormActivate(Sender: TObject);
+begin                  
+AmpViewMainForm.SetTopMost( GetIniBool('main', 'TopMost', false, IniFile) );
+{if AmpViewMainForm.IsEmbedded then
+  begin
+  AmpViewMainForm.DoDeactivate;
+  end; }
+end;
+
+procedure TPlayListForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if key=27 then
+  begin
+  SendMessage(AmpViewMainForm.Handle,WM_KEYDOWN,27,0);
+  end;
+end;
+
+procedure TPlayListForm.PlayListKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+keydowncnt:=0;
 end;
 
 end.

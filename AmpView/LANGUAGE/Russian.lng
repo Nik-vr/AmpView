@@ -1,5 +1,5 @@
 ; ------------------------------------------------------ ;
-; Языковой файл для AmpView 3.2 beta 7                   ;
+; Языковой файл для AmpView 3.5                          ;
 ; Русский язык                                           ;
 ;                                                        ;
 ; AmpView © 2004-2007 Петроченко Н.Ю.                    ;
@@ -18,8 +18,11 @@ mail=Nik_vr@mail.ru
 [menus]
 ItemAbout=О плагине...
 ItemOptions=Опции
+ItemOpen=Открыть...
+ItemOpenFolder=Открыть каталог...
 ItemFileInfo=Информация о файле...
 ItemClose=Закрыть
+ItemDetach=Открепить
 ItemTopMost=Поверх всех окон
 ItemView=Вид
 ItemShowFileNames=Имена файлов
@@ -28,6 +31,7 @@ ItemTrackCaptions=Заголовки треков
 ItemShowNumbers=Показывать нумерацию
 ItemShowTrackLength=Показывать время
 ItemTimeMode=Обратный отсчет времени
+ItemShufflePlay=Случайный порядок воспроизведения
 ItemControl=Управление
 ItemNextFile=Следующий файл из текущей папки
 ItemShuffle=Перемешать треки
@@ -39,7 +43,7 @@ ItemSortByFileName=по имени файла
 ItemSortByTitle=по заголовку
 ItemSavePlayList=Сохранить список треков...
 
-; меню в трее
+; Меню в трее
 ItemVolumeUp=Увеличить громкость
 ItemVolumeDown=Уменьшить громкость
 ItemRestore=Показать окно
@@ -62,6 +66,7 @@ ButtonInfo=Информация о файле
 
 ; Строки, используемые в окне опций
 [options]
+
 ; Дерево опций (названия страниц)
 TreeItemInterface=Интерфейс
 TreeItemPlugins=Модули
@@ -69,6 +74,7 @@ TreeItemSkins=Скины
 TreeItemOther=Разное
 TreeItemControl=Управление
 TreeItemPlayList=Список треков
+
 ; Группы
 BoxLanguage=Язык
 BoxTranslator=Переводчик
@@ -86,30 +92,38 @@ BoxFormatTrackCaption=Формат заголовков треков
 BoxPlugins=Доступные модули
 BoxExtensions=Расширения
 BoxConfig=Конфигурация
+
 ; Действия
 OnEndActionStop=Остановить трек
 OnEndActionNext=Открыть следующий трек из списка
 OnEndActionClose=Закрыть AmpView
 OnEndActionRestart=Проиграть текущий трек сначала
 OnEndActionNextFile=Открыть следующий файл из папки
+
 ; Кнопки
 ButtonClose=Закрыть
 ButtonAdd=Добавить
 ButtonDelete=Удалить
+
 ; Надписи
 LabelSelectLanguage=Выберите язык из списка:
-; Флажки
+
+; Переключатели
+CheckBoxProgessBarHints=Показывать подсказки времени/громкости
 CheckBoxUseShadows=Разрешить использование теней
 CheckBoxUseAntiAliasing=Разрешить использование сглаживания
 CheckBoxIgnoreSkinFont=Игнорировать шрифт скина
 CheckBoxNotQV=Не использовать AmpView в режиме QuickView
 CheckBoxNotNV=Не использовать AmpView в обычном режиме
 CheckBoxUseControl=Регулировать уровень звука колесом мыши только при нажатом [Ctrl]
-CheckBoxWarning=Показывать предупреждения при удалении файлов
+CheckBoxUseRelativePaths=Использовать относительные пути
+CheckBoxWarningDelTracks=Показывать предупреждения при удалении треков
+CheckBoxWarningDelFiles=Показывать предупреждения при удалении файлов
 CheckBoxDefaultConfig=Использовать один файл конфигурации для всех пользователей
 PageInternalHotKeys=Внутренние команды
 PageGlobalHotKeys=Глобальные команды
 PageMouse=Мышь
+
 ; Страницы
 PagePlayList=Список
 
@@ -118,3 +132,33 @@ PagePlayList=Список
 WarningDeleteFiles=Вы уверены, что хотите удалить эти файлы?
 WarningDeleteTracks=Вы уверены, что хотите удалить этот трек?
 WarningCaption=Предупреждение
+
+; Строки, используемые в окне "Информация о файле"
+[fileinfo]
+FI_TabMetadata=Метаданные
+FI_MetadataName=Имя
+FI_MetadataValue=Значение
+FI_tag_Artist=Исполнитель
+FI_tag_Title=Название
+FI_tag_Album=Альбом
+FI_tag_Genre=Жанр
+FI_tag_Year=Год
+FI_tag_Track=Дорожка
+FI_tag_Composer=Композитор
+FI_tag_Copyright=Авторское право
+FI_tag_Subtitle=субтитр
+FI_tag_AlbumArtist=Исполнитель альбома
+FI_tag_DiscNumber=Номер диска
+FI_tag_Publisher=Издатель
+FI_tag_Comment=Комментарий
+FI_TabProperties=Свойства
+FI_Type=Тип:
+FI_Duration=Продолжительность:
+FI_FileSize=Размер файла:
+FI_Bitrate=Битрейт:
+FI_ChannelMode=Режим:
+FI_SampleRate=Частота:
+FI_LastModified=Дата изменения:
+FI_bytes=байт
+FI_CloseButton=Закрыть
+FI_Copy=Копировать

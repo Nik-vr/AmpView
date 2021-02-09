@@ -3,7 +3,8 @@ unit Options;
 interface
 
 uses Windows, SysUtils, Forms, StdCtrls, ComCtrls, ActnList, Classes,
-     Controls, xIni, ShellAPI, ExtCtrls, HotKeyTools, Graphics;
+     //{$IF CompilerVersion >= 24.0}System.Actions,{$IFEND}
+     Controls, xIni, ShellAPI, ExtCtrls, HotKeyTools, Graphics, System.Actions;
 
 type
   TOptionsForm = class(TForm)
@@ -65,7 +66,7 @@ type
     FormatTrackBox: TGroupBox;
     FSEdit: TEdit;
     OtherGroupBox: TGroupBox;
-    WarningCheckBox: TCheckBox;
+    TrackWarningCheckBox: TCheckBox;
     PluginsBox: TGroupBox;
     PluginsList: TListBox;
     ExtGroupBox: TGroupBox;
@@ -80,7 +81,12 @@ type
     ConfigGroupBox: TGroupBox;
     DefaultConfigCheckBox: TCheckBox;
     ScrollBox1: TScrollBox;
-    procedure WarningCheckBoxClick(Sender: TObject);
+    SFGroupBox: TGroupBox;
+    SFEdit: TEdit;
+    FileWarningCheckBox: TCheckBox;
+    ProgressBarHintsCheckBox: TCheckBox;
+    UseRelativePathsCheckBox: TCheckBox;
+    procedure TrackWarningCheckBoxClick(Sender: TObject);
     procedure LangComboBoxChange(Sender: TObject);
     procedure ActionCancelExecute(Sender: TObject);
     procedure SkinListClick(Sender: TObject);
@@ -115,6 +121,12 @@ type
       Selected: Boolean);
     procedure TabSheet8Show(Sender: TObject);
     procedure DefaultConfigCheckBoxClick(Sender: TObject);
+    procedure SFEditChange(Sender: TObject);
+    procedure FileWarningCheckBoxClick(Sender: TObject);
+    procedure HotKeyEditEnter(Sender: TObject);
+    procedure GlobalHotKeyEditEnter(Sender: TObject);
+    procedure ProgressBarHintsCheckBoxClick(Sender: TObject);
+    procedure UseRelativePathsCheckBoxClick(Sender: TObject);
   private
     procedure GetSkinsList;
     procedure EnableFontControls(enable: boolean);
@@ -218,33 +230,42 @@ begin
   if LangFiles.Count<=0 then LangComboBox.Enabled:=false;
 
   // Опции
-  ScrollStep.Position:=GetIniInt('main', 'ScrollStep', 5, 1, 50, IniFile);
+  ScrollStep.Position:=GetIniInt('main', 'ScrollStep', 3, 1, 50, IniFile);
   UseShadows.Checked:=GetIniBool('main', 'UseShadows', false, IniFile);
   UseAntiAliasing.Checked:=GetIniBool('main', 'UseAntiAliasing', false, IniFile);
+  ProgressBarHintsCheckBox.Checked:=GetIniBool('main', 'UseProgessBarHints', true, IniFile);
   OnEndTrackBox.ItemIndex:=GetIniInt('main', 'OnEndAction', 1, 0, 4, IniFile);
   UseControl.Checked:=GetIniBool('main', 'UseControl', true, IniFile);
+  DefaultConfigCheckBox.Checked:=GetIniBool('main', 'OnlyDefaultConfig', false, PlugDir+'\Config\default.ini');
 
-  FSEdit.Text:=GetIniString('main', 'FormatString', '%ARTI - %TITL', IniFile);
+  //FSEdit.Text:=GetIniString('main', 'FormatString', '%ARTI - %TITL', IniFile);
+  FSEdit.Text:=GetIniString('main', 'FormatString', DefaultFormatString, IniFile);
+
+  SFEdit.Text:=GetIniString('main', 'soundfontpath', '', IniFile);
+
+  UseRelativePathsCheckBox.Checked:= GetIniBool('main', 'UseRelativePaths', False, IniFile);
+  TrackWarningCheckBox.Checked:= GetIniBool('main', 'ShowWarningsDelTracks', False, IniFile);
+  FileWarningCheckBox.Checked:= GetIniBool('main', 'ShowWarningsDelFiles', true, IniFile);
 
   //
   case GetIniInt('main', 'LiteMode', 0, 0, 2, IniFile) of
    0: begin
        NotQVCheckBox.Checked:=false;
-       NotQVCheckBox.Enabled:=true;
+       //NotQVCheckBox.Enabled:=true;
        NotNVCheckBox.Checked:=false;
-       NotNVCheckBox.Enabled:=true;
+       //NotNVCheckBox.Enabled:=true;
       end;
    1: begin
        NotQVCheckBox.Checked:=true;
-       NotQVCheckBox.Enabled:=true;
+       //NotQVCheckBox.Enabled:=true;
        NotNVCheckBox.Checked:=false;
-       NotNVCheckBox.Enabled:=false;
+       //NotNVCheckBox.Enabled:=false;
       end;
    2:  begin
        NotQVCheckBox.Checked:=false;
-       NotQVCheckBox.Enabled:=false;
+       //NotQVCheckBox.Enabled:=false;
        NotNVCheckBox.Checked:=true;
-       NotNVCheckBox.Enabled:=true;
+       //NotNVCheckBox.Enabled:=true;
       end;
   end;
    
@@ -253,7 +274,7 @@ begin
   x:=SkinList.Items.Count-1;
   for i:=0 to x do
    begin
-    if LowerCase( GetIniString('main', 'skin', 'Lister.avsz', IniFile))=LowerCase( SkinList.Items[i]+'.avsz' )
+    if LowerCase( GetIniString('main', 'skin', 'ListerExtended.avsz', IniFile))=LowerCase( SkinList.Items[i]+'.avsz' )
      then SkinList.ItemIndex:=i;
    end;
 
@@ -337,13 +358,22 @@ begin
  if SkinList.Count>=0
   then SetIniString('main', 'skin', ExtractFileName(SkinFiles[SkinList.ItemIndex]), IniFile);
 
+ if AmpViewMainForm.IsEmbedded then
+   begin
+   SkinAutorLabel.Caption:='temporarily disabled loading skins in embedded mode.';
+   SkinEmailLabel.Caption:='new settings are saved';
+   exit;
+   end;
  // Загрузка шкурки
  with AmpViewMainForm do
   begin
    temp_pos:=ProgressBar.Position;
    LoadSkin(SkinFiles[SkinList.ItemIndex]);
-   VolumeBar.Position:=VolumeBar.Position;
-   ProgressBar.Position:=temp_pos;
+   //VolumeBar.Position:=VolumeBar.Position;
+   //ProgressBar.Position:=temp_pos;
+   VolumeBar.Position:=Player.Volume;
+   ProgressBar.Maximum:=Player.TrackLength div 100;
+   ProgressBar.Position:=Player.Position div 100;
    len:=GetTextWidth(TrackCaptionImage.Canvas.Handle, SkinText.TrackCaption, false);
    CaptionOffset:=(TrackCaptionImage.Width-len) div 2;
    DrawCaption(CaptionOffset);
@@ -352,7 +382,8 @@ begin
  PlayListForm.Width:=PlayListForm.Width+1;
  PlayListForm.Width:=PlayListForm.Width-1;
 
- // Информация о шкурке SkinDescLabel.Caption:=SkinText.Description;
+ // Информация о шкурке
+ SkinDescLabel.Caption:=SkinText.Description;
  SkinAutorLabel.Caption:=SkinText.Author;
 
  SkinEmailLabel.Caption:=SkinText.Email;
@@ -418,7 +449,7 @@ end;
 
 procedure TOptionsForm.SkinEmailLabelClick(Sender: TObject);
 begin
-  ShellExecute(Handle, nil, PChar('mailto:'+TranslatorEmailLabel.Caption), nil, nil, SW_SHOW);
+  ShellExecute(Handle, nil, PChar('mailto:'+SkinEmailLabel.Caption), nil, nil, SW_SHOW);
 end;
 
 procedure TOptionsForm.SkinHomePageLabelClick(Sender: TObject);
@@ -486,12 +517,12 @@ begin
    begin
     SetIniInt('main', 'LiteMode', 1, IniFile);
     NotNVCheckBox.Checked:=false;
-    NotNVCheckBox.Enabled:=false;
+    //NotNVCheckBox.Enabled:=false;
    end
   else
    begin
     SetIniInt('main', 'LiteMode', 0, IniFile);
-    NotNVCheckBox.Enabled:=true;
+    //NotNVCheckBox.Enabled:=true;
    end;
 end;
 
@@ -501,12 +532,12 @@ begin
    begin
     SetIniInt('main', 'LiteMode', 2, IniFile);
     NotQVCheckBox.Checked:=false;
-    NotQVCheckBox.Enabled:=false;
+    //NotQVCheckBox.Enabled:=false;
    end
   else
    begin
     SetIniInt('main', 'LiteMode', 0, IniFile);
-    NotQVCheckBox.Enabled:=true;
+    //NotQVCheckBox.Enabled:=true;
    end;
 end;
 
@@ -520,21 +551,29 @@ begin
   if HotKeysBox.ItemIndex<0 then exit;
 
   // Проверка
-  num:=HotKeysBox.Items.Count-1;
-  for i:=0 to num do
-   begin
-    if GetIniInt('main', HotKeysBox.Items[i].SubItems[1], 0, 0, MaxInt, KeysFile)=HotKeyEdit.HotKey
-     then
+
+  if HotKeyEdit.HotKey<>0 then
+    begin
+    num:=HotKeysBox.Items.Count-1;
+    for i:=0 to num do
       begin
-        MessageBeep(0);
-        HotKeyEdit.HotKey:=0;
-        exit;
+      if GetIniInt('main', HotKeysBox.Items[i].SubItems[1], 0, 0, MaxInt, KeysFile)=HotKeyEdit.HotKey then
+        begin
+          MessageBeep(0);
+          HotKeyEdit.HotKey:=0;
+          SetIniInt('main', HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[1], HotKeyEdit.HotKey, KeysFile);
+          HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[0]:=HotKeyToText(HotKeyEdit.HotKey, true);
+          AmpViewMainForm.LoadHotKeys(KeysFile);
+          exit;
+        end;
       end;
-   end;
+    end;
 
   SetIniInt('main', HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[1], HotKeyEdit.HotKey, KeysFile);
 
   HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[0]:=HotKeyToText(HotKeyEdit.HotKey, true);
+
+  AmpViewMainForm.LoadHotKeys(KeysFile);
 
 //  HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[1]:= HotKeyEdit.HotKey;
 
@@ -551,7 +590,11 @@ procedure TOptionsForm.HotKeysBoxSelectItem(Sender: TObject;
 var
  aName: string;
 begin
- if not Selected then exit;
+ if not Selected then
+   begin
+   HotKeyEdit.Enabled:=false;
+   exit;
+   end;
  try
  aName:=HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[1];
  if HotKeysBox.Items[HotKeysBox.ItemIndex].Caption<>'-'
@@ -575,24 +618,29 @@ begin
   if GlobalKeysBox.ItemIndex<0 then exit;
 
   // Проверка
-  num:=GlobalKeysBox.Items.Count-1;
-  for i:=0 to num do
-   begin
-    if GetIniInt('global', GlobalKeysBox.Items[i].SubItems[1], 0, 0, MaxInt, KeysFile)=GlobalHotKeyEdit.HotKey
-     then
-      begin
-        MessageBeep(0);
-        GlobalHotKeyEdit.HotKey:=0;
-        exit;
-      end;
-   end;
+  if GlobalHotKeyEdit.HotKey<>0 then
+    begin
+    num:=GlobalKeysBox.Items.Count-1;
+    for i:=0 to num do
+     begin
+     if GetIniInt('global', GlobalKeysBox.Items[i].SubItems[1], 0, 0, MaxInt, KeysFile)=GlobalHotKeyEdit.HotKey then
+       begin
+         MessageBeep(0);
+         GlobalHotKeyEdit.HotKey:=0;
+         SetIniInt('global', GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].SubItems[1], GlobalHotKeyEdit.HotKey, KeysFile);
+         GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].SubItems[0]:=HotKeyToText(GlobalHotKeyEdit.HotKey, true);
+         AmpViewMainForm.LoadHotKeys(KeysFile);
+         exit;
+       end;
+     end;
+    end;
 
   SetIniInt('global', GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].SubItems[1], GlobalHotKeyEdit.HotKey, KeysFile);
 //  DrawHKList;
   GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].SubItems[0]:=HotKeyToText(GlobalHotKeyEdit.HotKey, true);
 //  HotKeysBox.Items[HotKeysBox.ItemIndex].SubItems[1]:=HotKeyToText(HotKeyEdit.HotKey, false);
 
-
+  AmpViewMainForm.LoadHotKeys(KeysFile);
 end;
 
 
@@ -611,8 +659,8 @@ begin
    if aName='VolumeDown' then result:=ItemVolumeDown.Caption;
    if aName='Mute' then result:=MuteBtn.Hint;
    //-
-   if aName='Open' then result:=OpenBtn.Hint;
-   if aName='OpenFolder' then result:=OpenBtn.Hint;   
+   if aName='Open' then result:=ItemOpen.Caption;//OpenBtn.Hint;
+   if aName='OpenFolder' then result:=ItemOpenFolder.Caption;// OpenBtn.Hint;
    if aName='NextTrack' then result:=ItemNextTrack.Caption;
    if aName='PrevTrack' then result:=PrevBtn.Hint;
    if aName='NextFile' then result:=ItemNextFile.Caption;
@@ -634,14 +682,19 @@ begin
  SetIniBool('main', 'UseControl', UseControl.Checked, IniFile);
 end;
 
+procedure TOptionsForm.UseRelativePathsCheckBoxClick(Sender: TObject);
+begin
+SetIniBool('main', 'UseRelativePaths', UseRelativePathsCheckBox.Checked, IniFile);
+end;
+
 procedure TOptionsForm.FSEditChange(Sender: TObject);
 begin
  SetIniString('main', 'FormatString', FSEdit.Text, IniFile);
 end;
 
-procedure TOptionsForm.WarningCheckBoxClick(Sender: TObject);
+procedure TOptionsForm.TrackWarningCheckBoxClick(Sender: TObject);
 begin
- SetIniBool('main', 'ShowWarnings', WarningCheckBox.Checked, IniFile);
+ SetIniBool('main', 'ShowWarningsDelTracks', TrackWarningCheckBox.Checked, IniFile);
 end;
 
 procedure TOptionsForm.AddBtnClick(Sender: TObject);
@@ -781,7 +834,11 @@ procedure TOptionsForm.GlobalKeysBoxSelectItem(Sender: TObject;
 var
  aName: string;
 begin
- if not Selected then exit;
+ if not Selected then
+   begin
+   GlobalHotKeyEdit.Enabled:=false;
+   exit;
+   end;
  try
  aName:=GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].SubItems[1];
  if GlobalKeysBox.Items[GlobalKeysBox.ItemIndex].Caption<>'-'
@@ -804,6 +861,39 @@ end;
 procedure TOptionsForm.DefaultConfigCheckBoxClick(Sender: TObject);
 begin
  SetIniBool('main', 'OnlyDefaultConfig', DefaultConfigCheckBox.Checked, PlugDir+'\Config\default.ini');
+end;
+
+procedure TOptionsForm.SFEditChange(Sender: TObject);
+begin
+SetIniString('main', 'soundfontpath', SFEdit.Text, IniFile);
+end;
+
+procedure TOptionsForm.FileWarningCheckBoxClick(Sender: TObject);
+begin
+ SetIniBool('main', 'ShowWarningsDelFiles', FileWarningCheckBox.Checked, IniFile);
+end;
+
+procedure TOptionsForm.HotKeyEditEnter(Sender: TObject);
+begin
+if HotKeysBox.ItemIndex<0 then
+  begin
+  HotKeyEdit.Enabled:=false;
+  exit;
+  end;
+end;
+
+procedure TOptionsForm.GlobalHotKeyEditEnter(Sender: TObject);
+begin
+if GlobalKeysBox.ItemIndex<0 then
+  begin
+  GlobalHotKeyEdit.Enabled:=false;
+  exit;
+  end;
+end;
+
+procedure TOptionsForm.ProgressBarHintsCheckBoxClick(Sender: TObject);
+begin
+ SetIniBool('main', 'UseProgessBarHints', ProgressBarHintsCheckBox.Checked, IniFile);
 end;
 
 end.

@@ -1,6 +1,6 @@
 object OptionsForm: TOptionsForm
-  Left = 510
-  Top = 297
+  Left = 359
+  Top = 214
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Options'
@@ -47,7 +47,7 @@ object OptionsForm: TOptionsForm
   Scaled = False
   OnClose = FormClose
   OnShow = FormShow
-  PixelsPerInch = 120
+  PixelsPerInch = 96
   TextHeight = 16
   object CloseButton: TButton
     Left = 465
@@ -64,7 +64,7 @@ object OptionsForm: TOptionsForm
     Top = 10
     Width = 456
     Height = 342
-    ActivePage = TabSheet2
+    ActivePage = PageSkins
     MultiLine = True
     TabHeight = 25
     TabOrder = 1
@@ -99,7 +99,6 @@ object OptionsForm: TOptionsForm
           Width = 183
           Height = 22
           Style = csOwnerDrawFixed
-          ItemHeight = 16
           TabOrder = 0
           OnChange = LangComboBoxChange
         end
@@ -142,26 +141,35 @@ object OptionsForm: TOptionsForm
         Left = 10
         Top = 195
         Width = 395
-        Height = 85
+        Height = 102
         Caption = 'Effects'
         TabOrder = 1
         object UseShadows: TCheckBox
-          Left = 15
-          Top = 25
+          Left = 16
+          Top = 24
           Width = 371
           Height = 17
-          Caption = 'To resolve display of shadows'
+          Caption = 'Allow shadows'
           TabOrder = 0
           OnClick = UseShadowsClick
         end
         object UseAntiAliasing: TCheckBox
-          Left = 15
-          Top = 55
+          Left = 16
+          Top = 48
           Width = 371
           Height = 17
-          Caption = 'To resolve use of AntiAliasing'
+          Caption = 'Allow AntiAliasing'
           TabOrder = 1
           OnClick = UseAntiAliasingClick
+        end
+        object ProgressBarHintsCheckBox: TCheckBox
+          Left = 16
+          Top = 72
+          Width = 371
+          Height = 17
+          Caption = 'Time/volume hints'
+          TabOrder = 2
+          OnClick = ProgressBarHintsCheckBoxClick
         end
       end
     end
@@ -172,59 +180,73 @@ object OptionsForm: TOptionsForm
         Left = 10
         Top = 5
         Width = 395
-        Height = 141
+        Height = 124
         Caption = 'Avaible plugins'
         TabOrder = 0
         object PluginsList: TListBox
           Left = 15
           Top = 25
           Width = 365
-          Height = 95
-          ItemHeight = 16
+          Height = 88
           TabOrder = 0
         end
       end
       object ExtGroupBox: TGroupBox
         Left = 10
-        Top = 155
+        Top = 139
         Width = 395
-        Height = 155
+        Height = 126
         Caption = 'Extensions'
         TabOrder = 1
         object ExtListBox: TListBox
-          Left = 15
-          Top = 30
+          Left = 16
+          Top = 24
           Width = 245
-          Height = 105
-          ItemHeight = 16
+          Height = 89
           Sorted = True
           TabOrder = 0
           OnClick = ExtListBoxClick
         end
         object ExtEdit: TEdit
           Left = 280
-          Top = 32
+          Top = 24
           Width = 96
           Height = 24
           TabOrder = 1
         end
         object DeleteBtn: TButton
           Left = 280
-          Top = 108
+          Top = 88
           Width = 100
-          Height = 28
+          Height = 25
           Caption = 'Delete'
           TabOrder = 3
           OnClick = DeleteBtnClick
         end
         object AddBtn: TButton
           Left = 280
-          Top = 70
+          Top = 56
           Width = 100
-          Height = 28
+          Height = 25
           Caption = 'Add'
           TabOrder = 2
           OnClick = AddBtnClick
+        end
+      end
+      object SFGroupBox: TGroupBox
+        Left = 10
+        Top = 272
+        Width = 395
+        Height = 57
+        Caption = ' Soundfont file '
+        TabOrder = 2
+        object SFEdit: TEdit
+          Left = 15
+          Top = 24
+          Width = 365
+          Height = 24
+          TabOrder = 0
+          OnChange = SFEditChange
         end
       end
     end
@@ -263,7 +285,6 @@ object OptionsForm: TOptionsForm
               Font.Height = -15
               Font.Name = 'MS Sans Serif'
               Font.Style = []
-              ItemHeight = 16
               ParentFont = False
               TabOrder = 0
               OnClick = SkinListClick
@@ -358,11 +379,13 @@ object OptionsForm: TOptionsForm
               object SampleLabel: TLabel
                 Left = 2
                 Top = 18
-                Width = 55
-                Height = 16
+                Width = 172
+                Height = 40
                 Align = alClient
                 Alignment = taCenter
                 Caption = 'AaZz 123'
+                ExplicitWidth = 55
+                ExplicitHeight = 16
               end
             end
             object FontComboBox: TComboBox
@@ -371,7 +394,6 @@ object OptionsForm: TOptionsForm
               Width = 181
               Height = 22
               Style = csOwnerDrawVariable
-              ItemHeight = 16
               TabOrder = 1
               OnChange = FontComboBoxChange
               OnDrawItem = FontComboBoxDrawItem
@@ -382,7 +404,6 @@ object OptionsForm: TOptionsForm
               Width = 181
               Height = 24
               Style = csDropDownList
-              ItemHeight = 16
               TabOrder = 2
               OnChange = FontSizeComboBoxChange
               Items.Strings = (
@@ -435,6 +456,7 @@ object OptionsForm: TOptionsForm
                 Modifiers = []
                 TabOrder = 0
                 OnChange = HotKeyEditChange
+                OnEnter = HotKeyEditEnter
               end
             end
             object HotKeysBox: TListView
@@ -452,6 +474,7 @@ object OptionsForm: TOptionsForm
                   MaxWidth = 110
                   Width = 110
                 end>
+              HideSelection = False
               ReadOnly = True
               RowSelect = True
               ShowColumnHeaders = False
@@ -461,13 +484,14 @@ object OptionsForm: TOptionsForm
               OnSelectItem = HotKeysBoxSelectItem
             end
             object ScrollBox1: TScrollBox
-              Left = 15
+              Left = -329
               Top = 25
               Width = 341
               Height = 186
               Color = clWindow
               ParentColor = False
               TabOrder = 2
+              Visible = False
             end
           end
         end
@@ -498,6 +522,7 @@ object OptionsForm: TOptionsForm
                 Modifiers = []
                 TabOrder = 0
                 OnChange = GlobalHotKeyEditChange
+                OnEnter = GlobalHotKeyEditEnter
               end
             end
             object GlobalKeysBox: TListView
@@ -601,7 +626,8 @@ object OptionsForm: TOptionsForm
           Top = 22
           Width = 376
           Height = 36
-          Caption = 'Not use AmpView for QuickView [Ctrl+Q]'
+          Caption = 'Do not use AmpView for QuickView [Ctrl+Q]'
+          Enabled = False
           TabOrder = 0
           WordWrap = True
           OnClick = NotQVCheckBoxClick
@@ -611,7 +637,8 @@ object OptionsForm: TOptionsForm
           Top = 58
           Width = 376
           Height = 36
-          Caption = 'Not use AmpView for Normal View [F3]'
+          Caption = 'Do not use AmpView for Normal View [F3]'
+          Enabled = False
           TabOrder = 1
           OnClick = NotNVCheckBoxClick
         end
@@ -641,7 +668,7 @@ object OptionsForm: TOptionsForm
         Left = 10
         Top = 5
         Width = 395
-        Height = 145
+        Height = 132
         Caption = 'On end of a track'
         Items.Strings = (
           'Stop track'
@@ -655,9 +682,9 @@ object OptionsForm: TOptionsForm
       end
       object FormatTrackBox: TGroupBox
         Left = 10
-        Top = 155
+        Top = 143
         Width = 395
-        Height = 76
+        Height = 66
         Caption = 'Format of track'#39's captions'
         TabOrder = 1
         object FSEdit: TEdit
@@ -671,19 +698,37 @@ object OptionsForm: TOptionsForm
       end
       object OtherGroupBox: TGroupBox
         Left = 10
-        Top = 235
+        Top = 215
         Width = 395
-        Height = 57
+        Height = 98
         Caption = 'Other'
         TabOrder = 2
-        object WarningCheckBox: TCheckBox
-          Left = 16
-          Top = 24
+        object TrackWarningCheckBox: TCheckBox
+          Left = 10
+          Top = 48
           Width = 372
           Height = 17
           Caption = 'Show warnings of the track'#39's deleting'
+          TabOrder = 1
+          OnClick = TrackWarningCheckBoxClick
+        end
+        object FileWarningCheckBox: TCheckBox
+          Left = 10
+          Top = 71
+          Width = 372
+          Height = 17
+          Caption = 'Show warnings of the files deleting'
+          TabOrder = 2
+          OnClick = FileWarningCheckBoxClick
+        end
+        object UseRelativePathsCheckBox: TCheckBox
+          Left = 10
+          Top = 25
+          Width = 372
+          Height = 17
+          Caption = 'Use Relative Paths'
           TabOrder = 0
-          OnClick = WarningCheckBoxClick
+          OnClick = UseRelativePathsCheckBoxClick
         end
       end
     end
@@ -693,7 +738,6 @@ object OptionsForm: TOptionsForm
     Top = 10
     Width = 140
     Height = 340
-    ItemHeight = 16
     Items.Strings = (
       'Interface'
       'Plugins'
@@ -709,7 +753,6 @@ object OptionsForm: TOptionsForm
     Top = 355
     Width = 121
     Height = 21
-    ItemHeight = 16
     Items.Strings = (
       'Play'
       'Stop'
@@ -740,7 +783,6 @@ object OptionsForm: TOptionsForm
     Top = 355
     Width = 121
     Height = 22
-    ItemHeight = 16
     Items.Strings = (
       'Play'
       'Stop'
@@ -761,9 +803,9 @@ object OptionsForm: TOptionsForm
     Top = 361
     object ActionCancel: TAction
       Caption = 'Cancel'
-      ShortCut = 27
       SecondaryShortCuts.Strings = (
         'Alt+F4')
+      ShortCut = 27
       OnExecute = ActionCancelExecute
     end
   end

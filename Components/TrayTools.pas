@@ -8,6 +8,7 @@ interface
 
 uses Windows, ShellAPI, Messages, SysUtils;
 
+
 const
   WM_NOTIFYTRAYICON = WM_USER + 1111;
 
@@ -20,6 +21,8 @@ procedure SetNewTrayHint(AppHandle: HWND; Icon: HIcon; NewHint: string);
 
 implementation
 
+uses Viewer;
+
 // Добавление значка в трей
 procedure AddTrayIcon(AppHandle: Hwnd; Icon: HIcon; Hint: PChar);
 var
@@ -29,7 +32,7 @@ begin
   //Помещение иконки в Tray Bar
   with no do
   begin
-    cbSize := SizeOf(TNotifyIconData);
+    cbSize := {$IF CompilerVersion >= 24.0}System.{$IFEND}SizeOf(TNotifyIconData);
     Wnd := AppHandle;
     uID := 0;
     uFlags := NIF_ICON or NIF_MESSAGE or NIF_TIP;
@@ -54,7 +57,7 @@ begin
   //Удаление иконки
   with no do
   begin
-    cbSize := SizeOf(TNotifyIconData);
+    cbSize := {$IF CompilerVersion >= 24.0}System.{$IFEND}SizeOf(TNotifyIconData);
     Wnd := AppHandle;
     uID := 0;
   end;
@@ -69,6 +72,7 @@ procedure SetNewTrayHint(AppHandle: HWND; Icon: HIcon; NewHint: string);
 ///  i: byte;
 //  temp: string;
 begin
+ if AmpViewMainForm.IsEmbedded then exit;
  DeleteTrayIcon(AppHandle);
  AddTrayIcon(AppHandle, Icon, PChar(NewHint));
 (*  //Удаление иконки
